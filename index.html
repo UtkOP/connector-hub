@@ -209,6 +209,71 @@
   /* VIEW TOGGLE */
   .view { display: none; flex-direction: column; flex: 1; overflow: hidden; }
   .view.active { display: flex; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg); border-radius: var(--radius-lg); width: 780px; max-width: 95vw; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .modal-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text2); }
+  .modal-close:hover { background: var(--bg2); }
+
+  /* MARKETPLACE STEP */
+  .modal-search-bar { display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .modal-search { flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border2); border-radius: var(--radius); padding: 7px 12px; background: var(--bg); }
+  .modal-search input { border: none; outline: none; font-size: 13px; color: var(--text); background: transparent; width: 100%; }
+  .modal-search span { color: var(--text3); font-size: 14px; flex-shrink: 0; }
+  .modal-type-chips { display: flex; gap: 6px; }
+  .mchip { font-size: 11px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: var(--text2); background: var(--bg); white-space: nowrap; }
+  .mchip:hover { border-color: var(--border2); }
+  .mchip.on { font-weight: 500; }
+  .mchip.on.email { background: var(--blue-bg); color: var(--blue); border-color: #B5D4F4; }
+  .mchip.on.push { background: var(--purple-bg); color: var(--purple); border-color: #AFA9EC; }
+  .mchip.on.sms { background: var(--green-bg); color: var(--green-text); border-color: #9FE1CB; }
+  .mchip.on.all { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
+  .modal-body { flex: 1; overflow-y: auto; padding: 18px 22px; }
+  .market-section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 18px; }
+  .market-section-label:first-child { margin-top: 0; }
+  .market-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 4px; }
+  .market-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .market-card:hover { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+  .market-card-top { display: flex; align-items: center; gap: 10px; }
+  .mc-logo { width: 38px; height: 38px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .mc-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .mc-type { font-size: 10px; margin-top: 2px; }
+  .mc-desc { font-size: 11.5px; color: var(--text2); line-height: 1.5; flex: 1; }
+  .mc-connect { font-size: 12px; font-weight: 500; color: var(--green); display: flex; align-items: center; gap: 4px; margin-top: auto; }
+  .mc-connect::before { content: '+'; font-size: 14px; }
+
+  /* CONNECT FORM STEP */
+  .connect-form { display: none; flex-direction: column; height: 100%; }
+  .connect-form.open { display: flex; }
+  .cf-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; padding: 14px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .cf-back:hover { color: var(--text); }
+  .cf-provider-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .cf-logo { width: 44px; height: 44px; border-radius: 10px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .cf-pname { font-size: 15px; font-weight: 600; color: var(--text); }
+  .cf-pdesc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .cf-body { flex: 1; overflow-y: auto; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .cf-field { display: flex; flex-direction: column; gap: 5px; }
+  .cf-label { font-size: 11.5px; font-weight: 500; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .cf-required { font-size: 10px; color: var(--red); }
+  .cf-optional { font-size: 10px; color: var(--text3); }
+  .cf-input { padding: 8px 12px; border: 1px solid var(--border2); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--bg); outline: none; width: 100%; }
+  .cf-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+  .cf-select { padding: 8px 12px; border: 1px solid var(--border2); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--bg); outline: none; width: 100%; cursor: pointer; }
+  .cf-hint { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cf-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg2); }
+  .cf-test-btn { font-size: 12px; padding: 8px 16px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); cursor: pointer; font-weight: 500; }
+  .cf-test-btn:hover { background: var(--bg3); }
+  .cf-save-btn { font-size: 12px; padding: 8px 18px; border-radius: var(--radius); background: #1a1a18; color: #fff; border: none; cursor: pointer; font-weight: 500; }
+  .cf-save-btn:hover { background: #333; }
+  .cf-test-result { font-size: 11px; display: flex; align-items: center; gap: 5px; }
+  .cf-test-result.ok { color: var(--green-text); }
+  .cf-test-result.fail { color: var(--red); }
 </style>
 </head>
 <body>
@@ -290,7 +355,7 @@
     <div class="view active" id="view-providers">
       <div class="page-head">
         <div class="page-title">Providers</div>
-        <button class="primary-btn">+ Add Provider</button>
+        <button class="primary-btn" onclick="openModal()">+ Add Provider</button>
       </div>
 
       <div class="filter-bar">
@@ -649,9 +714,206 @@
   </div><!-- /main -->
 </div><!-- /shell -->
 
+<!-- ===== ADD PROVIDER MODAL ===== -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+
+    <!-- MARKETPLACE STEP -->
+    <div id="step-market" style="display:flex;flex-direction:column;height:100%;">
+      <div class="modal-header">
+        <div class="modal-title">Add a Provider</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-search-bar">
+        <div class="modal-search">
+          <span>🔍</span>
+          <input id="market-search" placeholder="Search providers..." oninput="filterMarket()" />
+        </div>
+        <div class="modal-type-chips">
+          <div class="mchip on all" onclick="setMarketChip(this,'all')">All</div>
+          <div class="mchip" onclick="setMarketChip(this,'email')">Email</div>
+          <div class="mchip" onclick="setMarketChip(this,'push')">Push</div>
+          <div class="mchip" onclick="setMarketChip(this,'sms')">SMS</div>
+        </div>
+      </div>
+
+      <div class="modal-body" id="market-body">
+
+        <div class="market-section-label" data-section="email">Email providers</div>
+        <div class="market-grid" data-section="email">
+          <div class="market-card" data-type="email" data-provider="sendgrid" onclick="openConnectForm('sendgrid')">
+            <div class="market-card-top">
+              <div class="mc-logo">SG</div>
+              <div><div class="mc-name">SendGrid</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
+            </div>
+            <div class="mc-desc">Reliable transactional email with advanced analytics, templates, and webhook delivery tracking.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="email" data-provider="ses" onclick="openConnectForm('ses')">
+            <div class="market-card-top">
+              <div class="mc-logo">SES</div>
+              <div><div class="mc-name">AWS SES</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
+            </div>
+            <div class="mc-desc">High-volume cloud email via AWS. Cost-effective at scale with SNS webhook integration.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="email" data-provider="mailgun" onclick="openConnectForm('mailgun')">
+            <div class="market-card-top">
+              <div class="mc-logo">MG</div>
+              <div><div class="mc-name">Mailgun</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
+            </div>
+            <div class="mc-desc">Developer-focused email API with US and EU region support. HMAC webhook signing.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="email" data-provider="mailchimp" onclick="openConnectForm('mailchimp')">
+            <div class="market-card-top">
+              <div class="mc-logo">MC</div>
+              <div><div class="mc-name">Mailchimp</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
+            </div>
+            <div class="mc-desc">Marketing campaigns via Mailchimp + transactional via Mandrill. Audience list management.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="email" data-provider="pepipost" onclick="openConnectForm('pepipost')">
+            <div class="market-card-top">
+              <div class="mc-logo">PP</div>
+              <div><div class="mc-name">Pepipost</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
+            </div>
+            <div class="mc-desc">India-optimised delivery via Netcore. Routes through Jio, Airtel, BSNL whitelisted IPs.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+        </div>
+
+        <div class="market-section-label" data-section="push">Push / In-App providers</div>
+        <div class="market-grid" data-section="push">
+          <div class="market-card" data-type="push" data-provider="fcm" onclick="openConnectForm('fcm')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:#EA8600;border-color:#FAC775;">FCM</div>
+              <div><div class="mc-name">FCM</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
+            </div>
+            <div class="mc-desc">Firebase Cloud Messaging for Android, iOS proxy, and web VAPID push. OAuth2 HTTP v1 API.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="push" data-provider="apns" onclick="openConnectForm('apns')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:var(--text2);">APNs</div>
+              <div><div class="mc-name">APNs</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
+            </div>
+            <div class="mc-desc">Apple Push Notification service for native iOS and macOS apps. .p8 token-based auth over HTTP/2.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="push" data-provider="onesignal" onclick="openConnectForm('onesignal')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:#E54B4D;border-color:#F09595;">1S</div>
+              <div><div class="mc-name">OneSignal</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
+            </div>
+            <div class="mc-desc">Multi-platform push, in-app messages, and SMS. Supports segments and A/B testing.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="push" data-provider="clevertap" onclick="openConnectForm('clevertap')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:#185FA5;border-color:#B5D4F4;">CT</div>
+              <div><div class="mc-name">CleverTap</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
+            </div>
+            <div class="mc-desc">India-focused engagement platform with push, in-app, and analytics. Strong APAC delivery.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="push" data-provider="moengage" onclick="openConnectForm('moengage')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:#0F6E56;border-color:#9FE1CB;">MoE</div>
+              <div><div class="mc-name">MoEngage</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
+            </div>
+            <div class="mc-desc">AI-driven engagement for India and SEA markets. Push, in-app, email, and SMS in one SDK.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+        </div>
+
+        <div class="market-section-label" data-section="sms">SMS providers</div>
+        <div class="market-grid" data-section="sms">
+          <div class="market-card" data-type="sms" data-provider="twilio" onclick="openConnectForm('twilio')">
+            <div class="market-card-top">
+              <div class="mc-logo" style="color:#c00;border-color:#F7C1C1;">TW</div>
+              <div><div class="mc-name">Twilio</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
+            </div>
+            <div class="mc-desc">Global SMS leader with programmable messaging, delivery webhooks, and status callbacks.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="sms" data-provider="infobip" onclick="openConnectForm('infobip')">
+            <div class="market-card-top">
+              <div class="mc-logo">IB</div>
+              <div><div class="mc-name">Infobip</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
+            </div>
+            <div class="mc-desc">Enterprise SMS with global reach, delivery reports, and 2FA support across 190+ countries.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="sms" data-provider="semaphore" onclick="openConnectForm('semaphore')">
+            <div class="market-card-top">
+              <div class="mc-logo">SM</div>
+              <div><div class="mc-name">Semaphore</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
+            </div>
+            <div class="mc-desc">Philippines-focused SMS gateway. Reliable delivery on Globe and Smart networks.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="sms" data-provider="smart" onclick="openConnectForm('smart')">
+            <div class="market-card-top">
+              <div class="mc-logo">SC</div>
+              <div><div class="mc-name">Smart Comms</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
+            </div>
+            <div class="mc-desc">Smart Communications Philippines direct carrier gateway for high-priority SMS delivery.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+          <div class="market-card" data-type="sms" data-provider="globe" onclick="openConnectForm('globe')">
+            <div class="market-card-top">
+              <div class="mc-logo">GT</div>
+              <div><div class="mc-name">Globe Telecom</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
+            </div>
+            <div class="mc-desc">Globe Telecom Philippines carrier gateway. Supports short codes and alphanumeric sender IDs.</div>
+            <div class="mc-connect">Connect</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:14px 16px;border:1px dashed var(--border2);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text);">Don't see your provider?</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Request a new connector and we'll prioritise based on demand.</div>
+          </div>
+          <button class="cf-test-btn">Submit request →</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONNECT FORM STEP -->
+    <div class="connect-form" id="step-form">
+      <div class="cf-back" onclick="backToMarket()">← Back to providers</div>
+      <div class="cf-provider-head">
+        <div class="cf-logo" id="cf-logo">SG</div>
+        <div>
+          <div class="cf-pname" id="cf-pname">SendGrid</div>
+          <div class="cf-pdesc" id="cf-pdesc">Configure your SendGrid connection</div>
+        </div>
+        <div style="margin-left:auto;" id="cf-type-badge"></div>
+      </div>
+      <div class="cf-body" id="cf-body">
+        <!-- injected by JS -->
+      </div>
+      <div class="cf-footer">
+        <div class="cf-test-result" id="cf-test-result"></div>
+        <div style="display:flex;gap:10px;">
+          <button class="cf-test-btn" onclick="testConnection()">Test connection</button>
+          <button class="cf-save-btn" id="cf-save-btn" onclick="saveProvider()">Save & connect</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
   var connOpen = true;
+  var marketFilter = 'all';
 
+  /* ---- SIDEBAR ---- */
   function toggleConnectors() {
     connOpen = !connOpen;
     document.getElementById('conn-children').style.display = connOpen ? 'block' : 'none';
@@ -667,11 +929,11 @@
     document.getElementById('view-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.remove('dim');
-
     var titles = { providers: 'Providers', routing: 'Routing', analytics: 'Analytics' };
     document.getElementById('breadcrumb').innerHTML = 'Connectors › <b>' + titles[name] + '</b>';
   }
 
+  /* ---- TABLE FILTER ---- */
   function filterType(el, type) {
     document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('on'); });
     el.classList.add('on');
@@ -681,10 +943,292 @@
     });
   }
 
+  /* ---- ROUTING ---- */
   function switchStrat(el, channel) {
     var parent = el.closest('.channel-section');
     parent.querySelectorAll('.strat-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
+  }
+
+  /* ---- MODAL ---- */
+  function openModal() {
+    document.getElementById('add-modal').classList.add('open');
+    document.getElementById('step-market').style.display = 'flex';
+    document.getElementById('step-form').classList.remove('open');
+    document.getElementById('market-search').value = '';
+    filterMarket();
+  }
+  function closeModal() {
+    document.getElementById('add-modal').classList.remove('open');
+  }
+  document.getElementById('add-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  /* ---- MARKETPLACE FILTER ---- */
+  function setMarketChip(el, type) {
+    marketFilter = type;
+    document.querySelectorAll('.mchip').forEach(function(c) {
+      c.classList.remove('on','all','email','push','sms');
+    });
+    el.classList.add('on', type);
+    filterMarket();
+  }
+
+  function filterMarket() {
+    var q = document.getElementById('market-search').value.toLowerCase();
+    var cards = document.querySelectorAll('.market-card');
+    cards.forEach(function(card) {
+      var typeMatch = marketFilter === 'all' || card.dataset.type === marketFilter;
+      var textMatch = q === '' || card.innerText.toLowerCase().includes(q);
+      card.style.display = (typeMatch && textMatch) ? '' : 'none';
+    });
+    // show/hide section labels and grids
+    ['email','push','sms'].forEach(function(sec) {
+      var grid = document.querySelector('.market-grid[data-section="' + sec + '"]');
+      var label = document.querySelector('.market-section-label[data-section="' + sec + '"]');
+      var visible = Array.from(grid.querySelectorAll('.market-card')).some(function(c) { return c.style.display !== 'none'; });
+      var sectionMatch = marketFilter === 'all' || marketFilter === sec;
+      grid.style.display = (visible && sectionMatch) ? '' : 'none';
+      label.style.display = (visible && sectionMatch) ? '' : 'none';
+    });
+  }
+
+  /* ---- PROVIDER FORM CONFIGS ---- */
+  var providerForms = {
+    sendgrid: {
+      name: 'SendGrid', logo: 'SG', type: 'email', desc: 'Email provider · Bearer token auth',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Transactional', hint:'A name to identify this connection' },
+        { id:'apikey', label:'API Key', required:true, placeholder:'SG.xxxxxxxxxxxxxxxx', hint:'Found in Settings → API Keys' },
+        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
+        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
+        { id:'webhook_key', label:'Webhook Signing Public Key', required:false, placeholder:'MFkwEwYHKoZIzj0...', hint:'Different from API Key. Found in Mail Settings → Event Webhook' },
+        { id:'sandbox', label:'Sandbox Mode', type:'select', options:['Disabled','Enabled'], required:false, hint:'Enabled = emails not actually delivered' }
+      ]
+    },
+    ses: {
+      name: 'AWS SES', logo: 'SES', type: 'email', desc: 'Email provider · SigV4 SDK auth',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Emergency Email' },
+        { id:'access_key', label:'AWS Access Key ID', required:true, placeholder:'AKIAIOSFODNN7EXAMPLE' },
+        { id:'secret_key', label:'AWS Secret Access Key', required:true, placeholder:'wJalrXUtnFEMI/K7MDENG/...' },
+        { id:'region', label:'Region', type:'select', options:['ap-south-1','us-east-1','us-west-2','eu-west-1','ap-southeast-1'], required:true },
+        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com', hint:'Must be verified in SES for this region' },
+        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
+        { id:'sns_arn', label:'SNS Topic ARN', required:false, placeholder:'arn:aws:sns:ap-south-1:123456:ses-events', hint:'Optional — for delivery event webhooks via SNS' }
+      ]
+    },
+    mailgun: {
+      name: 'Mailgun', logo: 'MG', type: 'email', desc: 'Email provider · HTTP Basic auth',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Backup Email' },
+        { id:'apikey', label:'Private API Key', required:true, placeholder:'key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'domain', label:'Sending Domain', required:true, placeholder:'mg.yourdomain.com' },
+        { id:'region', label:'Region', type:'select', options:['US (api.mailgun.net)','EU (api.eu.mailgun.net)'], required:true, hint:'EU uses separate infrastructure — wrong region returns 401' },
+        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@mg.yourdomain.com' },
+        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
+        { id:'webhook_key', label:'Webhook Signing Key', required:false, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', hint:'Different from API Key. Found in Webhooks section' }
+      ]
+    },
+    mailchimp: {
+      name: 'Mailchimp', logo: 'MC', type: 'email', desc: 'Email provider · Campaign + Transactional',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Marketing Email' },
+        { id:'mc_apikey', label:'Mailchimp API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-us14', hint:'Suffix (e.g. -us14) determines your datacenter' },
+        { id:'mandrill_key', label:'Mandrill API Key', required:false, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', hint:'Required only for transactional sends. Mandrill is a paid add-on.' },
+        { id:'audience_id', label:'Audience List ID', required:true, placeholder:'abc123def4', hint:'Found in Audience → Settings → Audience name and defaults' },
+        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
+        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' }
+      ]
+    },
+    pepipost: {
+      name: 'Pepipost / Netcore', logo: 'PP', type: 'email', desc: 'Email provider · India-optimised',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. India Email' },
+        { id:'apikey', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxx', hint:'Header sent as api_key (lowercase with underscore)' },
+        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
+        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
+        { id:'template_id', label:'Template ID', required:false, placeholder:'12345', hint:'Optional — for Netcore template-based sends' }
+      ]
+    },
+    fcm: {
+      name: 'FCM', logo: 'FCM', type: 'push', desc: 'Push provider · OAuth2 HTTP v1',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Android Push' },
+        { id:'service_json', label:'Service Account JSON', required:true, placeholder:'Paste full service account JSON here...', multiline:true, hint:'Downloaded from Firebase Console → Project Settings → Service accounts' },
+        { id:'project_id', label:'Firebase Project ID', required:true, placeholder:'my-project-12345', hint:'Auto-extractable from service account JSON' },
+        { id:'vapid_key', label:'VAPID Public Key', required:false, placeholder:'BEl62iUYgUivxIkv...', hint:'Required for web push only' }
+      ]
+    },
+    apns: {
+      name: 'APNs', logo: 'APNs', type: 'push', desc: 'Push provider · Token auth (.p8)',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. iOS Push' },
+        { id:'key_file', label:'.p8 Private Key', required:true, placeholder:'Paste contents of AuthKey_XXXXXXXXXX.p8 here...', multiline:true, hint:'Downloaded from Apple Developer → Keys. Shown only once.' },
+        { id:'key_id', label:'Key ID', required:true, placeholder:'ABC123DEF4', hint:'10-character ID shown when .p8 key was created' },
+        { id:'team_id', label:'Team ID', required:true, placeholder:'XYZ987WVU6', hint:'Found in Apple Developer → Membership' },
+        { id:'bundle_id', label:'Bundle ID (apns-topic)', required:true, placeholder:'com.company.appname' },
+        { id:'env', label:'APNs Environment', type:'select', options:['Production','Sandbox'], required:true, hint:'Sandbox for dev builds, Production for App Store / TestFlight' }
+      ]
+    },
+    onesignal: {
+      name: 'OneSignal', logo: '1S', type: 'push', desc: 'Push / In-App provider',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Cross-platform Push' },
+        { id:'app_id', label:'App ID', required:true, placeholder:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
+        { id:'api_key', label:'REST API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
+      ]
+    },
+    clevertap: {
+      name: 'CleverTap', logo: 'CT', type: 'push', desc: 'Push / In-App provider · India/APAC',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. CleverTap Push' },
+        { id:'account_id', label:'Account ID', required:true, placeholder:'XXX-XXX-XXXXXX' },
+        { id:'passcode', label:'Account Passcode', required:true, placeholder:'xxxxxxxxxxxxxxxx' },
+        { id:'region', label:'Region', type:'select', options:['India (in1)','US (us1)','Singapore (sg1)','Europe (eu1)'], required:true }
+      ]
+    },
+    moengage: {
+      name: 'MoEngage', logo: 'MoE', type: 'push', desc: 'Push / In-App provider · India/SEA',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. MoEngage Push' },
+        { id:'app_id', label:'App ID', required:true, placeholder:'XXXXXXXXXXXXXXXXXXXXXXXX' },
+        { id:'api_key', label:'Data API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'datacenter', label:'Data Center', type:'select', options:['India (DC-3)','US (DC-1)','EU (DC-2)','Singapore (DC-4)','Indonesia (DC-5)'], required:true }
+      ]
+    },
+    twilio: {
+      name: 'Twilio', logo: 'TW', type: 'sms', desc: 'SMS provider · Global',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Primary SMS' },
+        { id:'account_sid', label:'Account SID', required:true, placeholder:'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'auth_token', label:'Auth Token', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'from_number', label:'From Number / Sender ID', required:true, placeholder:'+1234567890', hint:'Twilio phone number or approved alphanumeric sender ID' },
+        { id:'webhook_url', label:'Status Callback URL', required:false, placeholder:'https://yourplatform.com/webhooks/twilio', hint:'For delivery status updates' }
+      ]
+    },
+    infobip: {
+      name: 'Infobip', logo: 'IB', type: 'sms', desc: 'SMS provider · Global enterprise',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. SMS Fallback' },
+        { id:'base_url', label:'Base URL', required:true, placeholder:'xxxxx.api.infobip.com', hint:'Unique to your Infobip account' },
+        { id:'api_key', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'sender', label:'Sender ID', required:true, placeholder:'FyscalTech', hint:'Alphanumeric or registered number' }
+      ]
+    },
+    semaphore: {
+      name: 'Semaphore', logo: 'SM', type: 'sms', desc: 'SMS provider · Philippines',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. PH SMS' },
+        { id:'api_key', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'sender_name', label:'Sender Name', required:true, placeholder:'FyscalTech', hint:'Must be pre-registered with Semaphore' }
+      ]
+    },
+    smart: {
+      name: 'Smart Communications', logo: 'SC', type: 'sms', desc: 'SMS provider · Philippines carrier',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Smart PH SMS' },
+        { id:'client_id', label:'Client ID', required:true, placeholder:'xxxxxxxx' },
+        { id:'client_secret', label:'Client Secret', required:true, placeholder:'xxxxxxxxxxxxxxxx' },
+        { id:'shortcode', label:'Short Code / Sender', required:true, placeholder:'FYSCAL' }
+      ]
+    },
+    globe: {
+      name: 'Globe Telecom', logo: 'GT', type: 'sms', desc: 'SMS provider · Philippines carrier',
+      fields: [
+        { id:'label', label:'Label', required:true, placeholder:'e.g. Globe PH SMS' },
+        { id:'app_id', label:'App ID', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'app_secret', label:'App Secret', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { id:'shortcode', label:'Short Code', required:true, placeholder:'21581234' }
+      ]
+    }
+  };
+
+  function openConnectForm(provider) {
+    var cfg = providerForms[provider];
+    if (!cfg) return;
+
+    document.getElementById('step-market').style.display = 'none';
+    document.getElementById('step-form').classList.add('open');
+
+    document.getElementById('cf-logo').textContent = cfg.logo;
+    document.getElementById('cf-pname').textContent = cfg.name;
+    document.getElementById('cf-pdesc').textContent = cfg.desc;
+
+    var typeColors = { email: 'b-email', push: 'b-push', sms: 'b-sms' };
+    document.getElementById('cf-type-badge').innerHTML = '<span class="badge ' + typeColors[cfg.type] + '">' + cfg.type.charAt(0).toUpperCase() + cfg.type.slice(1) + '</span>';
+
+    var body = document.getElementById('cf-body');
+    body.innerHTML = '';
+    document.getElementById('cf-test-result').innerHTML = '';
+
+    cfg.fields.forEach(function(f) {
+      var wrap = document.createElement('div');
+      wrap.className = 'cf-field';
+
+      var label = document.createElement('label');
+      label.className = 'cf-label';
+      label.innerHTML = f.label + ' <span class="' + (f.required ? 'cf-required">Required' : 'cf-optional">Optional') + '</span>';
+      wrap.appendChild(label);
+
+      if (f.type === 'select') {
+        var sel = document.createElement('select');
+        sel.className = 'cf-select';
+        f.options.forEach(function(o) {
+          var opt = document.createElement('option');
+          opt.textContent = o;
+          sel.appendChild(opt);
+        });
+        wrap.appendChild(sel);
+      } else if (f.multiline) {
+        var ta = document.createElement('textarea');
+        ta.className = 'cf-input';
+        ta.placeholder = f.placeholder || '';
+        ta.rows = 4;
+        ta.style.resize = 'vertical';
+        ta.style.fontFamily = 'monospace';
+        ta.style.fontSize = '11px';
+        wrap.appendChild(ta);
+      } else {
+        var inp = document.createElement('input');
+        inp.className = 'cf-input';
+        inp.placeholder = f.placeholder || '';
+        inp.type = (f.id.includes('secret') || f.id.includes('token') || f.id.includes('key') || f.id.includes('passcode')) ? 'password' : 'text';
+        wrap.appendChild(inp);
+      }
+
+      if (f.hint) {
+        var hint = document.createElement('div');
+        hint.className = 'cf-hint';
+        hint.textContent = f.hint;
+        wrap.appendChild(hint);
+      }
+
+      body.appendChild(wrap);
+    });
+  }
+
+  function backToMarket() {
+    document.getElementById('step-market').style.display = 'flex';
+    document.getElementById('step-form').classList.remove('open');
+  }
+
+  function testConnection() {
+    var el = document.getElementById('cf-test-result');
+    el.textContent = 'Testing...';
+    el.className = 'cf-test-result';
+    setTimeout(function() {
+      el.innerHTML = '✓ Connection successful';
+      el.className = 'cf-test-result ok';
+    }, 1400);
+  }
+
+  function saveProvider() {
+    var el = document.getElementById('cf-test-result');
+    el.innerHTML = '✓ Provider saved';
+    el.className = 'cf-test-result ok';
+    setTimeout(function() { closeModal(); }, 800);
   }
 </script>
 </body>
