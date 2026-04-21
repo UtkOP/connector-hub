@@ -1,1235 +1,1403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Connectors — Fyscal Technologies</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #ffffff;
-    --bg2: #f7f7f6;
-    --bg3: #f0f0ee;
-    --border: #e4e4e0;
-    --border2: #d0d0cc;
-    --text: #1a1a18;
-    --text2: #6b6b68;
-    --text3: #a0a09c;
-    --green: #1D9E75;
-    --green-bg: #E1F5EE;
-    --green-text: #0F6E56;
-    --blue: #185FA5;
-    --blue-bg: #E6F1FB;
-    --purple: #534AB7;
-    --purple-bg: #EEEDFE;
-    --red: #A32D2D;
-    --red-bg: #FCEBEB;
-    --amber: #BA7517;
-    --amber-bg: #FAEEDA;
-    --radius: 8px;
-    --radius-lg: 12px;
-  }
-  html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-serif; background: var(--bg2); color: var(--text); font-size: 13px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--bg2:#f8f8f6;--bg3:#efefec;--bg4:#e8e8e4;
+  --border:#e4e4e0;--border2:#d0d0ca;
+  --text:#17170f;--t2:#65655e;--t3:#9e9e97;
+  --green:#1D9E75;--gbg:#e0f5ed;--gtext:#0c6647;--gmid:#8ed9bb;
+  --blue:#1558a0;--bbg:#e4eef9;--bmid:#a8ccef;
+  --purple:#4e45b0;--pbg:#eceafb;--pmid:#b0acec;
+  --red:#992828;--rbg:#fbeaea;--rmid:#f2b8b8;
+  --amber:#a86910;--abg:#faecd8;--amid:#f5c87a;
+  --r:7px;--rl:11px;--rxl:15px;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.13);
+}
+html,body{height:100%;font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg2);color:var(--text);font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
 
-  /* LAYOUT */
-  .shell { display: flex; height: 100vh; overflow: hidden; }
+/* ═══ SHELL ═══ */
+.shell{display:flex;height:100vh;overflow:hidden;}
 
-  /* SIDEBAR */
-  .sidebar { width: 224px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
-  .sb-brand { display: flex; align-items: center; gap: 10px; padding: 16px; border-bottom: 1px solid var(--border); }
-  .sb-logo { width: 34px; height: 34px; border-radius: 7px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.02em; flex-shrink: 0; }
-  .sb-brand-text { font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.05em; line-height: 1.3; }
-  .sb-section { font-size: 10px; color: var(--text3); padding: 14px 16px 4px; letter-spacing: 0.07em; text-transform: uppercase; }
-  .sb-item { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 12.5px; color: var(--text2); cursor: pointer; user-select: none; border-left: 2px solid transparent; }
-  .sb-item:hover { background: var(--bg2); color: var(--text); }
-  .sb-item.open { color: var(--text); font-weight: 500; }
-  .sb-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.5; }
-  .sb-item.open svg { opacity: 1; stroke: var(--green); }
-  .sb-chev { margin-left: auto; font-size: 11px; color: var(--text3); transition: transform 0.2s; }
-  .sb-item.open .sb-chev { color: var(--green); transform: rotate(90deg); }
-  .sb-child { padding: 6px 16px 6px 40px; font-size: 12px; color: var(--text2); cursor: pointer; display: block; border-left: 2px solid transparent; }
-  .sb-child:hover { background: var(--bg2); color: var(--text); }
-  .sb-child.active { color: var(--green); font-weight: 500; background: var(--green-bg); border-left-color: var(--green); }
-  .sb-child.dim { color: var(--text3); }
-  .sb-user { margin-top: auto; border-top: 1px solid var(--border); padding: 12px 14px; display: flex; align-items: center; gap: 8px; }
-  .sb-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-bg); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--blue); flex-shrink: 0; }
-  .sb-uname { font-size: 11.5px; font-weight: 500; color: var(--text); }
-  .sb-uemail { font-size: 10px; color: var(--text3); }
-  .sb-more { margin-left: auto; color: var(--text3); cursor: pointer; font-size: 16px; }
+/* ═══ SIDEBAR ═══ */
+.sb{width:224px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:15px 16px 13px;border-bottom:1px solid var(--border);}
+.sb-logo{width:30px;height:30px;border-radius:7px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;letter-spacing:-.5px;flex-shrink:0;}
+.sb-bname{font-size:10.5px;font-weight:700;color:var(--text);letter-spacing:.04em;line-height:1.35;}
+.sb-grp{font-size:9.5px;font-weight:600;color:var(--t3);padding:14px 16px 4px;letter-spacing:.08em;text-transform:uppercase;}
+.sb-row{display:flex;align-items:center;gap:9px;padding:6px 16px;font-size:12.5px;color:var(--t2);cursor:pointer;user-select:none;border-radius:0;transition:background .12s;}
+.sb-row:hover{background:var(--bg2);}
+.sb-row.open{color:var(--text);font-weight:500;}
+.sb-row svg{width:14px;height:14px;flex-shrink:0;opacity:.45;}
+.sb-row.open svg{opacity:1;}
+.sb-chev{margin-left:auto;font-size:10px;color:var(--t3);transition:transform .2s;}
+.sb-row.open .sb-chev{transform:rotate(90deg);color:var(--green);}
+.sb-child{display:block;padding:5px 16px 5px 39px;font-size:12px;color:var(--t2);cursor:pointer;border-left:2px solid transparent;transition:all .12s;}
+.sb-child:hover{background:var(--bg2);color:var(--text);}
+.sb-child.active{color:var(--green);font-weight:500;background:var(--gbg);border-left-color:var(--green);}
+.sb-child.off{color:var(--t3);}
+.sb-user{margin-top:auto;border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:9px;}
+.sb-av{width:27px;height:27px;border-radius:50%;background:var(--bbg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--blue);flex-shrink:0;}
+.sb-un{font-size:12px;font-weight:500;color:var(--text);}
+.sb-ue{font-size:10px;color:var(--t3);}
+.sb-more{margin-left:auto;color:var(--t3);font-size:15px;cursor:pointer;}
 
-  /* MAIN */
-  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-  .topbar { height: 44px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--bg); gap: 6px; flex-shrink: 0; }
-  .breadcrumb { font-size: 12px; color: var(--text3); }
-  .breadcrumb b { color: var(--text); font-weight: 500; }
-  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-  .topbar-icon { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text2); cursor: pointer; }
+/* ═══ MAIN AREA ═══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:44px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;gap:6px;}
+.breadcrumb{font-size:12px;color:var(--t3);}
+.breadcrumb b{color:var(--text);font-weight:500;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.tb-ic{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--t2);cursor:pointer;}
+.tb-ic:hover{background:var(--bg2);}
 
-  /* PAGE */
-  .page { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-  .page-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 14px; flex-shrink: 0; }
-  .page-title { font-size: 22px; font-weight: 600; color: var(--text); }
-  .primary-btn { background: #1a1a18; color: #fff; font-size: 12px; padding: 8px 16px; border-radius: var(--radius); border: none; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-  .primary-btn:hover { background: #333; }
+/* ═══ VIEWS ═══ */
+.view{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.view.active{display:flex;}
 
-  /* FILTER BAR */
-  .filter-bar { display: flex; align-items: center; gap: 8px; padding: 0 24px 16px; flex-shrink: 0; flex-wrap: wrap; }
-  .search-wrap { display: flex; align-items: center; border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; background: var(--bg); }
-  .search-sel { font-size: 12px; padding: 6px 10px; border: none; background: var(--bg2); color: var(--text2); border-right: 1px solid var(--border); outline: none; cursor: pointer; }
-  .search-ico { padding: 0 8px; color: var(--text3); font-size: 13px; }
-  .search-inp { font-size: 12px; padding: 6px 8px 6px 0; border: none; background: transparent; color: var(--text); outline: none; width: 180px; }
-  .filter-chip { font-size: 12px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); color: var(--text2); cursor: pointer; transition: all 0.15s; }
-  .filter-chip:hover { border-color: var(--border2); color: var(--text); }
-  .filter-chip.on { background: var(--green-bg); color: var(--green-text); border-color: #9FE1CB; font-weight: 500; }
-  .show-filter-btn { margin-left: auto; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
-  .show-filter-btn:hover { background: var(--bg2); }
+/* ═══ PAGE HEADER ═══ */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 0;flex-shrink:0;}
+.ph-left{}
+.page-title{font-size:19px;font-weight:600;color:var(--text);}
+.page-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+.ph-right{display:flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--text);color:#fff;font-size:12px;padding:8px 16px;border-radius:var(--r);border:none;font-weight:500;transition:background .15s;display:flex;align-items:center;gap:5px;}
+.btn-primary:hover{background:#2a2a2a;}
+.btn-ghost{font-size:12px;padding:8px 14px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg);color:var(--t2);font-weight:500;}
+.btn-ghost:hover{background:var(--bg2);}
 
-  /* TABLE */
-  .table-wrap { flex: 1; overflow-y: auto; padding: 0 24px; }
-  table { width: 100%; border-collapse: collapse; }
-  thead tr { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 1; }
-  thead th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 9px 12px; white-space: nowrap; }
-  thead th.sortable { cursor: pointer; }
-  thead th.sortable:hover { color: var(--text2); }
-  tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-  tbody tr:hover { background: var(--bg2); }
-  tbody td { padding: 11px 12px; vertical-align: middle; }
-  .td-id { font-size: 12px; color: var(--text3); }
-  .provider-cell { display: flex; align-items: center; gap: 9px; }
-  .plogo { width: 28px; height: 28px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .pname { font-size: 13px; font-weight: 500; color: var(--text); }
-  .plabel-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
-  .td-label { font-size: 12.5px; color: var(--text2); }
-  .td-region { font-size: 12px; color: var(--text3); }
-  .td-date { font-size: 12px; color: var(--text3); white-space: nowrap; }
+/* ═══ FILTER BAR ═══ */
+.filter-bar{display:flex;align-items:center;gap:8px;padding:14px 24px;flex-shrink:0;flex-wrap:wrap;}
+.search-box{display:flex;align-items:center;border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;background:var(--bg);}
+.search-box select{font-size:12px;padding:7px 10px;border:none;border-right:1px solid var(--border);background:var(--bg2);color:var(--t2);outline:none;}
+.search-box .si{padding:0 8px;color:var(--t3);font-size:12px;}
+.search-box input{font-size:12px;padding:7px 6px 7px 0;border:none;background:transparent;color:var(--text);outline:none;width:170px;}
+.chip{font-size:11.5px;padding:5px 13px;border:1px solid var(--border);border-radius:20px;background:var(--bg);color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.chip:hover{border-color:var(--border2);}
+.chip.on{background:var(--gbg);color:var(--gtext);border-color:var(--gmid);font-weight:500;}
+.filter-right{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t2);cursor:pointer;padding:5px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);}
+.filter-right:hover{background:var(--bg2);}
 
-  /* BADGES */
-  .badge { font-size: 11px; padding: 2px 9px; border-radius: 4px; font-weight: 500; display: inline-flex; white-space: nowrap; }
-  .b-email { background: var(--blue-bg); color: var(--blue); }
-  .b-push { background: var(--purple-bg); color: var(--purple); }
-  .b-sms { background: var(--green-bg); color: var(--green-text); }
-  .b-active { background: var(--green-bg); color: var(--green-text); }
-  .b-inactive { background: var(--bg3); color: var(--text3); }
-  .b-error { background: var(--red-bg); color: var(--red); }
-  .b-amber { background: var(--amber-bg); color: var(--amber); }
+/* ═══ TABLE ═══ */
+.table-wrap{flex:1;overflow-y:auto;padding:0 24px;}
+.table-wrap table{width:100%;border-collapse:collapse;}
+thead tr{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:5;}
+thead th{text-align:left;font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:9px 12px;white-space:nowrap;}
+thead th.sortable{cursor:pointer;}
+thead th.sortable:hover{color:var(--t2);}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+tbody tr:hover{background:var(--bg2);}
+tbody td{padding:12px 12px;vertical-align:middle;}
+.cell-id{font-size:11.5px;color:var(--t3);font-variant-numeric:tabular-nums;}
+.cell-muted{font-size:12px;color:var(--t3);}
+.prov-cell{display:flex;align-items:center;gap:10px;}
+.prov-logo{width:30px;height:30px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:var(--t2);flex-shrink:0;letter-spacing:-.5px;}
+.prov-name{font-size:13px;font-weight:500;color:var(--text);}
+.prov-cred{font-size:10.5px;color:var(--t3);margin-top:1px;font-family:'SF Mono',monospace;}
+.cell-label{font-size:12.5px;color:var(--t2);}
 
-  /* ACTIONS MENU */
-  .act-menu { color: var(--text3); cursor: pointer; font-size: 16px; letter-spacing: 2px; padding: 2px 4px; border-radius: 4px; }
-  .act-menu:hover { background: var(--bg3); color: var(--text); }
+/* ═══ BADGES ═══ */
+.badge{font-size:11px;padding:2px 9px;border-radius:4px;font-weight:500;display:inline-flex;align-items:center;white-space:nowrap;}
+.b-email{background:var(--bbg);color:var(--blue);}
+.b-push{background:var(--pbg);color:var(--purple);}
+.b-sms{background:var(--gbg);color:var(--gtext);}
+.b-active{background:var(--gbg);color:var(--gtext);}
+.b-inactive{background:var(--bg3);color:var(--t3);}
+.b-error{background:var(--rbg);color:var(--red);}
+.b-configured{background:var(--gbg);color:var(--gtext);}
 
-  /* PAGINATION */
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
-  .pag-info { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 6px; }
-  .pag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-  .pag-controls { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
-  .pag-btn { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: var(--text2); background: var(--bg); }
-  .pag-btn:hover { background: var(--bg2); }
-  .pag-btn.disabled { opacity: 0.35; cursor: default; }
+/* ═══ DOTS MENU ═══ */
+.dot-wrap{position:relative;display:inline-block;}
+.dot-btn{color:var(--t3);cursor:pointer;font-size:15px;letter-spacing:2.5px;padding:3px 7px;border-radius:5px;user-select:none;line-height:1;}
+.dot-btn:hover{background:var(--bg3);color:var(--text);}
+.dot-menu{position:absolute;right:0;top:calc(100% + 4px);background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);box-shadow:var(--shadow-lg);min-width:192px;z-index:60;display:none;overflow:hidden;}
+.dot-menu.open{display:block;}
+.dot-item{padding:8px 14px;font-size:12.5px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:9px;}
+.dot-item:hover{background:var(--bg2);color:var(--text);}
+.dot-item.danger{color:var(--red);}
+.dot-item.danger:hover{background:var(--rbg);}
+.dot-item.disabled{color:var(--t3);cursor:not-allowed;pointer-events:none;}
+.dot-sep{border:none;border-top:1px solid var(--border);margin:3px 0;}
 
-  /* ROUTING PAGE */
-  .routing-wrap { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; flex: 1; }
-  .channel-section { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .ch-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-  .ch-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text); }
-  .ch-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .ch-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .strategy-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
-  .strat-tab { padding: 9px 16px; font-size: 12px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-  .strat-tab:hover { color: var(--text); }
-  .strat-tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
-  .strategy-body { padding: 16px 18px; }
-  .routing-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .routing-row:last-child { border-bottom: none; }
-  .drag-handle { color: var(--text3); cursor: grab; font-size: 14px; }
-  .route-pos { width: 20px; height: 20px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text2); flex-shrink: 0; }
-  .route-pos.primary { background: var(--green-bg); border-color: #9FE1CB; color: var(--green-text); }
-  .route-plogo { width: 26px; height: 26px; border-radius: 5px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .route-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
-  .route-label { font-size: 11px; color: var(--text3); }
-  .route-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
-  .rt-primary { background: var(--green-bg); color: var(--green-text); }
-  .rt-fallback { background: var(--bg3); color: var(--text3); }
-  .weight-wrap { display: flex; align-items: center; gap: 8px; }
-  .weight-input { width: 60px; padding: 4px 8px; border: 1px solid var(--border2); border-radius: 5px; font-size: 12px; text-align: center; color: var(--text); background: var(--bg); outline: none; }
-  .weight-input:focus { border-color: var(--green); }
-  .weight-unit { font-size: 11px; color: var(--text3); }
-  .vol-cap-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: center; }
-  .vol-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-  .vol-select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text); background: var(--bg); outline: none; cursor: pointer; }
-  .vol-select:focus { border-color: var(--green); }
-  .vol-input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text); background: var(--bg); outline: none; }
-  .vol-input:focus { border-color: var(--green); }
-  .strategy-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--border); background: var(--bg2); }
-  .save-btn { font-size: 12px; padding: 6px 16px; border-radius: var(--radius); background: var(--green); color: #fff; border: none; cursor: pointer; font-weight: 500; }
-  .save-btn:hover { background: #0F6E56; }
-  .unsaved-note { font-size: 11px; color: var(--amber); display: flex; align-items: center; gap: 4px; }
+/* ═══ PAGINATION ═══ */
+.pag-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;}
+.pag-info{font-size:12px;color:var(--t3);display:flex;align-items:center;gap:7px;}
+.pag-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.pag-ctrls{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t2);}
+.pag-btn{width:26px;height:26px;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);font-size:11px;color:var(--t2);}
+.pag-btn:hover{background:var(--bg2);}
+.pag-btn.off{opacity:.3;cursor:default;pointer-events:none;}
 
-  /* ANALYTICS PAGE */
-  .analytics-wrap { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; flex: 1; }
-  .date-bar { display: flex; align-items: center; gap: 8px; }
-  .date-chip { font-size: 12px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); color: var(--text2); cursor: pointer; }
-  .date-chip.on { background: var(--green-bg); color: var(--green-text); border-color: #9FE1CB; font-weight: 500; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
-  .kpi-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; }
-  .kpi-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .kpi-value { font-size: 22px; font-weight: 600; color: var(--text); }
-  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-  .kpi-sub.up { color: var(--green-text); }
-  .kpi-sub.dn { color: var(--red); }
-  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
-  .chart-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
-  .chart-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
-  .chart-title span { font-size: 11px; color: var(--text3); font-weight: 400; }
-  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
-  .bar-row { display: flex; align-items: center; gap: 10px; }
-  .bar-name { width: 80px; font-size: 11px; color: var(--text2); flex-shrink: 0; text-align: right; }
-  .bar-track { flex: 1; height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
-  .bar-val { font-size: 11px; color: var(--text3); width: 40px; }
-  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .donut-legend { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-  .legend-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text2); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .legend-val { margin-left: auto; font-weight: 500; color: var(--text); }
-  .logs-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .logs-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
-  .logs-title { font-size: 13px; font-weight: 500; color: var(--text); }
-  .export-btn { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text2); cursor: pointer; }
-  .export-btn:hover { background: var(--bg2); }
-  .logs-table { width: 100%; border-collapse: collapse; }
-  .logs-table th { text-align: left; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; background: var(--bg2); border-bottom: 1px solid var(--border); }
-  .logs-table td { padding: 9px 12px; font-size: 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
-  .logs-table tr:last-child td { border-bottom: none; }
-  .logs-table tr:hover td { background: var(--bg2); }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-  .sd-sent { background: var(--green); }
-  .sd-failed { background: var(--red); }
-  .sd-queued { background: var(--amber); }
+/* ═══ OVERLAY ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.44);z-index:100;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
 
-  /* VIEW TOGGLE */
-  .view { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-  .view.active { display: flex; }
+/* ═══ MODAL ═══ */
+.modal{background:var(--bg);border-radius:var(--rxl);width:820px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-lg);}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-title{font-size:15px;font-weight:600;color:var(--text);}
+.modal-sub{font-size:11.5px;color:var(--t3);margin-top:2px;}
+.modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t2);}
+.modal-close:hover{background:var(--bg2);}
 
-  /* MODAL OVERLAY */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--bg); border-radius: var(--radius-lg); width: 780px; max-width: 95vw; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); }
-  .modal-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text2); }
-  .modal-close:hover { background: var(--bg2); }
+/* ═══ MARKETPLACE ═══ */
+.mkt-bar{display:flex;align-items:center;gap:10px;padding:13px 22px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.mkt-srch{flex:1;display:flex;align-items:center;gap:8px;border:1px solid var(--border2);border-radius:var(--r);padding:7px 12px;background:var(--bg);}
+.mkt-srch input{border:none;outline:none;font-size:13px;color:var(--text);background:transparent;width:100%;}
+.mkt-srch span{color:var(--t3);flex-shrink:0;font-size:13px;}
+.mkt-chips{display:flex;gap:6px;}
+.mchip{font-size:11px;padding:4px 12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;color:var(--t2);background:var(--bg);white-space:nowrap;transition:all .15s;}
+.mchip.oa{background:var(--bg3);color:var(--text);border-color:var(--border2);font-weight:500;}
+.mchip.oe{background:var(--bbg);color:var(--blue);border-color:var(--bmid);font-weight:500;}
+.mchip.op{background:var(--pbg);color:var(--purple);border-color:var(--pmid);font-weight:500;}
+.mchip.os{background:var(--gbg);color:var(--gtext);border-color:var(--gmid);font-weight:500;}
+.mkt-body{flex:1;overflow-y:auto;padding:20px 22px;}
+.mkt-sec{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+.mkt-sec:first-child{margin-top:0;}
+.mkt-sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.mkt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.mkt-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:15px 16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.mkt-card:hover{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.09);}
+.mc-top{display:flex;align-items:center;gap:11px;}
+.mc-logo{width:38px;height:38px;border-radius:9px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:var(--t2);flex-shrink:0;letter-spacing:-.5px;}
+.mc-name{font-size:13px;font-weight:600;color:var(--text);}
+.mc-desc{font-size:11.5px;color:var(--t2);line-height:1.5;}
+.mc-cta{font-size:11.5px;color:var(--green);font-weight:500;margin-top:2px;}
+.mkt-request{margin-top:20px;padding:15px 18px;border:1.5px dashed var(--border2);border-radius:var(--rl);display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.mkt-req-t{font-size:13px;font-weight:500;color:var(--text);}
+.mkt-req-s{font-size:11px;color:var(--t3);margin-top:2px;}
 
-  /* MARKETPLACE STEP */
-  .modal-search-bar { display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .modal-search { flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border2); border-radius: var(--radius); padding: 7px 12px; background: var(--bg); }
-  .modal-search input { border: none; outline: none; font-size: 13px; color: var(--text); background: transparent; width: 100%; }
-  .modal-search span { color: var(--text3); font-size: 14px; flex-shrink: 0; }
-  .modal-type-chips { display: flex; gap: 6px; }
-  .mchip { font-size: 11px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: var(--text2); background: var(--bg); white-space: nowrap; }
-  .mchip:hover { border-color: var(--border2); }
-  .mchip.on { font-weight: 500; }
-  .mchip.on.email { background: var(--blue-bg); color: var(--blue); border-color: #B5D4F4; }
-  .mchip.on.push { background: var(--purple-bg); color: var(--purple); border-color: #AFA9EC; }
-  .mchip.on.sms { background: var(--green-bg); color: var(--green-text); border-color: #9FE1CB; }
-  .mchip.on.all { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+/* ═══ CONNECT FORM ═══ */
+.cf{display:none;flex-direction:column;height:100%;}
+.cf.open{display:flex;}
+.cf-back{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);cursor:pointer;padding:11px 22px;border-bottom:1px solid var(--border);flex-shrink:0;transition:color .1s;}
+.cf-back:hover{color:var(--text);}
+.cf-phead{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2);}
+.cf-plogo{width:44px;height:44px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--t2);flex-shrink:0;letter-spacing:-.5px;}
+.cf-pname{font-size:15px;font-weight:600;color:var(--text);}
+.cf-pdesc{font-size:11.5px;color:var(--t3);margin-top:2px;}
+.cf-body{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:15px;}
+.cf-section-title{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.cf-field{display:flex;flex-direction:column;gap:5px;}
+.cf-label{font-size:11.5px;font-weight:500;color:var(--t2);display:flex;align-items:center;gap:6px;}
+.req-tag{font-size:10px;color:var(--red);}
+.opt-tag{font-size:10px;color:var(--t3);}
+.cf-input{padding:8px 12px;border:1px solid var(--border2);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.cf-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1);}
+.cf-select{padding:8px 12px;border:1px solid var(--border2);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);outline:none;width:100%;cursor:pointer;}
+.cf-select:focus{border-color:var(--green);}
+.cf-textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r);font-size:11.5px;font-family:'SF Mono',monospace;color:var(--text);background:var(--bg);outline:none;width:100%;resize:vertical;min-height:85px;}
+.cf-textarea:focus{border-color:var(--green);}
+.cf-hint{font-size:11px;color:var(--t3);line-height:1.45;}
+.cf-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cf-footer{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;border-top:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.cf-test-btn{font-size:12px;padding:7px 14px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-weight:500;}
+.cf-test-btn:hover{background:var(--bg3);}
+.cf-save-btn{font-size:12px;padding:7px 18px;border-radius:var(--r);background:var(--green);color:#fff;border:none;font-weight:500;}
+.cf-save-btn:hover{background:var(--gtext);}
+.test-msg{font-size:11.5px;display:flex;align-items:center;gap:5px;}
+.test-msg.ok{color:var(--gtext);}
+.test-msg.fail{color:var(--red);}
+.test-msg.loading{color:var(--t3);}
 
-  .modal-body { flex: 1; overflow-y: auto; padding: 18px 22px; }
-  .market-section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 18px; }
-  .market-section-label:first-child { margin-top: 0; }
-  .market-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 4px; }
-  .market-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
-  .market-card:hover { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
-  .market-card-top { display: flex; align-items: center; gap: 10px; }
-  .mc-logo { width: 38px; height: 38px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .mc-name { font-size: 13px; font-weight: 600; color: var(--text); }
-  .mc-type { font-size: 10px; margin-top: 2px; }
-  .mc-desc { font-size: 11.5px; color: var(--text2); line-height: 1.5; flex: 1; }
-  .mc-connect { font-size: 12px; font-weight: 500; color: var(--green); display: flex; align-items: center; gap: 4px; margin-top: auto; }
-  .mc-connect::before { content: '+'; font-size: 14px; }
+/* ═══ VIEW DETAILS PANEL ═══ */
+.dp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:200;justify-content:flex-end;}
+.dp-overlay.open{display:flex;}
+.dp-panel{width:450px;max-width:96vw;background:var(--bg);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100%;overflow:hidden;box-shadow:-6px 0 30px rgba(0,0,0,.1);}
+.dp-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.dp-title{font-size:14px;font-weight:600;color:var(--text);}
+.dp-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t2);}
+.dp-close:hover{background:var(--bg2);}
+.dp-body{flex:1;overflow-y:auto;padding:20px;}
+.dp-sec{margin-bottom:20px;}
+.dp-sec-title{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.dp-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:5px 0;}
+.dp-key{font-size:12px;color:var(--t3);flex-shrink:0;width:130px;}
+.dp-val{font-size:12px;color:var(--text);text-align:right;word-break:break-all;font-family:'SF Mono',monospace;font-size:11.5px;}
+.dp-val.plain{font-family:inherit;font-size:12px;}
+.dp-routing-tag{font-size:11px;padding:3px 10px;background:var(--bbg);color:var(--blue);border-radius:4px;display:inline-flex;}
+.dp-act-row{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-bottom:1px solid var(--border);}
+.dp-act-row:last-child{border-bottom:none;}
+.dp-act-label{font-size:10.5px;color:var(--t3);}
+.dp-act-val{font-size:12.5px;color:var(--text);}
+.dp-act-sub{font-size:10.5px;color:var(--red);margin-top:1px;}
+.dp-footer{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;background:var(--bg2);}
+.dp-edit-btn{flex:1;font-size:12px;padding:8px;border-radius:var(--r);background:var(--text);color:#fff;border:none;font-weight:500;}
+.dp-edit-btn:hover{background:#2a2a2a;}
+.dp-test-btn{font-size:12px;padding:8px 14px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-weight:500;}
+.dp-test-btn:hover{background:var(--bg2);}
 
-  /* CONNECT FORM STEP */
-  .connect-form { display: none; flex-direction: column; height: 100%; }
-  .connect-form.open { display: flex; }
-  .cf-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; padding: 14px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .cf-back:hover { color: var(--text); }
-  .cf-provider-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .cf-logo { width: 44px; height: 44px; border-radius: 10px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .cf-pname { font-size: 15px; font-weight: 600; color: var(--text); }
-  .cf-pdesc { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .cf-body { flex: 1; overflow-y: auto; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
-  .cf-field { display: flex; flex-direction: column; gap: 5px; }
-  .cf-label { font-size: 11.5px; font-weight: 500; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-  .cf-required { font-size: 10px; color: var(--red); }
-  .cf-optional { font-size: 10px; color: var(--text3); }
-  .cf-input { padding: 8px 12px; border: 1px solid var(--border2); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--bg); outline: none; width: 100%; }
-  .cf-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
-  .cf-select { padding: 8px 12px; border: 1px solid var(--border2); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--bg); outline: none; width: 100%; cursor: pointer; }
-  .cf-hint { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .cf-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg2); }
-  .cf-test-btn { font-size: 12px; padding: 8px 16px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); cursor: pointer; font-weight: 500; }
-  .cf-test-btn:hover { background: var(--bg3); }
-  .cf-save-btn { font-size: 12px; padding: 8px 18px; border-radius: var(--radius); background: #1a1a18; color: #fff; border: none; cursor: pointer; font-weight: 500; }
-  .cf-save-btn:hover { background: #333; }
-  .cf-test-result { font-size: 11px; display: flex; align-items: center; gap: 5px; }
-  .cf-test-result.ok { color: var(--green-text); }
-  .cf-test-result.fail { color: var(--red); }
+/* ═══ WARNING BANNER ═══ */
+.warn-banner{display:flex;align-items:center;gap:10px;padding:9px 24px;background:var(--rbg);border-bottom:1px solid var(--rmid);font-size:12px;color:var(--red);flex-shrink:0;}
+
+/* ═══ ROUTING VIEW ═══ */
+.routing-wrap{flex:1;overflow-y:auto;padding:16px 24px 24px;display:flex;flex-direction:column;gap:16px;}
+.ch-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.ch-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);background:var(--bg2);}
+.ch-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text);}
+.ch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ch-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+.strat-tabs{display:flex;border-bottom:1px solid var(--border);}
+.stab{padding:9px 16px;font-size:12px;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none;}
+.stab:hover{color:var(--text);}
+.stab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500;}
+.strat-body{padding:16px 18px;}
+.route-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.route-row:last-child{border-bottom:none;}
+.drag-handle{color:var(--t3);cursor:grab;font-size:13px;user-select:none;flex-shrink:0;}
+.r-pos{width:22px;height:22px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--t2);flex-shrink:0;}
+.r-pos.primary{background:var(--gbg);border-color:var(--gmid);color:var(--gtext);}
+.r-logo{width:26px;height:26px;border-radius:5px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--t2);flex-shrink:0;letter-spacing:-.3px;}
+.r-info{flex:1;}
+.r-name{font-size:13px;font-weight:500;color:var(--text);}
+.r-label{font-size:10.5px;color:var(--t3);}
+.r-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap;flex-shrink:0;}
+.rt-primary{background:var(--gbg);color:var(--gtext);}
+.rt-fallback{background:var(--bg3);color:var(--t3);}
+.rt-overflow{background:var(--abg);color:var(--amber);}
+.w-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.w-input{width:60px;padding:5px 8px;border:1px solid var(--border2);border-radius:5px;font-size:12.5px;text-align:center;color:var(--text);background:var(--bg);outline:none;}
+.w-input:focus{border-color:var(--green);}
+.w-unit{font-size:11px;color:var(--t3);}
+.vol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.vol-label{font-size:11px;color:var(--t3);margin-bottom:5px;font-weight:500;}
+.vol-select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12.5px;color:var(--text);background:var(--bg);outline:none;cursor:pointer;}
+.vol-input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12.5px;color:var(--text);background:var(--bg);outline:none;}
+.vol-select:focus,.vol-input:focus{border-color:var(--green);}
+.strat-footer{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-top:1px solid var(--border);background:var(--bg2);}
+.save-routing-btn{font-size:12px;padding:6px 16px;border-radius:var(--r);background:var(--green);color:#fff;border:none;font-weight:500;}
+.save-routing-btn:hover{background:var(--gtext);}
+.unsaved-note{font-size:11px;color:var(--amber);display:flex;align-items:center;gap:4px;}
+.strat-info{font-size:11px;color:var(--t3);}
+
+/* strategy comparison table */
+.strat-comparison{margin:16px 24px 0;background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;flex-shrink:0;}
+.strat-comparison table{width:100%;border-collapse:collapse;}
+.strat-comparison th{background:var(--bg2);font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.strat-comparison td{font-size:12px;color:var(--t2);padding:9px 14px;border-bottom:1px solid var(--border);}
+.strat-comparison tr:last-child td{border-bottom:none;}
+.strat-comparison td:first-child{font-weight:500;color:var(--text);}
+.strat-comparison td.highlight{color:var(--green);font-weight:500;}
+
+/* ═══ ANALYTICS VIEW ═══ */
+.analytics-wrap{flex:1;overflow-y:auto;padding:16px 24px 24px;display:flex;flex-direction:column;gap:18px;}
+.afilter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+.date-chip{font-size:12px;padding:5px 13px;border:1px solid var(--border);border-radius:20px;background:var(--bg);color:var(--t2);cursor:pointer;transition:all .15s;}
+.date-chip:hover{border-color:var(--border2);}
+.date-chip.on{background:var(--gbg);color:var(--gtext);border-color:var(--gmid);font-weight:500;}
+.ch-filter{margin-left:auto;display:flex;gap:6px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;flex-shrink:0;}
+.kpi-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;}
+.kpi-label{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;}
+.kpi-value{font-size:22px;font-weight:600;color:var(--text);line-height:1.1;}
+.kpi-delta{font-size:10.5px;margin-top:4px;}
+.kpi-delta.up{color:var(--gtext);}
+.kpi-delta.dn{color:var(--red);}
+.kpi-delta.neu{color:var(--t3);}
+.kpi-na{font-size:13px;color:var(--t3);margin-top:4px;font-style:italic;}
+.kpi-na-sub{font-size:10.5px;color:var(--t3);margin-top:3px;}
+.charts-row{display:grid;grid-template-columns:5fr 3fr;gap:14px;flex-shrink:0;}
+.chart-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:16px;}
+.chart-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.chart-title span{font-size:11px;color:var(--t3);font-weight:400;}
+.bar-list{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-name{width:96px;font-size:11.5px;color:var(--t2);flex-shrink:0;text-align:right;}
+.bar-track{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+.bar-pct{font-size:11px;color:var(--t3);width:34px;text-align:right;}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.donut-legend{width:100%;display:flex;flex-direction:column;gap:8px;}
+.leg-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.leg-val{margin-left:auto;font-weight:600;color:var(--text);}
+.logs-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.logs-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);}
+.logs-title{font-size:13px;font-weight:500;color:var(--text);}
+.logs-controls{display:flex;align-items:center;gap:8px;}
+.export-btn{font-size:11.5px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--t2);cursor:pointer;}
+.export-btn:hover{background:var(--bg2);}
+.logs-table{width:100%;border-collapse:collapse;}
+.logs-table th{text-align:left;font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);white-space:nowrap;}
+.logs-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:middle;}
+.logs-table tr:last-child td{border-bottom:none;}
+.logs-table tbody tr:hover td{background:var(--bg2);}
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;flex-shrink:0;}
+.sd-sent{background:var(--green);}
+.sd-failed{background:var(--red);}
+.sd-queued{background:var(--amber);}
+.sd-fallback{background:var(--purple);}
+.sd-delivered{background:var(--green);}
+.conn-cell-name{font-size:12px;color:var(--text);font-weight:500;}
+.conn-cell-sub{font-size:10.5px;color:var(--t3);}
+.err-cell{font-size:11px;color:var(--red);font-family:'SF Mono',monospace;}
 </style>
 </head>
 <body>
 <div class="shell">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sb-brand">
-      <div class="sb-logo">FT</div>
-      <div class="sb-brand-text">FYSCAL<br>TECHNOLOGIES</div>
-    </div>
+<!-- ════════════════════════════════
+     SIDEBAR
+════════════════════════════════ -->
+<div class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">FT</div>
+    <div class="sb-bname">FYSCAL<br>TECHNOLOGIES</div>
+  </div>
+  <div class="sb-grp">Platform</div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+    Homepage
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
+    Customers & KYC<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v9H2z"/><path d="M5 4V3h6v1"/></svg>
+    Digital Goods<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v8H9l-3 2v-2H2z"/></svg>
+    Communication<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row open" onclick="toggleSb()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="4" r="2.5"/><circle cx="11" cy="12" r="2.5"/><path d="M7.2 7l2-2M7.2 9l2 2"/></svg>
+    Connectors<span class="sb-chev" id="sb-chev" style="transform:rotate(90deg);">›</span>
+  </div>
+  <div id="sb-children">
+    <div class="sb-child active" id="nav-connections" onclick="goView('connections')">Connections</div>
+    <div class="sb-child off" id="nav-routing" onclick="goView('routing')">Routing</div>
+    <div class="sb-child off" id="nav-analytics" onclick="goView('analytics')">Analytics</div>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/></svg>
+    Alerts<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>
+    Payments<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>
+    Analytics<span class="sb-chev">›</span>
+  </div>
+  <div class="sb-row">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+    Audit Trails
+  </div>
+  <div class="sb-user">
+    <div class="sb-av">UG</div>
+    <div><div class="sb-un">Utkarsh Giri</div><div class="sb-ue">ut*****@*****ech.com</div></div>
+    <div class="sb-more">⋮</div>
+  </div>
+</div>
 
-    <div class="sb-section">Platform</div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
-      Homepage
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
-      Customers & KYC <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v9H2z"/><path d="M5 4V3h6v1"/></svg>
-      Digital Goods <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v8H9l-3 2v-2H2z"/></svg>
-      Communication <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item open" id="conn-toggle" onclick="toggleConnectors()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="8" r="2.5"/><circle cx="11" cy="4" r="2.5"/><circle cx="11" cy="12" r="2.5"/><path d="M7.2 7l2-2M7.2 9l2 2"/></svg>
-      Connectors <span class="sb-chev" id="conn-chev">›</span>
-    </div>
-    <div id="conn-children">
-      <div class="sb-child active" onclick="showView('providers')" id="nav-providers">Providers</div>
-      <div class="sb-child" onclick="showView('routing')" id="nav-routing">Routing</div>
-      <div class="sb-child" onclick="showView('analytics')" id="nav-analytics">Analytics</div>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/></svg>
-      Alerts <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>
-      Payments <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>
-      Analytics <span class="sb-chev">›</span>
-    </div>
-    <div class="sb-item">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
-      Audit Trails
-    </div>
-
-    <div class="sb-user">
-      <div class="sb-avatar">UG</div>
-      <div>
-        <div class="sb-uname">Utkarsh Giri</div>
-        <div class="sb-uemail">ut*****@*****ech.com</div>
-      </div>
-      <div class="sb-more">⋮</div>
+<!-- ════════════════════════════════
+     MAIN
+════════════════════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb" id="breadcrumb">Connectors › <b>Connections</b></div>
+    <div class="tb-right">
+      <div class="tb-ic">🔔</div>
+      <div class="tb-ic">⊞</div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <!-- ══════════════════════════════
+       VIEW: CONNECTIONS
+  ══════════════════════════════ -->
+  <div class="view active" id="view-connections">
+    <!-- Error banner shown because AWS SES is in Error state and referenced in routing -->
+    <div class="warn-banner">⚠ AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. Sends may fail to fall back correctly. <span style="margin-left:8px;text-decoration:underline;cursor:pointer;" onclick="openEdit(3)">Fix credentials →</span></div>
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="breadcrumb" id="breadcrumb">Connectors › <b>Providers</b></div>
-      <div class="topbar-right">
-        <div class="topbar-icon">⊞</div>
-        <div class="topbar-icon">🔔</div>
+    <div class="ph">
+      <div class="ph-left">
+        <div class="page-title">Connections</div>
+        <div class="page-sub">Manage third-party notification provider credentials across Email, Push, and SMS channels.</div>
+      </div>
+      <div class="ph-right">
+        <button class="btn-primary" onclick="openMkt()">+ New Connection</button>
       </div>
     </div>
 
-    <!-- ===== PROVIDERS VIEW ===== -->
-    <div class="view active" id="view-providers">
-      <div class="page-head">
-        <div class="page-title">Providers</div>
-        <button class="primary-btn" onclick="openModal()">+ Add Provider</button>
+    <div class="filter-bar">
+      <div class="search-box">
+        <select><option>Provider</option><option>Label</option></select>
+        <span class="si">🔍</span>
+        <input placeholder="Search here..." oninput="filterTable(this.value)"/>
       </div>
+      <div class="chip on" onclick="filterType(this,'all')">All types</div>
+      <div class="chip" onclick="filterType(this,'email')">Email</div>
+      <div class="chip" onclick="filterType(this,'push')">Push</div>
+      <div class="chip" onclick="filterType(this,'sms')">SMS</div>
+      <div class="filter-right">⊙ Show Filters</div>
+    </div>
 
-      <div class="filter-bar">
-        <div class="search-wrap">
-          <select class="search-sel"><option>Search by</option><option>Provider</option><option>Label</option><option>Type</option></select>
-          <span class="search-ico">🔍</span>
-          <input class="search-inp" placeholder="Search here..." />
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Provider</th>
+            <th>Label</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Region</th>
+            <th class="sortable">Created At ↑↓</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="conn-tbody">
+          <!-- EMAIL rows -->
+          <tr data-type="email" onclick="openDetail(1)">
+            <td class="cell-id">#7</td>
+            <td><div class="prov-cell"><div class="prov-logo">SG</div><div><div class="prov-name">SendGrid</div><div class="prov-cred">•••• 4f2a</div></div></div></td>
+            <td class="cell-label">Transactional</td>
+            <td><span class="badge b-email">Email</span></td>
+            <td><span class="badge b-active">Active</span></td>
+            <td class="cell-muted">Global</td>
+            <td class="cell-muted">Apr 20, 2026 04:27 PM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(1)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(1)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">◎ Deactivate</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-type="email" onclick="openDetail(2)">
+            <td class="cell-id">#6</td>
+            <td><div class="prov-cell"><div class="prov-logo">MG</div><div><div class="prov-name">Mailgun</div><div class="prov-cred">•••• 9c1b</div></div></div></td>
+            <td class="cell-label">Backup</td>
+            <td><span class="badge b-email">Email</span></td>
+            <td><span class="badge b-inactive">Inactive</span></td>
+            <td class="cell-muted">US</td>
+            <td class="cell-muted">Apr 18, 2026 10:12 AM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(2)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(2)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">✓ Set as active</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-type="email" onclick="openDetail(3)">
+            <td class="cell-id">#5</td>
+            <td><div class="prov-cell"><div class="prov-logo" style="color:var(--red);border-color:var(--rmid);">SES</div><div><div class="prov-name">AWS SES</div><div class="prov-cred">•••• 2e8f</div></div></div></td>
+            <td class="cell-label">Emergency</td>
+            <td><span class="badge b-email">Email</span></td>
+            <td><span class="badge b-error">Error</span></td>
+            <td class="cell-muted">ap-south-1</td>
+            <td class="cell-muted">Apr 10, 2026 02:00 PM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(3)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(3)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- PUSH rows -->
+          <tr data-type="push" onclick="openDetail(4)">
+            <td class="cell-id">#4</td>
+            <td><div class="prov-cell"><div class="prov-logo" style="color:var(--purple);border-color:var(--pmid);">FCM</div><div><div class="prov-name">FCM</div><div class="prov-cred">•••• 7d3c</div></div></div></td>
+            <td class="cell-label">Android Push</td>
+            <td><span class="badge b-push">Push</span></td>
+            <td><span class="badge b-active">Active</span></td>
+            <td class="cell-muted">Global</td>
+            <td class="cell-muted">Apr 08, 2026 09:30 AM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(4)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(4)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">◎ Deactivate</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-type="push" onclick="openDetail(5)">
+            <td class="cell-id">#3</td>
+            <td><div class="prov-cell"><div class="prov-logo">APNs</div><div><div class="prov-name">APNs</div><div class="prov-cred">•••• 3a9d</div></div></div></td>
+            <td class="cell-label">iOS Push</td>
+            <td><span class="badge b-push">Push</span></td>
+            <td><span class="badge b-active">Active</span></td>
+            <td class="cell-muted">Global</td>
+            <td class="cell-muted">Apr 08, 2026 09:45 AM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(5)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(5)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">◎ Deactivate</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- SMS rows -->
+          <tr data-type="sms" onclick="openDetail(6)">
+            <td class="cell-id">#2</td>
+            <td><div class="prov-cell"><div class="prov-logo" style="color:#8b0000;border-color:var(--rmid);">TW</div><div><div class="prov-name">Twilio</div><div class="prov-cred">•••• 1a9f</div></div></div></td>
+            <td class="cell-label">Primary SMS</td>
+            <td><span class="badge b-sms">SMS</span></td>
+            <td><span class="badge b-active">Active</span></td>
+            <td class="cell-muted">IN</td>
+            <td class="cell-muted">Apr 05, 2026 11:20 AM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(6)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(6)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">◎ Deactivate</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-type="sms" onclick="openDetail(7)">
+            <td class="cell-id">#1</td>
+            <td><div class="prov-cell"><div class="prov-logo">IB</div><div><div class="prov-name">Infobip</div><div class="prov-cred">•••• 5b2e</div></div></div></td>
+            <td class="cell-label">SMS Fallback</td>
+            <td><span class="badge b-sms">SMS</span></td>
+            <td><span class="badge b-inactive">Inactive</span></td>
+            <td class="cell-muted">Global</td>
+            <td class="cell-muted">Mar 28, 2026 03:15 PM</td>
+            <td onclick="event.stopPropagation()">
+              <div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div>
+                <div class="dot-menu">
+                  <div class="dot-item" onclick="openDetail(7)">👁 View details</div>
+                  <div class="dot-item" onclick="openEdit(7)">✎ Edit</div>
+                  <div class="dot-item" onclick="testDot(this)">⚡ Test connection</div>
+                  <hr class="dot-sep"/>
+                  <div class="dot-item" onclick="closeDots()">✓ Set as active</div>
+                  <div class="dot-item danger" onclick="closeDots()">✕ Delete</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pag-bar">
+      <div class="pag-info"><span class="pag-dot"></span>Showing 1–7 of 7 connections</div>
+      <div class="pag-ctrls">
+        Page 1 of 1
+        <div class="pag-btn off">‹</div>
+        <div class="pag-btn off">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       VIEW: ROUTING
+  ══════════════════════════════ -->
+  <div class="view" id="view-routing">
+    <div class="ph" style="padding-bottom:14px;">
+      <div class="ph-left">
+        <div class="page-title">Routing</div>
+        <div class="page-sub">Configure how sends are distributed across connections per channel. One strategy active at a time.</div>
+      </div>
+    </div>
+
+    <!-- Strategy comparison reference -->
+    <div class="strat-comparison">
+      <table>
+        <thead><tr><th>Strategy</th><th>Trigger</th><th>Solves for</th><th>V0 limit</th></tr></thead>
+        <tbody>
+          <tr><td>Fallback Chain</td><td>Connection failure (5xx, timeout, terminal error)</td><td>Reliability</td><td class="highlight">Max 5 in chain</td></tr>
+          <tr><td>Weighted Split</td><td>Every request — weighted random pre-send</td><td>Cost / migration</td><td class="highlight">Max 4 in split</td></tr>
+          <tr><td>Volume Cap Overflow</td><td>Daily send counter exceeds configured cap</td><td>Hard provider limits</td><td class="highlight">1 primary + 1 overflow</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="routing-wrap">
+      <!-- EMAIL -->
+      <div class="ch-block">
+        <div class="ch-hd">
+          <div>
+            <div class="ch-title"><span class="ch-dot" style="background:var(--blue);"></span>Email</div>
+            <div class="ch-meta">3 connections configured · Fallback Chain active · Max 5 in chain</div>
+          </div>
+          <span class="badge b-configured">Configured</span>
         </div>
-        <div class="filter-chip on" onclick="filterType(this,'all')">All types</div>
-        <div class="filter-chip" onclick="filterType(this,'email')">Email</div>
-        <div class="filter-chip" onclick="filterType(this,'push')">Push</div>
-        <div class="filter-chip" onclick="filterType(this,'sms')">SMS</div>
-        <div class="show-filter-btn">⊙ Show Filters</div>
+        <div class="strat-tabs">
+          <div class="stab" onclick="switchStrat(this)">Weighted Split</div>
+          <div class="stab active" onclick="switchStrat(this)">Fallback Chain</div>
+          <div class="stab" onclick="switchStrat(this)">Volume Cap Overflow</div>
+        </div>
+        <div class="strat-body">
+          <div class="route-row">
+            <div class="drag-handle">⠿</div>
+            <div class="r-pos primary">1</div>
+            <div class="r-logo">SG</div>
+            <div class="r-info"><div class="r-name">SendGrid</div><div class="r-label">Transactional</div></div>
+            <span class="r-tag rt-primary">Primary</span>
+          </div>
+          <div class="route-row">
+            <div class="drag-handle">⠿</div>
+            <div class="r-pos">2</div>
+            <div class="r-logo">MG</div>
+            <div class="r-info"><div class="r-name">Mailgun</div><div class="r-label">Backup</div></div>
+            <span class="r-tag rt-fallback">Fallback 1</span>
+          </div>
+          <div class="route-row">
+            <div class="drag-handle">⠿</div>
+            <div class="r-pos">3</div>
+            <div class="r-logo" style="color:var(--red);border-color:var(--rmid);">SES</div>
+            <div class="r-info"><div class="r-name">AWS SES <span style="color:var(--red);font-size:10px;">⚠ Error</span></div><div class="r-label">Emergency</div></div>
+            <span class="r-tag rt-fallback">Fallback 2</span>
+          </div>
+        </div>
+        <div class="strat-footer">
+          <div><div class="unsaved-note">⚠ AWS SES in error state — fallback may fail at position 3</div><div class="strat-info" style="margin-top:3px;">Trigger: 5xx / timeout (10s default) / terminal errors · If all fail: send marked Failed, full chain logged</div></div>
+          <button class="save-routing-btn">Save routing</button>
+        </div>
       </div>
 
-      <div class="table-wrap">
-        <table>
+      <!-- PUSH -->
+      <div class="ch-block">
+        <div class="ch-hd">
+          <div>
+            <div class="ch-title"><span class="ch-dot" style="background:var(--purple);"></span>Push / In-App</div>
+            <div class="ch-meta">2 connections configured · Weighted Split active · Weights must sum to 100%</div>
+          </div>
+          <span class="badge b-configured">Configured</span>
+        </div>
+        <div class="strat-tabs">
+          <div class="stab active" onclick="switchStrat(this)">Weighted Split</div>
+          <div class="stab" onclick="switchStrat(this)">Fallback Chain</div>
+          <div class="stab" onclick="switchStrat(this)">Volume Cap Overflow</div>
+        </div>
+        <div class="strat-body">
+          <div class="route-row">
+            <div class="drag-handle">⠿</div>
+            <div class="r-pos primary">1</div>
+            <div class="r-logo" style="color:var(--purple);border-color:var(--pmid);">FCM</div>
+            <div class="r-info"><div class="r-name">FCM</div><div class="r-label">Android Push</div></div>
+            <div class="w-wrap"><input class="w-input" type="number" value="60" min="5" max="95"/><span class="w-unit">%</span></div>
+          </div>
+          <div class="route-row">
+            <div class="drag-handle">⠿</div>
+            <div class="r-pos">2</div>
+            <div class="r-logo">APNs</div>
+            <div class="r-info"><div class="r-name">APNs</div><div class="r-label">iOS Push</div></div>
+            <div class="w-wrap"><input class="w-input" type="number" value="40" min="5" max="95"/><span class="w-unit">%</span></div>
+          </div>
+        </div>
+        <div class="strat-footer">
+          <div class="strat-info">Total: <b style="color:var(--gtext);">100% ✓</b> · Min 5% per connection · Max 4 connections · Selection is weighted random per send</div>
+          <button class="save-routing-btn">Save routing</button>
+        </div>
+      </div>
+
+      <!-- SMS -->
+      <div class="ch-block">
+        <div class="ch-hd">
+          <div>
+            <div class="ch-title"><span class="ch-dot" style="background:var(--green);"></span>SMS</div>
+            <div class="ch-meta">2 connections configured · Volume Cap Overflow active · V0: 1 primary + 1 overflow only</div>
+          </div>
+          <span class="badge b-configured">Configured</span>
+        </div>
+        <div class="strat-tabs">
+          <div class="stab" onclick="switchStrat(this)">Weighted Split</div>
+          <div class="stab" onclick="switchStrat(this)">Fallback Chain</div>
+          <div class="stab active" onclick="switchStrat(this)">Volume Cap Overflow</div>
+        </div>
+        <div class="strat-body">
+          <div class="vol-grid">
+            <div>
+              <div class="vol-label">Primary connection</div>
+              <select class="vol-select">
+                <option>Twilio — Primary SMS</option>
+                <option>Infobip — SMS Fallback</option>
+              </select>
+            </div>
+            <div>
+              <div class="vol-label">Daily cap (messages)</div>
+              <input class="vol-input" type="number" value="10000"/>
+            </div>
+            <div>
+              <div class="vol-label">Overflow connection</div>
+              <select class="vol-select">
+                <option>Infobip — SMS Fallback</option>
+                <option>Twilio — Primary SMS</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="strat-footer">
+          <div class="strat-info">Counter resets UTC midnight daily · Alert at 80% and 100% of cap · If overflow also capped: send fails</div>
+          <button class="save-routing-btn">Save routing</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       VIEW: ANALYTICS
+  ══════════════════════════════ -->
+  <div class="view" id="view-analytics">
+    <div class="ph" style="padding-bottom:14px;">
+      <div class="ph-left">
+        <div class="page-title">Analytics</div>
+        <div class="page-sub">Observability across all channels and connections. Date range and channel filter apply globally.</div>
+      </div>
+      <div class="ph-right">
+        <button class="btn-ghost">⬇ Export CSV</button>
+      </div>
+    </div>
+
+    <div class="analytics-wrap">
+      <!-- Date + channel filter -->
+      <div class="afilter-bar">
+        <div class="date-chip" onclick="selDate(this)">Last 24h</div>
+        <div class="date-chip on" onclick="selDate(this)">Last 7 days</div>
+        <div class="date-chip" onclick="selDate(this)">Last 30 days</div>
+        <div class="date-chip" onclick="selDate(this)">Custom range</div>
+        <div class="ch-filter">
+          <div class="chip on" onclick="selCh(this)">All</div>
+          <div class="chip" onclick="selCh(this)">Email</div>
+          <div class="chip" onclick="selCh(this)">Push</div>
+          <div class="chip" onclick="selCh(this)">SMS</div>
+        </div>
+      </div>
+
+      <!-- KPI cards — 6 cards per spec -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Sent</div>
+          <div class="kpi-value">84,291</div>
+          <div class="kpi-delta up">↑ 12% vs prev period</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Failed</div>
+          <div class="kpi-value">4,687</div>
+          <div class="kpi-delta dn">↑ 3% (worse)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Failure Rate</div>
+          <div class="kpi-value">5.6%</div>
+          <div class="kpi-delta dn">↑ 0.4%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Latency</div>
+          <div class="kpi-value">218ms</div>
+          <div class="kpi-delta up">↓ 14ms faster</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Delivered</div>
+          <div class="kpi-na">N/A</div>
+          <div class="kpi-na-sub">Configure webhook to track delivery</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Fallback Rate</div>
+          <div class="kpi-value">2.1%</div>
+          <div class="kpi-delta up">↓ 0.3%</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Failure rate by connection <span>Green &lt;2% · Amber 2–5% · Red &gt;5%</span></div>
+          <div class="bar-list">
+            <div class="bar-row"><div class="bar-name">AWS SES</div><div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--red);"></div></div><div class="bar-pct">8.2%</div></div>
+            <div class="bar-row"><div class="bar-name">Infobip</div><div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--amber);"></div></div><div class="bar-pct">3.1%</div></div>
+            <div class="bar-row"><div class="bar-name">Mailgun</div><div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--blue);"></div></div><div class="bar-pct">1.9%</div></div>
+            <div class="bar-row"><div class="bar-name">APNs</div><div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--green);"></div></div><div class="bar-pct">1.2%</div></div>
+            <div class="bar-row"><div class="bar-name">SendGrid</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:var(--green);"></div></div><div class="bar-pct">0.8%</div></div>
+            <div class="bar-row"><div class="bar-name">Twilio</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:var(--green);"></div></div><div class="bar-pct">0.6%</div></div>
+            <div class="bar-row"><div class="bar-name">FCM</div><div class="bar-track"><div class="bar-fill" style="width:4%;background:var(--green);"></div></div><div class="bar-pct">0.4%</div></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Traffic distribution <span>Actual sends · click to drill in</span></div>
+          <div class="donut-wrap">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="45" fill="none" stroke="#efefec" stroke-width="20"/>
+              <circle cx="60" cy="60" r="45" fill="none" stroke="#1D9E75" stroke-width="20" stroke-dasharray="113 169.5" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="45" fill="none" stroke="#1558a0" stroke-width="20" stroke-dasharray="70 212.5" stroke-dashoffset="-113" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="45" fill="none" stroke="#4e45b0" stroke-width="20" stroke-dasharray="99.5 183" stroke-dashoffset="-183" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="donut-legend">
+              <div class="leg-row"><span class="leg-dot" style="background:var(--green);"></span>SMS<span class="leg-val">40%</span></div>
+              <div class="leg-row"><span class="leg-dot" style="background:var(--blue);"></span>Email<span class="leg-val">31%</span></div>
+              <div class="leg-row"><span class="leg-dot" style="background:var(--purple);"></span>Push<span class="leg-val">29%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log table -->
+      <div class="logs-card">
+        <div class="logs-hd">
+          <div class="logs-title">Notification logs</div>
+          <div class="logs-controls">
+            <div style="font-size:11.5px;color:var(--t3);">Showing 20 of 84,291 · Recipients masked</div>
+            <button class="export-btn">⬇ Export CSV</button>
+          </div>
+        </div>
+        <table class="logs-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Provider</th>
-              <th>Label</th>
-              <th>Type</th>
+              <th>Timestamp</th>
+              <th>Channel</th>
+              <th>Connection</th>
+              <th>Recipient</th>
+              <th>Template UID</th>
               <th>Status</th>
-              <th>Region</th>
-              <th class="sortable">Created At ↑↓</th>
+              <th>Latency</th>
+              <th>Error Reason</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="providers-tbody">
-            <tr data-type="email">
-              <td class="td-id">6</td>
-              <td><div class="provider-cell"><div class="plogo">SG</div><div><div class="pname">SendGrid</div><div class="plabel-sub">•••• 4f2a</div></div></div></td>
-              <td class="td-label">Transactional</td>
+          <tbody>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 04:27 PM</td>
               <td><span class="badge b-email">Email</span></td>
-              <td><span class="badge b-active">Active</span></td>
-              <td class="td-region">Global</td>
-              <td class="td-date">Apr 20, 2026 04:27 PM</td>
-              <td><span class="act-menu">···</span></td>
+              <td><div class="conn-cell-name">SendGrid<div class="conn-cell-sub">Transactional</div></div></td>
+              <td>*****@fyscaltech.com</td>
+              <td>template_13</td>
+              <td><span class="status-dot sd-failed"></span>Failed</td>
+              <td>—</td>
+              <td class="err-cell">401 Unauthorized</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(1)">👁 View connection details</div><div class="dot-item" onclick="openEdit(1)">✎ Edit connection</div></div></div></td>
             </tr>
-            <tr data-type="email">
-              <td class="td-id">5</td>
-              <td><div class="provider-cell"><div class="plogo">MG</div><div><div class="pname">Mailgun</div><div class="plabel-sub">•••• 9c1b</div></div></div></td>
-              <td class="td-label">Backup</td>
-              <td><span class="badge b-email">Email</span></td>
-              <td><span class="badge b-inactive">Inactive</span></td>
-              <td class="td-region">US</td>
-              <td class="td-date">Apr 18, 2026 10:12 AM</td>
-              <td><span class="act-menu">···</span></td>
-            </tr>
-            <tr data-type="email">
-              <td class="td-id">4</td>
-              <td><div class="provider-cell"><div class="plogo" style="color:var(--red);border-color:#F7C1C1;">SES</div><div><div class="pname">AWS SES</div><div class="plabel-sub">•••• 2e8f</div></div></div></td>
-              <td class="td-label">Emergency</td>
-              <td><span class="badge b-email">Email</span></td>
-              <td><span class="badge b-error">Error</span></td>
-              <td class="td-region">ap-south-1</td>
-              <td class="td-date">Apr 10, 2026 02:00 PM</td>
-              <td><span class="act-menu">···</span></td>
-            </tr>
-            <tr data-type="push">
-              <td class="td-id">3</td>
-              <td><div class="provider-cell"><div class="plogo" style="color:var(--purple);border-color:#AFA9EC;">FCM</div><div><div class="pname">FCM</div><div class="plabel-sub">•••• 7d3c</div></div></div></td>
-              <td class="td-label">Android Push</td>
-              <td><span class="badge b-push">Push</span></td>
-              <td><span class="badge b-active">Active</span></td>
-              <td class="td-region">Global</td>
-              <td class="td-date">Apr 08, 2026 09:30 AM</td>
-              <td><span class="act-menu">···</span></td>
-            </tr>
-            <tr data-type="push">
-              <td class="td-id">3b</td>
-              <td><div class="provider-cell"><div class="plogo" style="color:var(--purple);border-color:#AFA9EC;">APNs</div><div><div class="pname">APNs</div><div class="plabel-sub">•••• 3a9d</div></div></div></td>
-              <td class="td-label">iOS Push</td>
-              <td><span class="badge b-push">Push</span></td>
-              <td><span class="badge b-active">Active</span></td>
-              <td class="td-region">Global</td>
-              <td class="td-date">Apr 08, 2026 09:45 AM</td>
-              <td><span class="act-menu">···</span></td>
-            </tr>
-            <tr data-type="sms">
-              <td class="td-id">2</td>
-              <td><div class="provider-cell"><div class="plogo">TW</div><div><div class="pname">Twilio</div><div class="plabel-sub">•••• 1a9f</div></div></div></td>
-              <td class="td-label">Primary SMS</td>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 04:15 PM</td>
               <td><span class="badge b-sms">SMS</span></td>
-              <td><span class="badge b-active">Active</span></td>
-              <td class="td-region">IN</td>
-              <td class="td-date">Apr 05, 2026 11:20 AM</td>
-              <td><span class="act-menu">···</span></td>
+              <td><div class="conn-cell-name">Twilio<div class="conn-cell-sub">Primary SMS</div></div></td>
+              <td>63*****0567</td>
+              <td>sms_acctfrozen</td>
+              <td><span class="status-dot sd-queued"></span>Queued</td>
+              <td>—</td>
+              <td>—</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(6)">👁 View connection details</div><div class="dot-item" onclick="openEdit(6)">✎ Edit connection</div></div></div></td>
             </tr>
-            <tr data-type="sms">
-              <td class="td-id">1</td>
-              <td><div class="provider-cell"><div class="plogo">IB</div><div><div class="pname">Infobip</div><div class="plabel-sub">•••• 5b2e</div></div></div></td>
-              <td class="td-label">SMS Fallback</td>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 04:07 PM</td>
+              <td><span class="badge b-push">Push</span></td>
+              <td><div class="conn-cell-name">FCM<div class="conn-cell-sub">Android Push</div></div></td>
+              <td>device_****3c</td>
+              <td>push_login_alert</td>
+              <td><span class="status-dot sd-delivered"></span>Delivered</td>
+              <td>142ms</td>
+              <td>—</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(4)">👁 View connection details</div><div class="dot-item" onclick="openEdit(4)">✎ Edit connection</div></div></div></td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 04:05 PM</td>
+              <td><span class="badge b-email">Email</span></td>
+              <td><div class="conn-cell-name">SendGrid → Mailgun<div class="conn-cell-sub">Fallback triggered</div></div></td>
+              <td>*****@acme.com</td>
+              <td>email_welcome</td>
+              <td><span class="status-dot sd-fallback"></span>Fallback Triggered</td>
+              <td>310ms</td>
+              <td class="err-cell">SendGrid 503 → Mailgun OK</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(1)">👁 View connection details</div><div class="dot-item" onclick="openEdit(1)">✎ Edit connection</div></div></div></td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 03:58 PM</td>
               <td><span class="badge b-sms">SMS</span></td>
-              <td><span class="badge b-inactive">Inactive</span></td>
-              <td class="td-region">Global</td>
-              <td class="td-date">Mar 28, 2026 03:15 PM</td>
-              <td><span class="act-menu">···</span></td>
+              <td><div class="conn-cell-name">Infobip<div class="conn-cell-sub">SMS Fallback</div></div></td>
+              <td>91*****8834</td>
+              <td>sms_otp</td>
+              <td><span class="status-dot sd-sent"></span>Sent</td>
+              <td>198ms</td>
+              <td>—</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(7)">👁 View connection details</div><div class="dot-item" onclick="openEdit(7)">✎ Edit connection</div></div></div></td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Apr 20, 2026 03:44 PM</td>
+              <td><span class="badge b-push">Push</span></td>
+              <td><div class="conn-cell-name">APNs<div class="conn-cell-sub">iOS Push</div></div></td>
+              <td>device_****aa</td>
+              <td>push_promo_apr</td>
+              <td><span class="status-dot sd-sent"></span>Sent</td>
+              <td>87ms</td>
+              <td>—</td>
+              <td onclick="event.stopPropagation()"><div class="dot-wrap"><div class="dot-btn" onclick="dots(this)">···</div><div class="dot-menu"><div class="dot-item" onclick="openDetail(5)">👁 View connection details</div><div class="dot-item" onclick="openEdit(5)">✎ Edit connection</div></div></div></td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <div class="pagination">
-        <div class="pag-info"><span class="pag-dot"></span> Showing 1–7 of 7</div>
-        <div class="pag-controls">
-          Page 1 of 1
-          <div class="pag-btn disabled">‹</div>
-          <div class="pag-btn disabled">›</div>
-          <div class="pag-btn disabled">»</div>
-        </div>
-      </div>
     </div>
-
-    <!-- ===== ROUTING VIEW ===== -->
-    <div class="view" id="view-routing">
-      <div class="page-head">
-        <div class="page-title">Routing</div>
-      </div>
-
-      <div class="routing-wrap">
-
-        <!-- EMAIL ROUTING -->
-        <div class="channel-section">
-          <div class="ch-header">
-            <div>
-              <div class="ch-title"><span class="ch-dot" style="background:var(--blue);"></span> Email</div>
-              <div class="ch-meta">3 providers connected · Fallback strategy active</div>
-            </div>
-            <span class="badge b-active">Configured</span>
-          </div>
-          <div class="strategy-tabs">
-            <div class="strat-tab" onclick="switchStrat(this,'email')">Weighted Split</div>
-            <div class="strat-tab active" onclick="switchStrat(this,'email')">Default Fallback</div>
-            <div class="strat-tab" onclick="switchStrat(this,'email')">Volume Cap</div>
-          </div>
-          <div class="strategy-body">
-            <div class="routing-row">
-              <div class="drag-handle">⠿</div>
-              <div class="route-pos primary">1</div>
-              <div class="route-plogo">SG</div>
-              <div><div class="route-name">SendGrid</div><div class="route-label">Transactional</div></div>
-              <span class="route-tag rt-primary">Primary</span>
-            </div>
-            <div class="routing-row">
-              <div class="drag-handle">⠿</div>
-              <div class="route-pos">2</div>
-              <div class="route-plogo">MG</div>
-              <div><div class="route-name">Mailgun</div><div class="route-label">Backup</div></div>
-              <span class="route-tag rt-fallback">Fallback 1</span>
-            </div>
-            <div class="routing-row">
-              <div class="drag-handle">⠿</div>
-              <div class="route-pos">3</div>
-              <div class="route-plogo" style="color:var(--red);border-color:#F7C1C1;">SES</div>
-              <div><div class="route-name">AWS SES</div><div class="route-label">Emergency</div></div>
-              <span class="route-tag rt-fallback">Fallback 2</span>
-            </div>
-          </div>
-          <div class="strategy-footer">
-            <div class="unsaved-note">⚠ Unsaved changes</div>
-            <button class="save-btn">Save routing</button>
-          </div>
-        </div>
-
-        <!-- PUSH ROUTING -->
-        <div class="channel-section">
-          <div class="ch-header">
-            <div>
-              <div class="ch-title"><span class="ch-dot" style="background:var(--purple);"></span> Push / In-App</div>
-              <div class="ch-meta">2 providers connected · Weighted split active</div>
-            </div>
-            <span class="badge b-active">Configured</span>
-          </div>
-          <div class="strategy-tabs">
-            <div class="strat-tab active" onclick="switchStrat(this,'push')">Weighted Split</div>
-            <div class="strat-tab" onclick="switchStrat(this,'push')">Default Fallback</div>
-            <div class="strat-tab" onclick="switchStrat(this,'push')">Volume Cap</div>
-          </div>
-          <div class="strategy-body">
-            <div class="routing-row">
-              <div class="drag-handle">⠿</div>
-              <div class="route-pos primary">1</div>
-              <div class="route-plogo" style="color:var(--purple);border-color:#AFA9EC;">FCM</div>
-              <div style="flex:1"><div class="route-name">FCM</div><div class="route-label">Android Push</div></div>
-              <div class="weight-wrap"><input class="weight-input" type="number" value="60" min="0" max="100"/><span class="weight-unit">%</span></div>
-            </div>
-            <div class="routing-row">
-              <div class="drag-handle">⠿</div>
-              <div class="route-pos">2</div>
-              <div class="route-plogo" style="color:var(--purple);border-color:#AFA9EC;">APNs</div>
-              <div style="flex:1"><div class="route-name">APNs</div><div class="route-label">iOS Push</div></div>
-              <div class="weight-wrap"><input class="weight-input" type="number" value="40" min="0" max="100"/><span class="weight-unit">%</span></div>
-            </div>
-          </div>
-          <div class="strategy-footer">
-            <div style="font-size:11px;color:var(--text3);">Total: 100% ✓</div>
-            <button class="save-btn">Save routing</button>
-          </div>
-        </div>
-
-        <!-- SMS ROUTING -->
-        <div class="channel-section">
-          <div class="ch-header">
-            <div>
-              <div class="ch-title"><span class="ch-dot" style="background:var(--green);"></span> SMS</div>
-              <div class="ch-meta">2 providers connected · Volume cap active</div>
-            </div>
-            <span class="badge b-active">Configured</span>
-          </div>
-          <div class="strategy-tabs">
-            <div class="strat-tab" onclick="switchStrat(this,'sms')">Weighted Split</div>
-            <div class="strat-tab" onclick="switchStrat(this,'sms')">Default Fallback</div>
-            <div class="strat-tab active" onclick="switchStrat(this,'sms')">Volume Cap</div>
-          </div>
-          <div class="strategy-body">
-            <div class="vol-cap-wrap">
-              <div>
-                <div class="vol-label">Primary provider</div>
-                <select class="vol-select"><option>Twilio — Primary SMS</option><option>Infobip — SMS Fallback</option></select>
-              </div>
-              <div>
-                <div class="vol-label">Daily cap (messages)</div>
-                <input class="vol-input" type="number" value="10000" />
-              </div>
-              <div>
-                <div class="vol-label">Overflow provider</div>
-                <select class="vol-select"><option>Infobip — SMS Fallback</option><option>Twilio — Primary SMS</option></select>
-              </div>
-            </div>
-          </div>
-          <div class="strategy-footer">
-            <div style="font-size:11px;color:var(--text3);">Resets daily at UTC midnight</div>
-            <button class="save-btn">Save routing</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ===== ANALYTICS VIEW ===== -->
-    <div class="view" id="view-analytics">
-      <div class="page-head">
-        <div class="page-title">Analytics</div>
-        <div class="date-bar">
-          <div class="date-chip">Last 24h</div>
-          <div class="date-chip on">Last 7 days</div>
-          <div class="date-chip">Last 30 days</div>
-          <div class="date-chip">Custom</div>
-        </div>
-      </div>
-
-      <div class="analytics-wrap">
-
-        <!-- Filter chips -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <div class="filter-chip on">All channels</div>
-          <div class="filter-chip">Email</div>
-          <div class="filter-chip">Push</div>
-          <div class="filter-chip">SMS</div>
-        </div>
-
-        <!-- KPI row -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Total Sent</div>
-            <div class="kpi-value">84,291</div>
-            <div class="kpi-sub up">↑ 12% vs last week</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Delivered</div>
-            <div class="kpi-value">79,604</div>
-            <div class="kpi-sub up">↑ 9%</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Failed</div>
-            <div class="kpi-value">4,687</div>
-            <div class="kpi-sub dn">↑ 3% (worse)</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Delivery Rate</div>
-            <div class="kpi-value">94.4%</div>
-            <div class="kpi-sub">Target: 97%</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Avg Latency</div>
-            <div class="kpi-value">218ms</div>
-            <div class="kpi-sub up">↓ 14ms faster</div>
-          </div>
-        </div>
-
-        <!-- Charts row -->
-        <div class="charts-row">
-          <div class="chart-card">
-            <div class="chart-title">Failure rate by provider <span>Last 7 days</span></div>
-            <div class="bar-chart">
-              <div class="bar-row"><div class="bar-name">AWS SES</div><div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--red);"></div></div><div class="bar-val">8.2%</div></div>
-              <div class="bar-row"><div class="bar-name">Infobip</div><div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--amber);"></div></div><div class="bar-val">3.1%</div></div>
-              <div class="bar-row"><div class="bar-name">Mailgun</div><div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--blue);"></div></div><div class="bar-val">1.9%</div></div>
-              <div class="bar-row"><div class="bar-name">SendGrid</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:var(--green);"></div></div><div class="bar-val">0.8%</div></div>
-              <div class="bar-row"><div class="bar-name">Twilio</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:var(--green);"></div></div><div class="bar-val">0.6%</div></div>
-              <div class="bar-row"><div class="bar-name">FCM</div><div class="bar-track"><div class="bar-fill" style="width:4%;background:var(--green);"></div></div><div class="bar-val">0.4%</div></div>
-            </div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Traffic distribution <span>Actual vs configured</span></div>
-            <div class="donut-wrap">
-              <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="40" fill="none" stroke="#f0f0ee" stroke-width="18"/>
-                <circle cx="55" cy="55" r="40" fill="none" stroke="#1D9E75" stroke-width="18" stroke-dasharray="100.5 150.8" stroke-dashoffset="0" transform="rotate(-90 55 55)"/>
-                <circle cx="55" cy="55" r="40" fill="none" stroke="#185FA5" stroke-width="18" stroke-dasharray="62.8 188.5" stroke-dashoffset="-100.5" transform="rotate(-90 55 55)"/>
-                <circle cx="55" cy="55" r="40" fill="none" stroke="#534AB7" stroke-width="18" stroke-dasharray="37.7 213.6" stroke-dashoffset="-163.3" transform="rotate(-90 55 55)"/>
-                <text x="55" y="59" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a18">All</text>
-              </svg>
-              <div class="donut-legend">
-                <div class="legend-row"><span class="legend-dot" style="background:var(--green);"></span> SMS <span class="legend-val">40%</span></div>
-                <div class="legend-row"><span class="legend-dot" style="background:var(--blue);"></span> Email <span class="legend-val">31%</span></div>
-                <div class="legend-row"><span class="legend-dot" style="background:var(--purple);"></span> Push <span class="legend-val">29%</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Logs table -->
-        <div class="logs-card">
-          <div class="logs-head">
-            <div class="logs-title">Recent notification logs</div>
-            <button class="export-btn">⬇ Export CSV</button>
-          </div>
-          <table class="logs-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Type</th>
-                <th>Provider</th>
-                <th>Recipient</th>
-                <th>Template</th>
-                <th>Status</th>
-                <th>Latency</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Apr 20, 2026 04:27 PM</td><td><span class="badge b-email">Email</span></td><td>SendGrid</td><td>ut*****@*****ech.com</td><td>template_13</td><td><span class="status-dot sd-failed"></span>Failed</td><td>—</td></tr>
-              <tr><td>Apr 20, 2026 04:15 PM</td><td><span class="badge b-sms">SMS</span></td><td>Twilio</td><td>63*****0567</td><td>sms_acctfrozen</td><td><span class="status-dot sd-queued"></span>Queued</td><td>—</td></tr>
-              <tr><td>Apr 20, 2026 04:12 PM</td><td><span class="badge b-sms">SMS</span></td><td>Twilio</td><td>63*****0567</td><td>sms_acctunfrozen</td><td><span class="status-dot sd-queued"></span>Queued</td><td>—</td></tr>
-              <tr><td>Apr 20, 2026 04:07 PM</td><td><span class="badge b-push">Push</span></td><td>FCM</td><td>device_****3c</td><td>push_login_alert</td><td><span class="status-dot sd-sent"></span>Delivered</td><td>142ms</td></tr>
-              <tr><td>Apr 20, 2026 04:05 PM</td><td><span class="badge b-email">Email</span></td><td>Mailgun</td><td>jo*****@*****com</td><td>email_welcome</td><td><span class="status-dot sd-sent"></span>Delivered</td><td>310ms</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </div>
-
-  </div><!-- /main -->
+  </div>
+</div><!-- /main -->
 </div><!-- /shell -->
 
-<!-- ===== ADD PROVIDER MODAL ===== -->
-<div class="modal-overlay" id="add-modal">
+<!-- ════════════════════════════════
+     NEW CONNECTION MODAL
+════════════════════════════════ -->
+<div class="overlay" id="mkt-overlay">
   <div class="modal">
-
-    <!-- MARKETPLACE STEP -->
-    <div id="step-market" style="display:flex;flex-direction:column;height:100%;">
-      <div class="modal-header">
-        <div class="modal-title">Add a Provider</div>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+    <!-- Step 1: Marketplace -->
+    <div id="mkt-step" style="display:flex;flex-direction:column;height:100%;">
+      <div class="modal-hd">
+        <div><div class="modal-title">New Connection</div><div class="modal-sub">Select a provider to configure credentials and connect.</div></div>
+        <button class="modal-close" onclick="closeMkt()">✕</button>
       </div>
-
-      <div class="modal-search-bar">
-        <div class="modal-search">
-          <span>🔍</span>
-          <input id="market-search" placeholder="Search providers..." oninput="filterMarket()" />
-        </div>
-        <div class="modal-type-chips">
-          <div class="mchip on all" onclick="setMarketChip(this,'all')">All</div>
-          <div class="mchip" onclick="setMarketChip(this,'email')">Email</div>
-          <div class="mchip" onclick="setMarketChip(this,'push')">Push</div>
-          <div class="mchip" onclick="setMarketChip(this,'sms')">SMS</div>
+      <div class="mkt-bar">
+        <div class="mkt-srch"><span>🔍</span><input id="mkt-inp" placeholder="Search providers..." oninput="filterMkt()"/></div>
+        <div class="mkt-chips">
+          <div class="mchip oa" onclick="setMChip(this,'all')">All</div>
+          <div class="mchip" onclick="setMChip(this,'email')">Email</div>
+          <div class="mchip" onclick="setMChip(this,'push')">Push</div>
+          <div class="mchip" onclick="setMChip(this,'sms')">SMS</div>
         </div>
       </div>
-
-      <div class="modal-body" id="market-body">
-
-        <div class="market-section-label" data-section="email">Email providers</div>
-        <div class="market-grid" data-section="email">
-          <div class="market-card" data-type="email" data-provider="sendgrid" onclick="openConnectForm('sendgrid')">
-            <div class="market-card-top">
-              <div class="mc-logo">SG</div>
-              <div><div class="mc-name">SendGrid</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
-            </div>
-            <div class="mc-desc">Reliable transactional email with advanced analytics, templates, and webhook delivery tracking.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="email" data-provider="ses" onclick="openConnectForm('ses')">
-            <div class="market-card-top">
-              <div class="mc-logo">SES</div>
-              <div><div class="mc-name">AWS SES</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
-            </div>
-            <div class="mc-desc">High-volume cloud email via AWS. Cost-effective at scale with SNS webhook integration.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="email" data-provider="mailgun" onclick="openConnectForm('mailgun')">
-            <div class="market-card-top">
-              <div class="mc-logo">MG</div>
-              <div><div class="mc-name">Mailgun</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
-            </div>
-            <div class="mc-desc">Developer-focused email API with US and EU region support. HMAC webhook signing.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="email" data-provider="mailchimp" onclick="openConnectForm('mailchimp')">
-            <div class="market-card-top">
-              <div class="mc-logo">MC</div>
-              <div><div class="mc-name">Mailchimp</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
-            </div>
-            <div class="mc-desc">Marketing campaigns via Mailchimp + transactional via Mandrill. Audience list management.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="email" data-provider="pepipost" onclick="openConnectForm('pepipost')">
-            <div class="market-card-top">
-              <div class="mc-logo">PP</div>
-              <div><div class="mc-name">Pepipost</div><div class="mc-type"><span class="badge b-email">Email</span></div></div>
-            </div>
-            <div class="mc-desc">India-optimised delivery via Netcore. Routes through Jio, Airtel, BSNL whitelisted IPs.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
+      <div class="mkt-body">
+        <div class="mkt-sec" data-sec="email">Email</div>
+        <div class="mkt-grid" data-sec="email">
+          <div class="mkt-card" data-t="email" onclick="openCF('sendgrid')"><div class="mc-top"><div class="mc-logo">SG</div><div><div class="mc-name">SendGrid</div><span class="badge b-email" style="margin-top:3px;font-size:10px;">Email</span></div></div><div class="mc-desc">Reliable transactional email with analytics, templates, and ECDSA webhook delivery tracking.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="email" onclick="openCF('ses')"><div class="mc-top"><div class="mc-logo">SES</div><div><div class="mc-name">AWS SES</div><span class="badge b-email" style="margin-top:3px;font-size:10px;">Email</span></div></div><div class="mc-desc">High-volume cloud email via AWS. Cost-effective at scale with SNS webhook integration.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="email" onclick="openCF('mailgun')"><div class="mc-top"><div class="mc-logo">MG</div><div><div class="mc-name">Mailgun</div><span class="badge b-email" style="margin-top:3px;font-size:10px;">Email</span></div></div><div class="mc-desc">Developer-focused email API. US and EU regions. HMAC-SHA256 webhook signing.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="email" onclick="openCF('mailchimp')"><div class="mc-top"><div class="mc-logo">MC</div><div><div class="mc-name">Mailchimp / Mandrill</div><span class="badge b-email" style="margin-top:3px;font-size:10px;">Email</span></div></div><div class="mc-desc">Marketing campaigns via Mailchimp + transactional via Mandrill. Audience list management.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="email" onclick="openCF('pepipost')"><div class="mc-top"><div class="mc-logo">PP</div><div><div class="mc-name">Pepipost / Netcore</div><span class="badge b-email" style="margin-top:3px;font-size:10px;">Email</span></div></div><div class="mc-desc">India-optimised delivery via Netcore. Routes through Jio, Airtel, BSNL whitelisted IPs.</div><div class="mc-cta">+ Connect →</div></div>
         </div>
-
-        <div class="market-section-label" data-section="push">Push / In-App providers</div>
-        <div class="market-grid" data-section="push">
-          <div class="market-card" data-type="push" data-provider="fcm" onclick="openConnectForm('fcm')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:#EA8600;border-color:#FAC775;">FCM</div>
-              <div><div class="mc-name">FCM</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
-            </div>
-            <div class="mc-desc">Firebase Cloud Messaging for Android, iOS proxy, and web VAPID push. OAuth2 HTTP v1 API.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="push" data-provider="apns" onclick="openConnectForm('apns')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:var(--text2);">APNs</div>
-              <div><div class="mc-name">APNs</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
-            </div>
-            <div class="mc-desc">Apple Push Notification service for native iOS and macOS apps. .p8 token-based auth over HTTP/2.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="push" data-provider="onesignal" onclick="openConnectForm('onesignal')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:#E54B4D;border-color:#F09595;">1S</div>
-              <div><div class="mc-name">OneSignal</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
-            </div>
-            <div class="mc-desc">Multi-platform push, in-app messages, and SMS. Supports segments and A/B testing.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="push" data-provider="clevertap" onclick="openConnectForm('clevertap')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:#185FA5;border-color:#B5D4F4;">CT</div>
-              <div><div class="mc-name">CleverTap</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
-            </div>
-            <div class="mc-desc">India-focused engagement platform with push, in-app, and analytics. Strong APAC delivery.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="push" data-provider="moengage" onclick="openConnectForm('moengage')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:#0F6E56;border-color:#9FE1CB;">MoE</div>
-              <div><div class="mc-name">MoEngage</div><div class="mc-type"><span class="badge b-push">Push</span></div></div>
-            </div>
-            <div class="mc-desc">AI-driven engagement for India and SEA markets. Push, in-app, email, and SMS in one SDK.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
+        <div class="mkt-sec" data-sec="push">Push / In-App</div>
+        <div class="mkt-grid" data-sec="push">
+          <div class="mkt-card" data-t="push" onclick="openCF('fcm')"><div class="mc-top"><div class="mc-logo" style="color:#c77700;border-color:var(--amid);">FCM</div><div><div class="mc-name">FCM</div><span class="badge b-push" style="margin-top:3px;font-size:10px;">Push</span></div></div><div class="mc-desc">Firebase Cloud Messaging for Android, iOS proxy, and web VAPID push. HTTP v1 API only.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="push" onclick="openCF('apns')"><div class="mc-top"><div class="mc-logo">APNs</div><div><div class="mc-name">APNs</div><span class="badge b-push" style="margin-top:3px;font-size:10px;">Push</span></div></div><div class="mc-desc">Apple Push Notification service. .p8 token auth over HTTP/2. One key for all apps in team.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="push" onclick="openCF('onesignal')"><div class="mc-top"><div class="mc-logo" style="color:var(--red);border-color:var(--rmid);">1S</div><div><div class="mc-name">OneSignal</div><span class="badge b-push" style="margin-top:3px;font-size:10px;">Push</span></div></div><div class="mc-desc">Multi-platform push and in-app messages. Supports segments and A/B testing.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="push" onclick="openCF('clevertap')"><div class="mc-top"><div class="mc-logo" style="color:var(--blue);border-color:var(--bmid);">CT</div><div><div class="mc-name">CleverTap</div><span class="badge b-push" style="margin-top:3px;font-size:10px;">Push</span></div></div><div class="mc-desc">India/APAC engagement platform. Push, in-app, analytics. Region-specific endpoints.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="push" onclick="openCF('moengage')"><div class="mc-top"><div class="mc-logo" style="color:var(--gtext);border-color:var(--gmid);">MoE</div><div><div class="mc-name">MoEngage</div><span class="badge b-push" style="margin-top:3px;font-size:10px;">Push</span></div></div><div class="mc-desc">AI-driven engagement for India and SEA. Multi-datacenter. Push and in-app.</div><div class="mc-cta">+ Connect →</div></div>
         </div>
-
-        <div class="market-section-label" data-section="sms">SMS providers</div>
-        <div class="market-grid" data-section="sms">
-          <div class="market-card" data-type="sms" data-provider="twilio" onclick="openConnectForm('twilio')">
-            <div class="market-card-top">
-              <div class="mc-logo" style="color:#c00;border-color:#F7C1C1;">TW</div>
-              <div><div class="mc-name">Twilio</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
-            </div>
-            <div class="mc-desc">Global SMS leader with programmable messaging, delivery webhooks, and status callbacks.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="sms" data-provider="infobip" onclick="openConnectForm('infobip')">
-            <div class="market-card-top">
-              <div class="mc-logo">IB</div>
-              <div><div class="mc-name">Infobip</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
-            </div>
-            <div class="mc-desc">Enterprise SMS with global reach, delivery reports, and 2FA support across 190+ countries.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="sms" data-provider="semaphore" onclick="openConnectForm('semaphore')">
-            <div class="market-card-top">
-              <div class="mc-logo">SM</div>
-              <div><div class="mc-name">Semaphore</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
-            </div>
-            <div class="mc-desc">Philippines-focused SMS gateway. Reliable delivery on Globe and Smart networks.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="sms" data-provider="smart" onclick="openConnectForm('smart')">
-            <div class="market-card-top">
-              <div class="mc-logo">SC</div>
-              <div><div class="mc-name">Smart Comms</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
-            </div>
-            <div class="mc-desc">Smart Communications Philippines direct carrier gateway for high-priority SMS delivery.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
-          <div class="market-card" data-type="sms" data-provider="globe" onclick="openConnectForm('globe')">
-            <div class="market-card-top">
-              <div class="mc-logo">GT</div>
-              <div><div class="mc-name">Globe Telecom</div><div class="mc-type"><span class="badge b-sms">SMS</span></div></div>
-            </div>
-            <div class="mc-desc">Globe Telecom Philippines carrier gateway. Supports short codes and alphanumeric sender IDs.</div>
-            <div class="mc-connect">Connect</div>
-          </div>
+        <div class="mkt-sec" data-sec="sms">SMS</div>
+        <div class="mkt-grid" data-sec="sms">
+          <div class="mkt-card" data-t="sms" onclick="openCF('twilio')"><div class="mc-top"><div class="mc-logo" style="color:#8b0000;border-color:var(--rmid);">TW</div><div><div class="mc-name">Twilio</div><span class="badge b-sms" style="margin-top:3px;font-size:10px;">SMS</span></div></div><div class="mc-desc">Global SMS. Programmable messaging, delivery webhooks, and status callbacks.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="sms" onclick="openCF('infobip')"><div class="mc-top"><div class="mc-logo">IB</div><div><div class="mc-name">Infobip</div><span class="badge b-sms" style="margin-top:3px;font-size:10px;">SMS</span></div></div><div class="mc-desc">Enterprise SMS. 190+ countries, delivery reports, 2FA support, unique base URL per account.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="sms" onclick="openCF('semaphore')"><div class="mc-top"><div class="mc-logo">SM</div><div><div class="mc-name">Semaphore</div><span class="badge b-sms" style="margin-top:3px;font-size:10px;">SMS</span></div></div><div class="mc-desc">Philippines SMS gateway. Reliable delivery across Globe and Smart networks.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="sms" onclick="openCF('smart')"><div class="mc-top"><div class="mc-logo">SC</div><div><div class="mc-name">Smart Comms</div><span class="badge b-sms" style="margin-top:3px;font-size:10px;">SMS</span></div></div><div class="mc-desc">Smart Communications Philippines direct carrier gateway for high-priority SMS delivery.</div><div class="mc-cta">+ Connect →</div></div>
+          <div class="mkt-card" data-t="sms" onclick="openCF('globe')"><div class="mc-top"><div class="mc-logo">GT</div><div><div class="mc-name">Globe Telecom</div><span class="badge b-sms" style="margin-top:3px;font-size:10px;">SMS</span></div></div><div class="mc-desc">Globe Telecom Philippines carrier. Short codes and alphanumeric sender IDs.</div><div class="mc-cta">+ Connect →</div></div>
         </div>
-
-        <div style="margin-top:20px;padding:14px 16px;border:1px dashed var(--border2);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text);">Don't see your provider?</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Request a new connector and we'll prioritise based on demand.</div>
-          </div>
-          <button class="cf-test-btn">Submit request →</button>
+        <div class="mkt-request">
+          <div><div class="mkt-req-t">Don't see your provider?</div><div class="mkt-req-s">Submit a connector request — we prioritise based on demand.</div></div>
+          <button class="btn-ghost">Submit request →</button>
         </div>
-
       </div>
     </div>
-
-    <!-- CONNECT FORM STEP -->
-    <div class="connect-form" id="step-form">
-      <div class="cf-back" onclick="backToMarket()">← Back to providers</div>
-      <div class="cf-provider-head">
-        <div class="cf-logo" id="cf-logo">SG</div>
-        <div>
-          <div class="cf-pname" id="cf-pname">SendGrid</div>
-          <div class="cf-pdesc" id="cf-pdesc">Configure your SendGrid connection</div>
-        </div>
-        <div style="margin-left:auto;" id="cf-type-badge"></div>
+    <!-- Step 2: Connect form -->
+    <div class="cf" id="cf-step">
+      <div class="cf-back" onclick="backMkt()">← Back to providers</div>
+      <div class="cf-phead">
+        <div class="cf-plogo" id="cf-logo"></div>
+        <div><div class="cf-pname" id="cf-name"></div><div class="cf-pdesc" id="cf-desc"></div></div>
+        <div style="margin-left:auto;" id="cf-badge"></div>
       </div>
-      <div class="cf-body" id="cf-body">
-        <!-- injected by JS -->
-      </div>
+      <div class="cf-body" id="cf-body"></div>
       <div class="cf-footer">
-        <div class="cf-test-result" id="cf-test-result"></div>
-        <div style="display:flex;gap:10px;">
-          <button class="cf-test-btn" onclick="testConnection()">Test connection</button>
-          <button class="cf-save-btn" id="cf-save-btn" onclick="saveProvider()">Save & connect</button>
+        <div class="test-msg" id="cf-tmsg"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="cf-test-btn" onclick="runTest('cf-tmsg')">Test connection</button>
+          <button class="cf-save-btn" onclick="saveConn()">Save &amp; connect</button>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
+<!-- ════════════════════════════════
+     EDIT MODAL
+════════════════════════════════ -->
+<div class="overlay" id="edit-overlay">
+  <div class="modal" style="max-width:560px;">
+    <div class="cf open" style="height:auto;max-height:88vh;">
+      <div class="modal-hd" style="padding:18px 22px;">
+        <div><div class="modal-title" id="edit-title">Edit — SendGrid · Transactional</div><div class="modal-sub">Re-enter credentials to update. Leave credential fields blank to keep existing values.</div></div>
+        <button class="modal-close" onclick="closeEdit()">✕</button>
+      </div>
+      <div class="cf-body" id="edit-body" style="max-height:60vh;">
+        <div class="cf-field"><label class="cf-label">Label <span class="req-tag">Required</span></label><input class="cf-input" value="Transactional"/></div>
+        <div class="cf-field"><label class="cf-label">API Key <span class="req-tag">Required</span></label><input class="cf-input" type="password" placeholder="Re-enter to update  ···· 4f2a"/><div class="cf-hint">Leave blank to keep existing key. Re-enter in full to replace.</div></div>
+        <div class="cf-2col">
+          <div class="cf-field"><label class="cf-label">From Email <span class="req-tag">Required</span></label><input class="cf-input" value="noreply@fyscaltech.com"/></div>
+          <div class="cf-field"><label class="cf-label">From Name <span class="req-tag">Required</span></label><input class="cf-input" value="Fyscal Technologies"/></div>
+        </div>
+        <div class="cf-field"><label class="cf-label">Webhook Signing Public Key <span class="opt-tag">Optional</span></label><input class="cf-input" type="password" placeholder="Re-enter to update"/><div class="cf-hint">Different from API Key — found in Mail Settings → Event Webhook.</div></div>
+        <div class="cf-field"><label class="cf-label">Sandbox Mode <span class="opt-tag">Optional</span></label><select class="cf-select"><option>Disabled</option><option>Enabled</option></select><div class="cf-hint">Enabled = emails not actually delivered. Use for testing only.</div></div>
+      </div>
+      <div class="cf-footer">
+        <div class="test-msg" id="edit-tmsg"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="cf-test-btn" onclick="runTest('edit-tmsg')">Test connection</button>
+          <button class="cf-save-btn" onclick="closeEdit()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     VIEW DETAILS PANEL
+════════════════════════════════ -->
+<div class="dp-overlay" id="dp-overlay">
+  <div class="dp-panel">
+    <div class="dp-hd">
+      <div class="dp-title">Connection details</div>
+      <button class="dp-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="dp-body" id="dp-body"></div>
+    <div class="dp-footer">
+      <button class="dp-test-btn" onclick="closeDetail()">⚡ Test connection</button>
+      <button class="dp-edit-btn" onclick="closeDetail();openEdit(curDetail)">✎ Edit connection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════ -->
 <script>
-  var connOpen = true;
-  var marketFilter = 'all';
+// ── State ──
+var sbOpen = true, mktFilter = 'all', curDetail = 1;
 
-  /* ---- SIDEBAR ---- */
-  function toggleConnectors() {
-    connOpen = !connOpen;
-    document.getElementById('conn-children').style.display = connOpen ? 'block' : 'none';
-    document.getElementById('conn-chev').style.transform = connOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-  }
+// ── Detail data matching spec ──
+var DETAILS = {
+  1:{name:'SendGrid',logo:'SG',type:'email',label:'Transactional',status:'active',region:'Global',env:'Production',created:'Apr 20, 2026 04:27 PM',updated:'Apr 20, 2026 04:27 PM',credLabel:'API Key',credMask:'•••• 4f2a',fromEmail:'noreply@fyscaltech.com',fromName:'Fyscal Technologies',routing:'Email · Fallback Chain · Position 1',lastOk:'Apr 20, 2026 04:05 PM',lastFail:'Apr 20, 2026 04:27 PM',failReason:'401 Unauthorized — invalid API key',sends7d:'12,430'},
+  2:{name:'Mailgun',logo:'MG',type:'email',label:'Backup',status:'inactive',region:'US',env:'Production',created:'Apr 18, 2026 10:12 AM',updated:'Apr 18, 2026 10:12 AM',credLabel:'API Key',credMask:'•••• 9c1b',fromEmail:'noreply@mg.fyscaltech.com',fromName:'Fyscal Technologies',routing:'Email · Fallback Chain · Position 2',lastOk:'Apr 20, 2026 04:05 PM',lastFail:'—',failReason:'—',sends7d:'1,204'},
+  3:{name:'AWS SES',logo:'SES',type:'email',label:'Emergency',status:'error',region:'ap-south-1',env:'Production',created:'Apr 10, 2026 02:00 PM',updated:'Apr 20, 2026 03:00 PM',credLabel:'Access Key ID',credMask:'•••• 2e8f',fromEmail:'noreply@fyscaltech.com',fromName:'Fyscal Technologies',routing:'Email · Fallback Chain · Position 3',lastOk:'Apr 15, 2026 10:00 AM',lastFail:'Apr 20, 2026 03:00 PM',failReason:'InvalidClientTokenId — credentials expired',sends7d:'0'},
+  4:{name:'FCM',logo:'FCM',type:'push',label:'Android Push',status:'active',region:'Global',env:'Production',created:'Apr 08, 2026 09:30 AM',updated:'Apr 08, 2026 09:30 AM',credLabel:'Project ID',credMask:'my-project-****45',fromEmail:'',fromName:'',routing:'Push · Weighted Split · 60%',lastOk:'Apr 20, 2026 04:07 PM',lastFail:'—',failReason:'—',sends7d:'28,100'},
+  5:{name:'APNs',logo:'APNs',type:'push',label:'iOS Push',status:'active',region:'Global',env:'Production',created:'Apr 08, 2026 09:45 AM',updated:'Apr 08, 2026 09:45 AM',credLabel:'Key ID',credMask:'•••• 3a9d',fromEmail:'',fromName:'',routing:'Push · Weighted Split · 40%',lastOk:'Apr 20, 2026 04:07 PM',lastFail:'—',failReason:'—',sends7d:'18,800'},
+  6:{name:'Twilio',logo:'TW',type:'sms',label:'Primary SMS',status:'active',region:'IN',env:'Production',created:'Apr 05, 2026 11:20 AM',updated:'Apr 05, 2026 11:20 AM',credLabel:'Account SID',credMask:'AC•••• 1a9f',fromEmail:'',fromName:'',routing:'SMS · Volume Cap Overflow · Primary (cap: 10,000/day)',lastOk:'Apr 20, 2026 04:15 PM',lastFail:'—',failReason:'—',sends7d:'9,870'},
+  7:{name:'Infobip',logo:'IB',type:'sms',label:'SMS Fallback',status:'inactive',region:'Global',env:'Production',created:'Mar 28, 2026 03:15 PM',updated:'Mar 28, 2026 03:15 PM',credLabel:'API Key',credMask:'•••• 5b2e',fromEmail:'',fromName:'',routing:'SMS · Volume Cap Overflow · Overflow connection',lastOk:'Apr 19, 2026 11:00 AM',lastFail:'—',failReason:'—',sends7d:'130'}
+};
 
-  function showView(name) {
-    ['providers','routing','analytics'].forEach(function(v) {
-      document.getElementById('view-' + v).classList.remove('active');
-      document.getElementById('nav-' + v).classList.remove('active');
-      document.getElementById('nav-' + v).classList.add('dim');
-    });
-    document.getElementById('view-' + name).classList.add('active');
-    document.getElementById('nav-' + name).classList.add('active');
-    document.getElementById('nav-' + name).classList.remove('dim');
-    var titles = { providers: 'Providers', routing: 'Routing', analytics: 'Analytics' };
-    document.getElementById('breadcrumb').innerHTML = 'Connectors › <b>' + titles[name] + '</b>';
-  }
+// ── Provider form config ──
+var PROVIDERS = {
+  sendgrid:{name:'SendGrid',logo:'SG',type:'email',desc:'Email · Bearer token auth',fields:[
+    {l:'Label',r:1,p:'e.g. Transactional',h:'A name to identify this connection in the Connections table.'},
+    {l:'API Key',r:1,p:'SG.xxxxxxxxxxxxxxxx',pw:1},
+    {l:'From Email',r:1,p:'noreply@yourdomain.com'},
+    {l:'From Name',r:1,p:'Fyscal Technologies'},
+    {l:'Webhook Signing Public Key',r:0,p:'MFkwEwYHKoZIzj0...',pw:1,h:'Different from API Key — found in Mail Settings → Event Webhook.'},
+    {l:'Sandbox Mode',r:0,sel:['Disabled','Enabled'],h:'Enabled = emails are not actually delivered. Use for testing only.'}
+  ]},
+  ses:{name:'AWS SES',logo:'SES',type:'email',desc:'Email · SigV4 SDK auth',fields:[
+    {l:'Label',r:1,p:'e.g. Emergency Email'},
+    {l:'AWS Access Key ID',r:1,p:'AKIAIOSFODNN7EXAMPLE',pw:1},
+    {l:'AWS Secret Access Key',r:1,p:'wJalrXUtnFEMI/K7MDENG/...',pw:1},
+    {l:'Region',r:1,sel:['ap-south-1','us-east-1','us-west-2','eu-west-1','ap-southeast-1'],h:'Must match the region where your sending identity is verified.'},
+    {l:'From Email',r:1,p:'noreply@yourdomain.com',h:'Must be verified in SES for the selected region.'},
+    {l:'From Name',r:1,p:'Fyscal Technologies'},
+    {l:'SNS Topic ARN',r:0,p:'arn:aws:sns:ap-south-1:123456:ses-events',h:'Optional — for delivery event webhooks via SNS.'}
+  ]},
+  mailgun:{name:'Mailgun',logo:'MG',type:'email',desc:'Email · HTTP Basic auth',fields:[
+    {l:'Label',r:1,p:'e.g. Backup Email'},
+    {l:'Private API Key',r:1,p:'key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'Sending Domain',r:1,p:'mg.yourdomain.com'},
+    {l:'Region',r:1,sel:['US (api.mailgun.net)','EU (api.eu.mailgun.net)'],h:'EU uses completely separate infrastructure — wrong region returns 401.'},
+    {l:'From Email',r:1,p:'noreply@mg.yourdomain.com'},
+    {l:'From Name',r:1,p:'Fyscal Technologies'},
+    {l:'Webhook Signing Key',r:0,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1,h:'Different from API Key — found in Mailgun Webhooks section.'}
+  ]},
+  mailchimp:{name:'Mailchimp / Mandrill',logo:'MC',type:'email',desc:'Email · Campaign + Transactional',fields:[
+    {l:'Label',r:1,p:'e.g. Marketing Email'},
+    {l:'Mailchimp API Key',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-us14',pw:1,h:'Suffix (e.g. -us14) determines your datacenter.'},
+    {l:'Mandrill API Key',r:0,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1,h:'Required for transactional sends. Mandrill is a paid Mailchimp add-on.'},
+    {l:'Audience List ID',r:1,p:'abc123def4',h:'Found in Audience → Settings → Audience name and defaults.'},
+    {l:'From Email',r:1,p:'noreply@yourdomain.com'},
+    {l:'From Name',r:1,p:'Fyscal Technologies'}
+  ]},
+  pepipost:{name:'Pepipost / Netcore',logo:'PP',type:'email',desc:'Email · India-optimised',fields:[
+    {l:'Label',r:1,p:'e.g. India Email'},
+    {l:'API Key',r:1,p:'xxxxxxxxxxxxxxxx',pw:1,h:'Sent as header api_key (lowercase, with underscore).'},
+    {l:'From Email',r:1,p:'noreply@yourdomain.com'},
+    {l:'From Name',r:1,p:'Fyscal Technologies'},
+    {l:'Template ID',r:0,p:'12345',h:'Optional — for Netcore template-based sends.'}
+  ]},
+  fcm:{name:'FCM',logo:'FCM',type:'push',desc:'Push · OAuth2 Bearer · HTTP v1 API only',fields:[
+    {l:'Label',r:1,p:'e.g. Android Push'},
+    {l:'Service Account JSON',r:1,p:'Paste full service account JSON here...',ta:1,h:'Downloaded from Firebase Console → Project Settings → Service accounts. Legacy API shut down July 2024.'},
+    {l:'Firebase Project ID',r:1,p:'my-project-12345',h:'Auto-extractable from service account JSON project_id field.'},
+    {l:'VAPID Public Key',r:0,p:'BEl62iUYgUivxIkv...',h:'Required for web push only.'}
+  ]},
+  apns:{name:'APNs',logo:'APNs',type:'push',desc:'Push · .p8 token auth over HTTP/2',fields:[
+    {l:'Label',r:1,p:'e.g. iOS Push'},
+    {l:'.p8 Private Key',r:1,p:'Paste AuthKey_XXXXXXXXXX.p8 contents...',ta:1,h:'Downloaded from Apple Developer → Keys. Displayed only once at creation.'},
+    {l:'Key ID',r:1,p:'ABC123DEF4',h:'10-character ID shown alongside the .p8 key in Apple Developer.'},
+    {l:'Team ID',r:1,p:'XYZ987WVU6',h:'Found in Apple Developer → Membership. Identifies your developer account.'},
+    {l:'Bundle ID',r:1,p:'com.company.appname',h:'e.g. com.fyscaltech.app — must match the app registered in your account.'},
+    {l:'APNs Environment',r:1,sel:['Production','Sandbox'],h:'Sandbox for debug/dev builds. Production for App Store and TestFlight.'}
+  ]},
+  onesignal:{name:'OneSignal',logo:'1S',type:'push',desc:'Push · REST API Key',fields:[
+    {l:'Label',r:1,p:'e.g. Cross-platform Push'},
+    {l:'App ID',r:1,p:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'},
+    {l:'REST API Key',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1}
+  ]},
+  clevertap:{name:'CleverTap',logo:'CT',type:'push',desc:'Push · Account ID + Passcode',fields:[
+    {l:'Label',r:1,p:'e.g. CleverTap Push'},
+    {l:'Account ID',r:1,p:'XXX-XXX-XXXXXX'},
+    {l:'Account Passcode',r:1,p:'xxxxxxxxxxxxxxxx',pw:1},
+    {l:'Region',r:1,sel:['India (in1)','US (us1)','Singapore (sg1)','Europe (eu1)'],h:'Region determines the API endpoint. Use the region where your CleverTap account was created.'}
+  ]},
+  moengage:{name:'MoEngage',logo:'MoE',type:'push',desc:'Push · App ID + Data API Key',fields:[
+    {l:'Label',r:1,p:'e.g. MoEngage Push'},
+    {l:'App ID',r:1,p:'XXXXXXXXXXXXXXXXXXXXXXXX'},
+    {l:'Data API Key',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'Data Center',r:1,sel:['India (DC-3)','US (DC-1)','EU (DC-2)','Singapore (DC-4)','Indonesia (DC-5)'],h:'Must match the datacenter where your MoEngage account is hosted.'}
+  ]},
+  twilio:{name:'Twilio',logo:'TW',type:'sms',desc:'SMS · Account SID + Auth Token',fields:[
+    {l:'Label',r:1,p:'e.g. Primary SMS'},
+    {l:'Account SID',r:1,p:'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'},
+    {l:'Auth Token',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'From Number / Sender ID',r:1,p:'+1234567890',h:'Your Twilio phone number or approved alphanumeric sender ID.'},
+    {l:'Status Callback URL',r:0,p:'https://yourplatform.com/webhooks/twilio',h:'Optional — for delivery status webhook events.'}
+  ]},
+  infobip:{name:'Infobip',logo:'IB',type:'sms',desc:'SMS · API Key + unique Base URL',fields:[
+    {l:'Label',r:1,p:'e.g. SMS Fallback'},
+    {l:'Base URL',r:1,p:'xxxxx.api.infobip.com',h:'Unique to your Infobip account — found in the Infobip dashboard.'},
+    {l:'API Key',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'Sender ID',r:1,p:'FyscalTech',h:'Alphanumeric or registered number. Must be pre-approved for target countries.'}
+  ]},
+  semaphore:{name:'Semaphore',logo:'SM',type:'sms',desc:'SMS · Philippines',fields:[
+    {l:'Label',r:1,p:'e.g. PH SMS'},
+    {l:'API Key',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'Sender Name',r:1,p:'FyscalTech',h:'Must be pre-registered with Semaphore before use.'}
+  ]},
+  smart:{name:'Smart Communications',logo:'SC',type:'sms',desc:'SMS · Philippines carrier direct',fields:[
+    {l:'Label',r:1,p:'e.g. Smart PH SMS'},
+    {l:'Client ID',r:1,p:'xxxxxxxx'},
+    {l:'Client Secret',r:1,p:'xxxxxxxxxxxxxxxx',pw:1},
+    {l:'Short Code / Sender',r:1,p:'FYSCAL'}
+  ]},
+  globe:{name:'Globe Telecom',logo:'GT',type:'sms',desc:'SMS · Philippines carrier direct',fields:[
+    {l:'Label',r:1,p:'e.g. Globe PH SMS'},
+    {l:'App ID',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'},
+    {l:'App Secret',r:1,p:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pw:1},
+    {l:'Short Code',r:1,p:'21581234'}
+  ]}
+};
 
-  /* ---- TABLE FILTER ---- */
-  function filterType(el, type) {
-    document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('on'); });
-    el.classList.add('on');
-    var rows = document.querySelectorAll('#providers-tbody tr');
-    rows.forEach(function(row) {
-      row.style.display = (type === 'all' || row.dataset.type === type) ? '' : 'none';
-    });
-  }
+// ── Sidebar toggle ──
+function toggleSb(){
+  sbOpen = !sbOpen;
+  document.getElementById('sb-children').style.display = sbOpen ? 'block' : 'none';
+  document.getElementById('sb-chev').style.transform = sbOpen ? 'rotate(90deg)' : 'rotate(0)';
+}
 
-  /* ---- ROUTING ---- */
-  function switchStrat(el, channel) {
-    var parent = el.closest('.channel-section');
-    parent.querySelectorAll('.strat-tab').forEach(function(t) { t.classList.remove('active'); });
-    el.classList.add('active');
-  }
-
-  /* ---- MODAL ---- */
-  function openModal() {
-    document.getElementById('add-modal').classList.add('open');
-    document.getElementById('step-market').style.display = 'flex';
-    document.getElementById('step-form').classList.remove('open');
-    document.getElementById('market-search').value = '';
-    filterMarket();
-  }
-  function closeModal() {
-    document.getElementById('add-modal').classList.remove('open');
-  }
-  document.getElementById('add-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
+// ── View switcher ──
+function goView(name) {
+  ['connections','routing','analytics'].forEach(function(v){
+    document.getElementById('view-'+v).classList.remove('active');
+    document.getElementById('nav-'+v).classList.remove('active');
+    document.getElementById('nav-'+v).classList.add('off');
   });
+  document.getElementById('view-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.remove('off');
+  var labels = {connections:'Connections', routing:'Routing', analytics:'Analytics'};
+  document.getElementById('breadcrumb').innerHTML = 'Connectors › <b>'+labels[name]+'</b>';
+}
 
-  /* ---- MARKETPLACE FILTER ---- */
-  function setMarketChip(el, type) {
-    marketFilter = type;
-    document.querySelectorAll('.mchip').forEach(function(c) {
-      c.classList.remove('on','all','email','push','sms');
-    });
-    el.classList.add('on', type);
-    filterMarket();
-  }
+// ── Table filters ──
+function filterType(el, type) {
+  document.querySelectorAll('.filter-bar .chip').forEach(function(c){c.classList.remove('on');});
+  el.classList.add('on');
+  document.querySelectorAll('#conn-tbody tr').forEach(function(r){
+    r.style.display = (type === 'all' || r.dataset.type === type) ? '' : 'none';
+  });
+}
+function filterTable(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('#conn-tbody tr').forEach(function(r){
+    r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
 
-  function filterMarket() {
-    var q = document.getElementById('market-search').value.toLowerCase();
-    var cards = document.querySelectorAll('.market-card');
-    cards.forEach(function(card) {
-      var typeMatch = marketFilter === 'all' || card.dataset.type === marketFilter;
-      var textMatch = q === '' || card.innerText.toLowerCase().includes(q);
-      card.style.display = (typeMatch && textMatch) ? '' : 'none';
-    });
-    // show/hide section labels and grids
-    ['email','push','sms'].forEach(function(sec) {
-      var grid = document.querySelector('.market-grid[data-section="' + sec + '"]');
-      var label = document.querySelector('.market-section-label[data-section="' + sec + '"]');
-      var visible = Array.from(grid.querySelectorAll('.market-card')).some(function(c) { return c.style.display !== 'none'; });
-      var sectionMatch = marketFilter === 'all' || marketFilter === sec;
-      grid.style.display = (visible && sectionMatch) ? '' : 'none';
-      label.style.display = (visible && sectionMatch) ? '' : 'none';
-    });
-  }
+// ── Dots menus ──
+function dots(el) {
+  document.querySelectorAll('.dot-menu.open').forEach(function(m){
+    if(m !== el.nextElementSibling) m.classList.remove('open');
+  });
+  el.nextElementSibling.classList.toggle('open');
+}
+function closeDots() { document.querySelectorAll('.dot-menu.open').forEach(function(m){m.classList.remove('open');}); }
+function testDot(el) { closeDots(); }
+document.addEventListener('click', function(e){ if(!e.target.closest('.dot-wrap')) closeDots(); });
 
-  /* ---- PROVIDER FORM CONFIGS ---- */
-  var providerForms = {
-    sendgrid: {
-      name: 'SendGrid', logo: 'SG', type: 'email', desc: 'Email provider · Bearer token auth',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Transactional', hint:'A name to identify this connection' },
-        { id:'apikey', label:'API Key', required:true, placeholder:'SG.xxxxxxxxxxxxxxxx', hint:'Found in Settings → API Keys' },
-        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
-        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
-        { id:'webhook_key', label:'Webhook Signing Public Key', required:false, placeholder:'MFkwEwYHKoZIzj0...', hint:'Different from API Key. Found in Mail Settings → Event Webhook' },
-        { id:'sandbox', label:'Sandbox Mode', type:'select', options:['Disabled','Enabled'], required:false, hint:'Enabled = emails not actually delivered' }
-      ]
-    },
-    ses: {
-      name: 'AWS SES', logo: 'SES', type: 'email', desc: 'Email provider · SigV4 SDK auth',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Emergency Email' },
-        { id:'access_key', label:'AWS Access Key ID', required:true, placeholder:'AKIAIOSFODNN7EXAMPLE' },
-        { id:'secret_key', label:'AWS Secret Access Key', required:true, placeholder:'wJalrXUtnFEMI/K7MDENG/...' },
-        { id:'region', label:'Region', type:'select', options:['ap-south-1','us-east-1','us-west-2','eu-west-1','ap-southeast-1'], required:true },
-        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com', hint:'Must be verified in SES for this region' },
-        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
-        { id:'sns_arn', label:'SNS Topic ARN', required:false, placeholder:'arn:aws:sns:ap-south-1:123456:ses-events', hint:'Optional — for delivery event webhooks via SNS' }
-      ]
-    },
-    mailgun: {
-      name: 'Mailgun', logo: 'MG', type: 'email', desc: 'Email provider · HTTP Basic auth',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Backup Email' },
-        { id:'apikey', label:'Private API Key', required:true, placeholder:'key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'domain', label:'Sending Domain', required:true, placeholder:'mg.yourdomain.com' },
-        { id:'region', label:'Region', type:'select', options:['US (api.mailgun.net)','EU (api.eu.mailgun.net)'], required:true, hint:'EU uses separate infrastructure — wrong region returns 401' },
-        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@mg.yourdomain.com' },
-        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
-        { id:'webhook_key', label:'Webhook Signing Key', required:false, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', hint:'Different from API Key. Found in Webhooks section' }
-      ]
-    },
-    mailchimp: {
-      name: 'Mailchimp', logo: 'MC', type: 'email', desc: 'Email provider · Campaign + Transactional',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Marketing Email' },
-        { id:'mc_apikey', label:'Mailchimp API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-us14', hint:'Suffix (e.g. -us14) determines your datacenter' },
-        { id:'mandrill_key', label:'Mandrill API Key', required:false, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', hint:'Required only for transactional sends. Mandrill is a paid add-on.' },
-        { id:'audience_id', label:'Audience List ID', required:true, placeholder:'abc123def4', hint:'Found in Audience → Settings → Audience name and defaults' },
-        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
-        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' }
-      ]
-    },
-    pepipost: {
-      name: 'Pepipost / Netcore', logo: 'PP', type: 'email', desc: 'Email provider · India-optimised',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. India Email' },
-        { id:'apikey', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxx', hint:'Header sent as api_key (lowercase with underscore)' },
-        { id:'from_email', label:'From Email', required:true, placeholder:'noreply@yourdomain.com' },
-        { id:'from_name', label:'From Name', required:true, placeholder:'Fyscal Technologies' },
-        { id:'template_id', label:'Template ID', required:false, placeholder:'12345', hint:'Optional — for Netcore template-based sends' }
-      ]
-    },
-    fcm: {
-      name: 'FCM', logo: 'FCM', type: 'push', desc: 'Push provider · OAuth2 HTTP v1',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Android Push' },
-        { id:'service_json', label:'Service Account JSON', required:true, placeholder:'Paste full service account JSON here...', multiline:true, hint:'Downloaded from Firebase Console → Project Settings → Service accounts' },
-        { id:'project_id', label:'Firebase Project ID', required:true, placeholder:'my-project-12345', hint:'Auto-extractable from service account JSON' },
-        { id:'vapid_key', label:'VAPID Public Key', required:false, placeholder:'BEl62iUYgUivxIkv...', hint:'Required for web push only' }
-      ]
-    },
-    apns: {
-      name: 'APNs', logo: 'APNs', type: 'push', desc: 'Push provider · Token auth (.p8)',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. iOS Push' },
-        { id:'key_file', label:'.p8 Private Key', required:true, placeholder:'Paste contents of AuthKey_XXXXXXXXXX.p8 here...', multiline:true, hint:'Downloaded from Apple Developer → Keys. Shown only once.' },
-        { id:'key_id', label:'Key ID', required:true, placeholder:'ABC123DEF4', hint:'10-character ID shown when .p8 key was created' },
-        { id:'team_id', label:'Team ID', required:true, placeholder:'XYZ987WVU6', hint:'Found in Apple Developer → Membership' },
-        { id:'bundle_id', label:'Bundle ID (apns-topic)', required:true, placeholder:'com.company.appname' },
-        { id:'env', label:'APNs Environment', type:'select', options:['Production','Sandbox'], required:true, hint:'Sandbox for dev builds, Production for App Store / TestFlight' }
-      ]
-    },
-    onesignal: {
-      name: 'OneSignal', logo: '1S', type: 'push', desc: 'Push / In-App provider',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Cross-platform Push' },
-        { id:'app_id', label:'App ID', required:true, placeholder:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
-        { id:'api_key', label:'REST API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
-      ]
-    },
-    clevertap: {
-      name: 'CleverTap', logo: 'CT', type: 'push', desc: 'Push / In-App provider · India/APAC',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. CleverTap Push' },
-        { id:'account_id', label:'Account ID', required:true, placeholder:'XXX-XXX-XXXXXX' },
-        { id:'passcode', label:'Account Passcode', required:true, placeholder:'xxxxxxxxxxxxxxxx' },
-        { id:'region', label:'Region', type:'select', options:['India (in1)','US (us1)','Singapore (sg1)','Europe (eu1)'], required:true }
-      ]
-    },
-    moengage: {
-      name: 'MoEngage', logo: 'MoE', type: 'push', desc: 'Push / In-App provider · India/SEA',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. MoEngage Push' },
-        { id:'app_id', label:'App ID', required:true, placeholder:'XXXXXXXXXXXXXXXXXXXXXXXX' },
-        { id:'api_key', label:'Data API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'datacenter', label:'Data Center', type:'select', options:['India (DC-3)','US (DC-1)','EU (DC-2)','Singapore (DC-4)','Indonesia (DC-5)'], required:true }
-      ]
-    },
-    twilio: {
-      name: 'Twilio', logo: 'TW', type: 'sms', desc: 'SMS provider · Global',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Primary SMS' },
-        { id:'account_sid', label:'Account SID', required:true, placeholder:'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'auth_token', label:'Auth Token', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'from_number', label:'From Number / Sender ID', required:true, placeholder:'+1234567890', hint:'Twilio phone number or approved alphanumeric sender ID' },
-        { id:'webhook_url', label:'Status Callback URL', required:false, placeholder:'https://yourplatform.com/webhooks/twilio', hint:'For delivery status updates' }
-      ]
-    },
-    infobip: {
-      name: 'Infobip', logo: 'IB', type: 'sms', desc: 'SMS provider · Global enterprise',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. SMS Fallback' },
-        { id:'base_url', label:'Base URL', required:true, placeholder:'xxxxx.api.infobip.com', hint:'Unique to your Infobip account' },
-        { id:'api_key', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'sender', label:'Sender ID', required:true, placeholder:'FyscalTech', hint:'Alphanumeric or registered number' }
-      ]
-    },
-    semaphore: {
-      name: 'Semaphore', logo: 'SM', type: 'sms', desc: 'SMS provider · Philippines',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. PH SMS' },
-        { id:'api_key', label:'API Key', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'sender_name', label:'Sender Name', required:true, placeholder:'FyscalTech', hint:'Must be pre-registered with Semaphore' }
-      ]
-    },
-    smart: {
-      name: 'Smart Communications', logo: 'SC', type: 'sms', desc: 'SMS provider · Philippines carrier',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Smart PH SMS' },
-        { id:'client_id', label:'Client ID', required:true, placeholder:'xxxxxxxx' },
-        { id:'client_secret', label:'Client Secret', required:true, placeholder:'xxxxxxxxxxxxxxxx' },
-        { id:'shortcode', label:'Short Code / Sender', required:true, placeholder:'FYSCAL' }
-      ]
-    },
-    globe: {
-      name: 'Globe Telecom', logo: 'GT', type: 'sms', desc: 'SMS provider · Philippines carrier',
-      fields: [
-        { id:'label', label:'Label', required:true, placeholder:'e.g. Globe PH SMS' },
-        { id:'app_id', label:'App ID', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'app_secret', label:'App Secret', required:true, placeholder:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-        { id:'shortcode', label:'Short Code', required:true, placeholder:'21581234' }
-      ]
-    }
-  };
+// ── Marketplace ──
+function openMkt() {
+  document.getElementById('mkt-overlay').classList.add('open');
+  document.getElementById('mkt-step').style.display = 'flex';
+  document.getElementById('cf-step').classList.remove('open');
+  document.getElementById('mkt-inp').value = '';
+  mktFilter = 'all';
+  document.querySelectorAll('.mchip').forEach(function(c,i){ c.className = 'mchip' + (i===0?' oa':''); });
+  filterMkt();
+}
+function closeMkt() { document.getElementById('mkt-overlay').classList.remove('open'); }
+document.getElementById('mkt-overlay').addEventListener('click', function(e){ if(e.target===this) closeMkt(); });
 
-  function openConnectForm(provider) {
-    var cfg = providerForms[provider];
-    if (!cfg) return;
+function setMChip(el, type) {
+  mktFilter = type;
+  document.querySelectorAll('.mchip').forEach(function(c){ c.className='mchip'; });
+  el.className = 'mchip o'+type;
+  filterMkt();
+}
+function filterMkt() {
+  var q = document.getElementById('mkt-inp').value.toLowerCase();
+  document.querySelectorAll('.mkt-card').forEach(function(c){
+    var tm = mktFilter==='all' || c.dataset.t===mktFilter;
+    var qm = q==='' || c.innerText.toLowerCase().includes(q);
+    c.style.display = (tm && qm) ? '' : 'none';
+  });
+  ['email','push','sms'].forEach(function(s){
+    var grid = document.querySelector('.mkt-grid[data-sec="'+s+'"]');
+    var label = document.querySelector('.mkt-sec[data-sec="'+s+'"]');
+    var vis = Array.from(grid.querySelectorAll('.mkt-card')).some(function(c){ return c.style.display!=='none'; });
+    var sm = mktFilter==='all' || mktFilter===s;
+    grid.style.display = (vis && sm) ? '' : 'none';
+    label.style.display = (vis && sm) ? '' : 'none';
+  });
+}
 
-    document.getElementById('step-market').style.display = 'none';
-    document.getElementById('step-form').classList.add('open');
+// ── Connect form ──
+function openCF(key) {
+  var p = PROVIDERS[key]; if(!p) return;
+  document.getElementById('mkt-step').style.display = 'none';
+  document.getElementById('cf-step').classList.add('open');
+  document.getElementById('cf-logo').textContent = p.logo;
+  document.getElementById('cf-name').textContent = p.name;
+  document.getElementById('cf-desc').textContent = p.desc;
+  var bt = {email:'b-email',push:'b-push',sms:'b-sms'};
+  var bl = {email:'Email',push:'Push',sms:'SMS'};
+  document.getElementById('cf-badge').innerHTML = '<span class="badge '+bt[p.type]+'">'+bl[p.type]+'</span>';
+  document.getElementById('cf-tmsg').innerHTML = '';
+  var body = document.getElementById('cf-body'); body.innerHTML = '';
+  p.fields.forEach(function(f){
+    var wrap = document.createElement('div'); wrap.className = 'cf-field';
+    var lbl = document.createElement('label'); lbl.className = 'cf-label';
+    lbl.innerHTML = f.l + ' <span class="'+(f.r?'req-tag">Required':'opt-tag">Optional')+'</span>';
+    wrap.appendChild(lbl);
+    if(f.sel){ var sel=document.createElement('select'); sel.className='cf-select'; f.sel.forEach(function(o){var op=document.createElement('option');op.textContent=o;sel.appendChild(op);}); wrap.appendChild(sel); }
+    else if(f.ta){ var ta=document.createElement('textarea'); ta.className='cf-textarea'; ta.placeholder=f.p||''; wrap.appendChild(ta); }
+    else { var inp=document.createElement('input'); inp.className='cf-input'; inp.placeholder=f.p||''; inp.type=f.pw?'password':'text'; wrap.appendChild(inp); }
+    if(f.h){ var hint=document.createElement('div'); hint.className='cf-hint'; hint.textContent=f.h; wrap.appendChild(hint); }
+    body.appendChild(wrap);
+  });
+}
+function backMkt() { document.getElementById('mkt-step').style.display='flex'; document.getElementById('cf-step').classList.remove('open'); }
+function runTest(msgId) {
+  var el = document.getElementById(msgId);
+  el.className='test-msg loading'; el.textContent='Testing...';
+  setTimeout(function(){ el.className='test-msg ok'; el.textContent='✓ Connection successful'; }, 1400);
+}
+function saveConn() {
+  var el = document.getElementById('cf-tmsg');
+  el.className='test-msg ok'; el.textContent='✓ Connection saved';
+  setTimeout(function(){ closeMkt(); }, 700);
+}
 
-    document.getElementById('cf-logo').textContent = cfg.logo;
-    document.getElementById('cf-pname').textContent = cfg.name;
-    document.getElementById('cf-pdesc').textContent = cfg.desc;
+// ── Edit modal ──
+function openEdit(id) {
+  curDetail = id;
+  var d = DETAILS[id]; if(!d) return;
+  var el = document.getElementById('edit-title');
+  if(el) el.textContent = 'Edit — ' + d.name + ' · ' + d.label;
+  document.getElementById('edit-tmsg').innerHTML='';
+  document.getElementById('edit-overlay').classList.add('open');
+}
+function closeEdit() { document.getElementById('edit-overlay').classList.remove('open'); }
+document.getElementById('edit-overlay').addEventListener('click', function(e){ if(e.target===this) closeEdit(); });
 
-    var typeColors = { email: 'b-email', push: 'b-push', sms: 'b-sms' };
-    document.getElementById('cf-type-badge').innerHTML = '<span class="badge ' + typeColors[cfg.type] + '">' + cfg.type.charAt(0).toUpperCase() + cfg.type.slice(1) + '</span>';
+// ── View Details panel ──
+function openDetail(id) {
+  curDetail = id;
+  var d = DETAILS[id]; if(!d) return;
+  var bt = {email:'b-email',push:'b-push',sms:'b-sms'};
+  var st = {active:'b-active',inactive:'b-inactive',error:'b-error'};
+  var bl = {email:'Email',push:'Push',sms:'SMS'};
+  var sl = {active:'Active',inactive:'Inactive',error:'Error'};
+  var body = document.getElementById('dp-body');
+  var html = '';
+  // Identity
+  html += '<div class="dp-sec"><div class="dp-sec-title">Identity</div>';
+  html += '<div class="dp-row"><span class="dp-key">Provider</span><span class="dp-val plain">'+d.name+'</span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Label</span><span class="dp-val plain">'+d.label+'</span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Channel</span><span class="dp-val plain"><span class="badge '+bt[d.type]+'">'+bl[d.type]+'</span></span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Status</span><span class="dp-val plain"><span class="badge '+st[d.status]+'">'+sl[d.status]+'</span></span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Created at</span><span class="dp-val">'+d.created+'</span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Updated at</span><span class="dp-val">'+d.updated+'</span></div>';
+  html += '</div>';
+  // Credentials
+  html += '<div class="dp-sec"><div class="dp-sec-title">Credentials</div>';
+  html += '<div class="dp-row"><span class="dp-key">'+d.credLabel+'</span><span class="dp-val">'+d.credMask+'</span></div>';
+  if(d.fromEmail) html += '<div class="dp-row"><span class="dp-key">From email</span><span class="dp-val">'+d.fromEmail+'</span></div>';
+  if(d.fromName) html += '<div class="dp-row"><span class="dp-key">From name</span><span class="dp-val plain">'+d.fromName+'</span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Region</span><span class="dp-val plain">'+d.region+'</span></div>';
+  html += '<div class="dp-row"><span class="dp-key">Environment</span><span class="dp-val plain">'+d.env+'</span></div>';
+  html += '</div>';
+  // Routing usage
+  html += '<div class="dp-sec"><div class="dp-sec-title">Routing usage</div>';
+  html += '<div style="padding:7px 0;"><span class="dp-routing-tag">'+d.routing+'</span></div>';
+  html += '</div>';
+  // Recent activity
+  html += '<div class="dp-sec"><div class="dp-sec-title">Recent activity</div>';
+  html += '<div class="dp-act-row"><div class="dp-act-label">Total sends — last 7 days</div><div class="dp-act-val">'+d.sends7d+'</div></div>';
+  html += '<div class="dp-act-row"><div class="dp-act-label">Last successful send</div><div class="dp-act-val">'+d.lastOk+'</div></div>';
+  html += '<div class="dp-act-row"><div class="dp-act-label">Last failed send</div><div class="dp-act-val">'+d.lastFail+'</div>';
+  if(d.failReason !== '—') html += '<div class="dp-act-sub">'+d.failReason+'</div>';
+  html += '</div></div>';
+  body.innerHTML = html;
+  document.getElementById('dp-overlay').classList.add('open');
+}
+function closeDetail() { document.getElementById('dp-overlay').classList.remove('open'); }
+document.getElementById('dp-overlay').addEventListener('click', function(e){ if(e.target===this) closeDetail(); });
 
-    var body = document.getElementById('cf-body');
-    body.innerHTML = '';
-    document.getElementById('cf-test-result').innerHTML = '';
+// ── Routing strategy tabs ──
+function switchStrat(el) {
+  var p = el.closest('.ch-block');
+  p.querySelectorAll('.stab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+}
 
-    cfg.fields.forEach(function(f) {
-      var wrap = document.createElement('div');
-      wrap.className = 'cf-field';
-
-      var label = document.createElement('label');
-      label.className = 'cf-label';
-      label.innerHTML = f.label + ' <span class="' + (f.required ? 'cf-required">Required' : 'cf-optional">Optional') + '</span>';
-      wrap.appendChild(label);
-
-      if (f.type === 'select') {
-        var sel = document.createElement('select');
-        sel.className = 'cf-select';
-        f.options.forEach(function(o) {
-          var opt = document.createElement('option');
-          opt.textContent = o;
-          sel.appendChild(opt);
-        });
-        wrap.appendChild(sel);
-      } else if (f.multiline) {
-        var ta = document.createElement('textarea');
-        ta.className = 'cf-input';
-        ta.placeholder = f.placeholder || '';
-        ta.rows = 4;
-        ta.style.resize = 'vertical';
-        ta.style.fontFamily = 'monospace';
-        ta.style.fontSize = '11px';
-        wrap.appendChild(ta);
-      } else {
-        var inp = document.createElement('input');
-        inp.className = 'cf-input';
-        inp.placeholder = f.placeholder || '';
-        inp.type = (f.id.includes('secret') || f.id.includes('token') || f.id.includes('key') || f.id.includes('passcode')) ? 'password' : 'text';
-        wrap.appendChild(inp);
-      }
-
-      if (f.hint) {
-        var hint = document.createElement('div');
-        hint.className = 'cf-hint';
-        hint.textContent = f.hint;
-        wrap.appendChild(hint);
-      }
-
-      body.appendChild(wrap);
-    });
-  }
-
-  function backToMarket() {
-    document.getElementById('step-market').style.display = 'flex';
-    document.getElementById('step-form').classList.remove('open');
-  }
-
-  function testConnection() {
-    var el = document.getElementById('cf-test-result');
-    el.textContent = 'Testing...';
-    el.className = 'cf-test-result';
-    setTimeout(function() {
-      el.innerHTML = '✓ Connection successful';
-      el.className = 'cf-test-result ok';
-    }, 1400);
-  }
-
-  function saveProvider() {
-    var el = document.getElementById('cf-test-result');
-    el.innerHTML = '✓ Provider saved';
-    el.className = 'cf-test-result ok';
-    setTimeout(function() { closeModal(); }, 800);
-  }
+// ── Analytics date + channel chips ──
+document.querySelectorAll('.date-chip').forEach(function(c){
+  c.addEventListener('click', function(){
+    document.querySelectorAll('.date-chip').forEach(function(x){ x.classList.remove('on'); });
+    this.classList.add('on');
+  });
+});
+document.querySelectorAll('.ch-filter .chip').forEach(function(c){
+  c.addEventListener('click', function(){
+    document.querySelectorAll('.ch-filter .chip').forEach(function(x){ x.classList.remove('on'); });
+    this.classList.add('on');
+  });
+});
 </script>
 </body>
 </html>
