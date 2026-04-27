@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Connector Hub — Fyscal Technologies</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%;font-family:-apple-system,'Segoe UI','Helvetica Neue',sans-serif;background:#f8f9fa;color:#111827;font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:3px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback}=React;
+
+const C={
+  blue:"#3B56F0",blueL:"#EEF0FD",blueM:"#C5CBF9",blueDark:"#2d42c4",
+  green:"#16a34a",greenL:"#f0fdf4",greenB:"#bbf7d0",greenT:"#15803d",
+  red:"#dc2626",redL:"#fef2f2",redB:"#fecaca",redT:"#b91c1c",
+  amber:"#d97706",amberL:"#fffbeb",amberB:"#fde68a",amberT:"#92400e",
+  purple:"#7c3aed",purpleL:"#f5f3ff",purpleB:"#ddd6fe",
+  gray:"#6b7280",grayL:"#f3f4f6",grayB:"#e5e7eb",
+  border:"#e5e7eb",bg:"#ffffff",bg2:"#f9fafb",bg3:"#f3f4f6",
+  text:"#111827",t2:"#6b7280",t3:"#9ca3af",
+};
+
+/* ── DATA ── */
+const CONNECTIONS=[
+  {id:8,provider:"SendGrid",logo:"SG",cred:"•••• 9x3z",label:"Marketing",type:"Email",status:"Active",region:"Global",created:"Apr 27, 2026"},
+  {id:7,provider:"SendGrid",logo:"SG",cred:"•••• 4f2a",label:"Transactional",type:"Email",status:"Active",region:"Global",created:"Apr 20, 2026"},
+  {id:6,provider:"Mailgun",logo:"MG",cred:"•••• 9c1b",label:"Backup",type:"Email",status:"Inactive",region:"US",created:"Apr 18, 2026"},
+  {id:5,provider:"AWS SES",logo:"SES",cred:"•••• 2e8f",label:"Emergency",type:"Email",status:"Error",region:"ap-south-1",created:"Apr 10, 2026"},
+  {id:4,provider:"FCM",logo:"FCM",cred:"•••• 7d3c",label:"Android Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026"},
+  {id:3,provider:"APNs",logo:"APNs",cred:"•••• 3a9d",label:"iOS Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026"},
+  {id:2,provider:"Twilio",logo:"TW",cred:"•••• 1a9f",label:"Primary SMS",type:"Sms",status:"Active",region:"IN",created:"Apr 05, 2026"},
+  {id:1,provider:"Infobip",logo:"IB",cred:"•••• 5b2e",label:"SMS Fallback",type:"Sms",status:"Inactive",region:"Global",created:"Mar 28, 2026"},
+];
+
+const PROVIDERS=[
+  {key:"sendgrid",name:"SendGrid",logo:"SG",type:"Email",desc:"Reliable transactional email with ECDSA webhook delivery tracking."},
+  {key:"ses",name:"AWS SES",logo:"SES",type:"Email",desc:"High-volume cloud email via AWS. SigV4 auth."},
+  {key:"mailgun",name:"Mailgun",logo:"MG",type:"Email",desc:"Developer-focused email API. US and EU regions."},
+  {key:"mailchimp",name:"Mailchimp/Mandrill",logo:"MC",type:"Email",desc:"Marketing campaigns + transactional via Mandrill."},
+  {key:"pepipost",name:"Pepipost/Netcore",logo:"PP",type:"Email",desc:"India-optimised. Jio/Airtel/BSNL whitelisted IPs."},
+  {key:"fcm",name:"FCM",logo:"FCM",type:"Push",desc:"Firebase Cloud Messaging. HTTP v1 only."},
+  {key:"apns",name:"APNs",logo:"APNs",type:"Push",desc:"Apple Push. .p8 token auth over HTTP/2."},
+  {key:"onesignal",name:"OneSignal",logo:"1S",type:"Push",desc:"Multi-platform push. Segments and A/B testing."},
+  {key:"clevertap",name:"CleverTap",logo:"CT",type:"Push",desc:"India/APAC engagement. Region-specific endpoints."},
+  {key:"moengage",name:"MoEngage",logo:"MoE",type:"Push",desc:"India/SEA push. Multi-datacenter."},
+  {key:"twilio",name:"Twilio",logo:"TW",type:"Sms",desc:"Global SMS. Delivery webhooks and callbacks."},
+  {key:"infobip",name:"Infobip",logo:"IB",type:"Sms",desc:"Enterprise SMS. 190+ countries."},
+  {key:"semaphore",name:"Semaphore",logo:"SM",type:"Sms",desc:"Philippines SMS. Globe and Smart networks."},
+  {key:"smart",name:"Smart Comms",logo:"SC",type:"Sms",desc:"Smart PH carrier direct gateway."},
+  {key:"globe",name:"Globe Telecom",logo:"GT",type:"Sms",desc:"Globe PH carrier. Short codes."},
+];
+
+const PROVIDER_FIELDS={
+  sendgrid:[{l:"Notification Type",r:1,sel:["Email","Push","Sms"]},{l:"Label",r:1,p:"e.g. Transactional"},{l:"API Key",r:1,p:"SG.xxxxxxxxxxxxxxxx",pw:1},{l:"From Email",r:1,p:"noreply@yourdomain.com"},{l:"From Name",r:1,p:"Fyscal Technologies"},{l:"Webhook Signing Key",r:0,p:"MFkwEwYH...",pw:1,hint:"Found in Mail Settings → Event Webhook"},{l:"Sandbox Mode",r:0,sel:["Disabled","Enabled"]}],
+  ses:[{l:"Notification Type",r:1,sel:["Email","Push","Sms"]},{l:"Label",r:1,p:"e.g. Emergency Email"},{l:"AWS Access Key ID",r:1,p:"AKIAIOSFODNN7EXAMPLE",pw:1},{l:"AWS Secret Access Key",r:1,p:"wJalrXUtnFEMI/K7MDENG/...",pw:1},{l:"Region",r:1,sel:["ap-south-1","us-east-1","us-west-2","eu-west-1","ap-southeast-1"],hint:"Must match your verified identity region"},{l:"From Email",r:1,p:"noreply@yourdomain.com"},{l:"From Name",r:1,p:"Fyscal Technologies"},{l:"SNS Topic ARN",r:0,p:"arn:aws:sns:ap-south-1:123456:ses-events"}],
+  fcm:[{l:"Notification Type",r:1,sel:["Email","Push","Sms"]},{l:"Label",r:1,p:"e.g. Android Push"},{l:"Service Account JSON",r:1,p:"Paste full service account JSON here...",ta:1,hint:"Downloaded from Firebase Console → Project Settings"},{l:"Firebase Project ID",r:1,p:"my-project-12345"},{l:"VAPID Public Key",r:0,p:"BEl62iUYgUivxIkv...",hint:"Required for web push only"}],
+  apns:[{l:"Notification Type",r:1,sel:["Email","Push","Sms"]},{l:"Label",r:1,p:"e.g. iOS Push"},{l:".p8 Private Key",r:1,p:"Paste AuthKey_XXXXXXXXXX.p8 contents...",ta:1,hint:"Downloaded from Apple Developer → Keys. Shown only once."},{l:"Key ID",r:1,p:"ABC123DEF4"},{l:"Team ID",r:1,p:"XYZ987WVU6"},{l:"Bundle ID",r:1,p:"com.company.appname"},{l:"APNs Environment",r:1,sel:["Production","Sandbox"]}],
+  twilio:[{l:"Notification Type",r:1,sel:["Email","Push","Sms"]},{l:"Label",r:1,p:"e.g. Primary SMS"},{l:"Account SID",r:1,p:"ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"},{l:"Auth Token",r:1,p:"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",pw:1},{l:"From Number / Sender ID",r:1,p:"+1234567890"},{l:"Status Callback URL",r:0,p:"https://yourplatform.com/webhooks/twilio"}],
+};
+const getF=k=>PROVIDER_FIELDS[k]||PROVIDER_FIELDS.sendgrid;
+
+const ROUTING_DATA=[
+  {id:1,name:"Email Fallback Chain",type:"Fallback Chain",subdomain:"Mail",desc:"SendGrid → Mailgun → AWS SES",status:"Active",created:"Apr 20, 2026",
+   connectors:[{logo:"SG",name:"SendGrid",label:"Transactional",pos:1},{logo:"MG",name:"Mailgun",label:"Backup",pos:2},{logo:"SES",name:"AWS SES",label:"Emergency",pos:3,err:true}]},
+  {id:2,name:"Email Weighted Split",type:"Weighted Split",subdomain:"Mail",desc:"SendGrid 60% / Mailgun 40%",status:"Inactive",created:"Apr 18, 2026",
+   connectors:[{logo:"SG",name:"SendGrid",label:"Marketing",weight:60},{logo:"MG",name:"Mailgun",label:"Backup",weight:40}]},
+  {id:3,name:"Push Weighted Split",type:"Weighted Split",subdomain:"Push",desc:"FCM 60% / APNs 40%",status:"Active",created:"Apr 08, 2026",
+   connectors:[{logo:"FCM",name:"FCM",label:"Android Push",weight:60},{logo:"APNs",name:"APNs",label:"iOS Push",weight:40}]},
+  {id:4,name:"SMS Volume Cap",type:"Volume Cap Overflow",subdomain:"SMS",desc:"Twilio → Infobip (overflow at 10k/day)",status:"Active",created:"Apr 05, 2026",
+   connectors:[{logo:"TW",name:"Twilio",label:"Primary SMS",cap:10000},{logo:"IB",name:"Infobip",label:"SMS Fallback",role:"overflow"}]},
+];
+
+const CHART_DATA=[
+  {label:"SendGrid",short:"SG",type:"Email",total:1240,success:1113,failed:127},
+  {label:"Mailgun",short:"MG",type:"Email",total:320,success:308,failed:12},
+  {label:"AWS SES",short:"SES",type:"Email",total:45,success:20,failed:25},
+  {label:"FCM",short:"FCM",type:"Push",total:2810,success:2748,failed:62},
+  {label:"APNs",short:"APNs",type:"Push",total:1880,success:1835,failed:45},
+  {label:"Twilio",short:"TW",type:"Sms",total:990,success:891,failed:99},
+  {label:"Infobip",short:"IB",type:"Sms",total:130,success:130,failed:0},
+  {label:"Semaphore",short:"SM",type:"Sms",total:80,success:80,failed:0},
+];
+
+/* ── Badges ── */
+const TYPE_S={Email:{bg:C.blueL,c:C.blue,b:C.blueM},Push:{bg:C.purpleL,c:C.purple,b:C.purpleB},Sms:{bg:C.greenL,c:C.greenT,b:C.greenB}};
+const STATUS_S={Active:{bg:C.greenL,c:C.greenT,b:C.greenB},Inactive:{bg:C.grayL,c:C.gray,b:C.grayB},Error:{bg:C.redL,c:C.redT,b:C.redB},Failed:{bg:C.redL,c:C.redT,b:C.redB},Queued:{bg:C.amberL,c:C.amberT,b:C.amberB},Sent:{bg:C.greenL,c:C.greenT,b:C.greenB},Delivered:{bg:C.greenL,c:C.greenT,b:C.greenB},Fallback:{bg:C.purpleL,c:"#5b21b6",b:C.purpleB},Mail:{bg:C.blueL,c:C.blue,b:C.blueM},Push:{bg:C.purpleL,c:C.purple,b:C.purpleB},SMS:{bg:C.greenL,c:C.greenT,b:C.greenB}};
+function Badge({label,sx={}}){const s=TYPE_S[label]||STATUS_S[label]||{bg:C.grayL,c:C.gray,b:C.grayB};return<span style={{display:"inline-flex",alignItems:"center",padding:"2px 9px",borderRadius:4,fontSize:11.5,fontWeight:500,background:s.bg,color:s.c,border:`1px solid ${s.b}`,...sx}}>{label}</span>;}
+
+/* ── Button ── */
+function Btn({children,variant="default",onClick,sx={},disabled}){
+  const base={display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,fontWeight:500,borderRadius:7,cursor:disabled?"not-allowed":"pointer",border:"none",fontSize:13,padding:"8px 18px",transition:"all .12s",opacity:disabled?.5:1};
+  const vs={default:{background:"#111827",color:"#fff"},outline:{background:C.bg,border:`1px solid ${C.grayB}`,color:C.t2},blue:{background:C.blue,color:"#fff"},ghost:{background:"transparent",color:C.t2,padding:"5px 10px"}};
+  return<button onClick={onClick} disabled={disabled} style={{...base,...vs[variant],...sx}}
+    onMouseEnter={e=>{if(!disabled){if(variant==="default")e.currentTarget.style.background="#1f2937";if(variant==="blue")e.currentTarget.style.background=C.blueDark;if(variant==="outline")e.currentTarget.style.background=C.bg2;}}}
+    onMouseLeave={e=>{if(!disabled){if(variant==="default")e.currentTarget.style.background="#111827";if(variant==="blue")e.currentTarget.style.background=C.blue;if(variant==="outline")e.currentTarget.style.background=C.bg;}}}>{children}</button>;
+}
+function Input({placeholder,type="text",value,onChange,sx={}}){
+  return<input type={type} placeholder={placeholder} value={value} onChange={onChange} style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.text,background:C.bg,outline:"none",...sx}} onFocus={e=>{e.currentTarget.style.borderColor=C.blue;e.currentTarget.style.boxShadow=`0 0 0 3px ${C.blueL}`}} onBlur={e=>{e.currentTarget.style.borderColor=C.grayB;e.currentTarget.style.boxShadow="none"}}/>;
+}
+function Select({options,defaultValue,sx={}}){return<select defaultValue={defaultValue} style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.text,background:C.bg,outline:"none",cursor:"pointer",...sx}}>{options.map(o=><option key={o}>{o}</option>)}</select>;}
+
+/* ── Dots Menu ── */
+function DotsMenu({items}){
+  const [open,setOpen]=useState(false);
+  const ref=useRef();
+  useEffect(()=>{const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false)};document.addEventListener("mousedown",h);return()=>document.removeEventListener("mousedown",h);},[]);
+  return(
+    <div ref={ref} style={{position:"relative",display:"inline-block"}} onClick={e=>e.stopPropagation()}>
+      <button onClick={()=>setOpen(o=>!o)} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,padding:"2px 7px",borderRadius:5,letterSpacing:"2px",lineHeight:1}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="none"}>⋮</button>
+      {open&&<div style={{position:"absolute",right:0,top:26,background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,boxShadow:"0 4px 24px rgba(0,0,0,.1)",minWidth:175,zIndex:80,padding:"4px 0",overflow:"hidden"}}>
+        {items.map(([label,color,fn])=><button key={label} onClick={()=>{fn&&fn();setOpen(false)}} style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"8px 14px",fontSize:12.5,color:color||C.blue,background:"none",border:"none",cursor:"pointer",textAlign:"left"}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="none"}>{label}</button>)}
+      </div>}
+    </div>
+  );
+}
+
+/* ── Sidebar ── */
+function Sidebar(){
+  const [commOpen,setCommOpen]=useState(true);
+  const NavRow=({label,active,indent=0,hasArrow,onClick})=>(
+    <div onClick={onClick} style={{display:"flex",alignItems:"center",gap:9,padding:`6px 16px 6px ${16+indent}px`,cursor:"pointer",color:active?C.blue:C.text,fontWeight:active?600:400,fontSize:13,background:active?C.blueL:"transparent",borderLeft:active?`3px solid ${C.blue}`:"3px solid transparent"}} onMouseEnter={e=>{if(!active)e.currentTarget.style.background=C.bg2}} onMouseLeave={e=>{if(!active)e.currentTarget.style.background="transparent"}}>
+      <span style={{flex:1}}>{label}</span>{hasArrow&&<span style={{fontSize:11,color:active?C.blue:C.t3}}>›</span>}
+    </div>
+  );
+  return(
+    <aside style={{width:224,flexShrink:0,background:C.bg,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",height:"100%",overflowY:"auto"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"14px 16px",borderBottom:`1px solid ${C.border}`}}>
+        <div style={{width:32,height:32,borderRadius:7,background:C.blue,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <svg width="20" height="14" viewBox="0 0 20 14"><text x="0" y="12" fill="#fff" fontSize="12" fontWeight="800" fontFamily="sans-serif">FT</text></svg>
+        </div>
+        <div style={{fontSize:10.5,fontWeight:700,color:C.text,letterSpacing:".04em",lineHeight:1.3}}>FYSCAL<br/>TECHNOLOGIES</div>
+        <div style={{marginLeft:"auto",cursor:"pointer"}}>{[0,1,2].map(i=><div key={i} style={{width:16,height:1.5,background:C.t3,borderRadius:1,marginBottom:i<2?3:0}}/>)}</div>
+      </div>
+      <nav style={{flex:1,padding:"6px 0"}}>
+        <div style={{fontSize:10.5,fontWeight:600,color:C.t3,padding:"8px 16px 4px",letterSpacing:".07em"}}>Platform</div>
+        {["Homepage","Customers & KYC","Digital Goods"].map(l=><NavRow key={l} label={l} hasArrow={l!=="Homepage"}/>)}
+        <div onClick={()=>setCommOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:9,padding:"6px 16px",cursor:"pointer",color:C.blue,fontWeight:600,fontSize:13,background:C.blueL,borderLeft:`3px solid ${C.blue}`}}>
+          <span style={{flex:1}}>Communication</span><span style={{fontSize:11,color:C.blue,transform:commOpen?"rotate(90deg)":"rotate(0deg)",transition:"transform .15s"}}>›</span>
+        </div>
+        {commOpen&&<div>
+          {["Notification Logs","Manage Template","Config"].map(c=><NavRow key={c} label={c} indent={16}/>)}
+          <div style={{display:"flex",alignItems:"center",gap:9,padding:"6px 16px 6px 32px",color:C.blue,fontWeight:600,fontSize:12.5,background:C.blueL,borderLeft:`3px solid ${C.blue}`}}>
+            <span style={{flex:1}}>Connectors</span><span style={{fontSize:11,color:C.t3}}>›</span>
+          </div>
+        </div>}
+        {["Alerts","Payments","Name Screening","Admin","Audit Trails","Ledger","Merchants & KYB","Analytics"].map(l=><NavRow key={l} label={l} hasArrow={l!=="Audit Trails"}/>)}
+      </nav>
+      <div style={{borderTop:`1px solid ${C.border}`,padding:"10px 14px",display:"flex",alignItems:"center",gap:9}}>
+        <div style={{width:30,height:30,borderRadius:"50%",background:C.blueL,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:C.blue,flexShrink:0}}>UG</div>
+        <div><div style={{fontSize:12,fontWeight:600,color:C.text}}>Utkarsh Giri</div><div style={{fontSize:10,color:C.t3}}>ut****@*****ech.com</div></div>
+        <span style={{marginLeft:"auto",fontSize:14,color:C.t3,cursor:"pointer"}}>⋯</span>
+      </div>
+    </aside>
+  );
+}
+
+/* ── Modal Shell ── */
+function ModalShell({title,subtitle,children,onClose,width=700}){
+  return(
+    <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+      <div style={{background:C.bg,borderRadius:12,width,maxWidth:"96%",maxHeight:"92vh",display:"flex",flexDirection:"column",boxShadow:"0 12px 48px rgba(0,0,0,.18)",overflow:"hidden"}}>
+        <div style={{padding:"18px 22px 14px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+            <div><div style={{fontSize:17,fontWeight:600,color:C.text}}>{title}</div>{subtitle&&<div style={{fontSize:12.5,color:C.t2,marginTop:3}}>{subtitle}</div>}</div>
+            <button onClick={onClose} style={{width:28,height:28,border:`1px solid ${C.grayB}`,borderRadius:6,background:"none",cursor:"pointer",fontSize:15,color:C.t2,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          </div>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ── Step Indicator ── */
+function StepIndicator({steps,current}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:8,marginTop:14}}>
+      {steps.map((s,i)=>(
+        <React.Fragment key={s}>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{width:22,height:22,borderRadius:"50%",background:i<=current?C.blue:C.grayB,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10.5,fontWeight:700,color:i<=current?"#fff":C.t3}}>{i<current?"✓":i+1}</div>
+            <span style={{fontSize:12,color:i===current?C.text:C.t3,fontWeight:i===current?500:400}}>{s}</span>
+          </div>
+          {i<steps.length-1&&<span style={{color:C.grayB,fontSize:12}}>—</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+/* ── Provider Selector ── */
+function ProviderSelector({onSelect,onClose}){
+  const [mf,setMf]=useState("All");const [q,setQ]=useState("");
+  const filtered=PROVIDERS.filter(p=>(mf==="All"||p.type===mf)&&(q===""||p.name.toLowerCase().includes(q.toLowerCase())));
+  return(
+    <ModalShell title="New Connection" subtitle="Select a provider to configure and connect." onClose={onClose} width={760}>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px 22px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+        <div style={{flex:1,display:"flex",alignItems:"center",gap:8,border:`1px solid ${C.grayB}`,borderRadius:7,padding:"7px 11px"}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search providers..." style={{border:"none",outline:"none",fontSize:13,flex:1,color:C.text,background:"transparent"}}/>
+        </div>
+        <div style={{display:"flex",border:`1px solid ${C.grayB}`,borderRadius:7,overflow:"hidden"}}>
+          {["All","Email","Push","Sms"].map(t=><button key={t} onClick={()=>setMf(t)} style={{padding:"7px 15px",fontSize:12.5,border:"none",cursor:"pointer",background:mf===t?"#111827":C.bg,color:mf===t?"#fff":C.t2,fontWeight:mf===t?500:400}}>{t}</button>)}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:20}}>
+        {["Email","Push","Sms"].map(g=>{
+          const items=filtered.filter(p=>p.type===g);
+          if(!items.length||(mf!=="All"&&mf!==g))return null;
+          return<div key={g} style={{marginBottom:20}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{fontSize:11,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".07em"}}>{g==="Sms"?"SMS":g} Providers</span><div style={{flex:1,height:1,background:C.border}}/></div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9}}>
+              {items.map(p=>{const ts=TYPE_S[p.type]||TYPE_S.Email;return(
+                <button key={p.key} onClick={()=>onSelect(p)} style={{textAlign:"left",border:`1px solid ${C.border}`,borderRadius:9,padding:"13px 14px",background:C.bg,cursor:"pointer",transition:"all .12s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.blue;e.currentTarget.style.background=C.blueL;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.background=C.bg;}}>
+                  <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:7}}>
+                    <div style={{width:32,height:32,borderRadius:7,background:C.bg2,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:C.t2,flexShrink:0}}>{p.logo}</div>
+                    <div><div style={{fontSize:12.5,fontWeight:600,color:C.text}}>{p.name}</div><span style={{background:ts.bg,border:`1px solid ${ts.b}`,color:ts.c,padding:"0 6px",borderRadius:3,fontSize:10,fontWeight:500}}>{p.type}</span></div>
+                  </div>
+                  <div style={{fontSize:11.5,color:C.t3,lineHeight:1.5}}>{p.desc}</div>
+                  <div style={{fontSize:11.5,color:C.blue,fontWeight:500,marginTop:7}}>+ Connect →</div>
+                </button>
+              );})}
+            </div>
+          </div>;
+        })}
+        <div style={{border:`1.5px dashed ${C.grayB}`,borderRadius:9,padding:"14px 18px",display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:4}}>
+          <div><div style={{fontSize:13,fontWeight:500,color:C.text}}>Don't see your provider?</div><div style={{fontSize:12,color:C.t3,marginTop:2}}>Submit a connector request — we prioritise based on demand.</div></div>
+          <Btn variant="outline">Submit request →</Btn>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}
+
+/* ── Connect Form ── */
+function ConnectForm({provider,onBack,onNext,onClose}){
+  const fields=getF(provider?.key);
+  return(
+    <ModalShell title="Create Connection" subtitle="Fill out the form below to create a new connection." onClose={onClose} width={720}>
+      <div style={{padding:"0 22px 14px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}><StepIndicator steps={["Provider details","Review & connect"]} current={0}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:12,padding:"11px 22px",background:C.blueL,borderBottom:`1px solid ${C.blueM}`,flexShrink:0}}>
+        <div style={{width:34,height:34,borderRadius:7,background:C.bg,border:`1px solid ${C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9.5,fontWeight:700,color:C.blue,flexShrink:0}}>{provider?.logo}</div>
+        <div><div style={{fontSize:13.5,fontWeight:600,color:C.text}}>{provider?.name}</div><div style={{fontSize:11.5,color:C.t2}}>{provider?.desc}</div></div>
+        <Badge label={provider?.type} sx={{marginLeft:"auto"}}/>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"18px 22px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,alignContent:"start"}}>
+        {fields.map((f,i)=>(
+          <div key={i} style={{gridColumn:f.ta?"1/-1":"auto"}}>
+            <label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:5}}>{f.l} {f.r&&<span style={{color:C.red}}>*</span>}</label>
+            {f.sel?<Select options={f.sel} defaultValue={f.sel[0]}/>:f.ta?<textarea placeholder={f.p} rows={3} style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:11.5,fontFamily:"monospace",color:C.text,background:C.bg,outline:"none",resize:"vertical"}}/>:<Input placeholder={f.p||""} type={f.pw?"password":"text"}/>}
+            {f.hint&&<div style={{fontSize:11,color:C.t3,marginTop:4,lineHeight:1.4}}>{f.hint}</div>}
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"13px 22px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
+        <Btn variant="outline" onClick={onBack}>← Back</Btn><div style={{flex:1}}/><Btn variant="outline" onClick={onClose}>Cancel</Btn><Btn variant="default" onClick={onNext}>Next →</Btn>
+      </div>
+    </ModalShell>
+  );
+}
+
+/* ── Summary Page ── */
+function SummaryPage({provider,onBack,onClose}){
+  const [ts,setTs]=useState(null);
+  const runTest=()=>{setTs("loading");setTimeout(()=>setTs("ok"),1500)};
+  const rows=[["Provider",provider?.name],["Channel type",provider?.type],["Label","Transactional"],["Credential key","•••• saved securely"],["From email","noreply@fyscaltech.com"],["Region","Global"],["Environment","Production"],["Status","Active"]];
+  return(
+    <ModalShell title="Review & Connect" subtitle="Review your connection details before saving." onClose={onClose} width={580}>
+      <div style={{padding:"0 22px 14px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}><StepIndicator steps={["Provider details","Review & connect"]} current={1}/></div>
+      <div style={{flex:1,overflowY:"auto",padding:"18px 22px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:13,padding:"14px 16px",background:C.blueL,border:`1px solid ${C.blueM}`,borderRadius:9,marginBottom:18}}>
+          <div style={{width:42,height:42,borderRadius:9,background:C.bg,border:`1px solid ${C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10.5,fontWeight:700,color:C.blue,flexShrink:0}}>{provider?.logo}</div>
+          <div style={{flex:1}}><div style={{fontSize:15,fontWeight:600,color:C.text}}>{provider?.name}</div><div style={{fontSize:12,color:C.t2,marginTop:2}}>{provider?.desc}</div></div>
+          <Badge label={provider?.type}/>
+        </div>
+        <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden"}}>
+          {rows.map(([k,v],i)=><div key={k} style={{display:"flex",alignItems:"center",padding:"10px 16px",borderBottom:i<rows.length-1?`1px solid ${C.bg2}`:"none"}}><span style={{width:160,fontSize:13,color:C.t2,flexShrink:0}}>{k}</span><span style={{fontSize:13,fontWeight:500,color:C.text}}>{v}</span></div>)}
+        </div>
+        {ts==="loading"&&<div style={{marginTop:14,padding:"10px 14px",background:C.amberL,border:`1px solid ${C.amberB}`,borderRadius:7,fontSize:12.5,color:C.amberT}}>Testing connection to {provider?.name}...</div>}
+        {ts==="ok"&&<div style={{marginTop:14,padding:"10px 14px",background:C.greenL,border:`1px solid ${C.greenB}`,borderRadius:7,fontSize:12.5,color:C.greenT}}>✓ Connection test successful — credentials are valid and ready to save.</div>}
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"13px 22px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
+        <Btn variant="outline" onClick={onBack}>← Back</Btn><div style={{flex:1}}/><Btn variant="outline" onClick={runTest}>⚡ Test Connection</Btn><Btn variant="default" onClick={onClose}>Save &amp; Connect</Btn>
+      </div>
+    </ModalShell>
+  );
+}
+
+/* ── View Details Panel ── */
+function DetailPanel({conn,onClose}){
+  return(
+    <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.3)",display:"flex",justifyContent:"flex-end",zIndex:200}}>
+      <div style={{position:"absolute",inset:0}} onClick={onClose}/>
+      <div style={{position:"relative",width:430,background:C.bg,borderLeft:`1px solid ${C.border}`,display:"flex",flexDirection:"column",height:"100%",boxShadow:"-4px 0 24px rgba(0,0,0,.1)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+          <div><div style={{fontSize:15,fontWeight:600,color:C.text}}>Connection Details</div><div style={{fontSize:12,color:C.t3,marginTop:2}}>{conn.provider} · {conn.label}</div></div>
+          <button onClick={onClose} style={{width:28,height:28,border:`1px solid ${C.grayB}`,borderRadius:6,background:"none",cursor:"pointer",fontSize:15,color:C.t2}}>✕</button>
+        </div>
+        <div style={{flex:1,overflowY:"auto",padding:20}}>
+          <div style={{display:"flex",alignItems:"center",gap:11,padding:"12px 14px",background:C.bg2,border:`1px solid ${C.border}`,borderRadius:9,marginBottom:18}}>
+            <div style={{width:38,height:38,borderRadius:8,background:conn.status==="Error"?C.redL:C.blueL,border:`1px solid ${conn.status==="Error"?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:conn.status==="Error"?C.redT:C.blue,flexShrink:0}}>{conn.logo}</div>
+            <div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:C.text}}>{conn.provider}</div><div style={{fontSize:12,color:C.t2,marginTop:1}}>{conn.label}</div></div>
+            <div style={{display:"flex",gap:6}}><Badge label={conn.type}/><Badge label={conn.status}/></div>
+          </div>
+          {[{title:"Identity",rows:[["Provider",conn.provider],["Label",conn.label],["Region",conn.region],["Created",conn.created]]},{title:"Credentials",rows:[["Credential",conn.cred],["Environment","Production"]]},{title:"Recent activity",rows:[["Total sends (7d)","12,430"],["Last success","Apr 20, 2026 04:05 PM"],["Last failure","Apr 20, 2026 04:27 PM"]]}].map(sec=>(
+            <div key={sec.title} style={{marginBottom:18}}>
+              <div style={{fontSize:10,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8,paddingBottom:6,borderBottom:`1px solid ${C.border}`}}>{sec.title}</div>
+              {sec.rows.map(([k,v])=><div key={k} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"7px 0",borderBottom:`1px solid ${C.bg2}`,fontSize:13}}><span style={{color:C.t2}}>{k}</span><span style={{color:C.text,textAlign:"right",fontFamily:k==="Credential"?"monospace":"inherit",fontSize:k==="Credential"?11.5:13}}>{v}</span></div>)}
+            </div>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:8,padding:"13px 20px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
+          <Btn variant="outline" onClick={onClose}>Close</Btn>
+          <Btn variant="default" sx={{flex:1}} onClick={onClose}>✎ Edit connection</Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════ CONNECTIONS VIEW ════ */
+function ConnectionsView(){
+  const [q,setQ]=useState("");const [tf,setTf]=useState("All");
+  const [flow,setFlow]=useState(null);const [prov,setProv]=useState(null);const [dc,setDc]=useState(null);
+  const rows=CONNECTIONS.filter(c=>(tf==="All"||c.type===tf)&&(q===""||c.provider.toLowerCase().includes(q.toLowerCase())||c.label.toLowerCase().includes(q.toLowerCase())));
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t3,padding:"10px 14px",borderBottom:`1px solid ${C.border}`,letterSpacing:".04em",whiteSpace:"nowrap",background:C.bg};
+  const tdS={padding:"11px 14px",borderBottom:`1px solid ${C.bg2}`,verticalAlign:"middle"};
+  return(
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 24px",background:C.redL,borderBottom:`1px solid ${C.redB}`,fontSize:12,color:C.redT,flexShrink:0}}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.redT} strokeWidth="2"><path d="m10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+        <span><strong>AWS SES (Emergency)</strong> is in Error state and is part of your active Email Fallback Chain.</span>
+        <button style={{marginLeft:"auto",color:C.blue,background:"none",border:"none",cursor:"pointer",textDecoration:"underline",fontSize:12,whiteSpace:"nowrap"}}>Fix credentials →</button>
+      </div>
+      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"18px 24px 6px",flexShrink:0}}>
+        <h1 style={{fontSize:20,fontWeight:600,color:C.text}}>Connections</h1>
+        <Btn variant="default" onClick={()=>setFlow("provider")}>+ New Connection</Btn>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 24px 12px",flexShrink:0,flexWrap:"wrap"}}>
+        <div style={{display:"flex",border:`1px solid ${C.grayB}`,borderRadius:7,overflow:"hidden",background:C.bg}}>
+          <select style={{padding:"7px 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer"}}><option>Search by</option><option>Provider</option><option>Label</option></select>
+          <div style={{display:"flex",alignItems:"center",gap:7,padding:"0 11px"}}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search here..." style={{border:"none",outline:"none",fontSize:13,width:180,color:C.text}}/></div>
+        </div>
+        <button style={{display:"flex",alignItems:"center",gap:6,padding:"7px 14px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:12.5,cursor:"pointer"}}>⊙ Show Filters</button>
+        <div style={{marginLeft:"auto",display:"flex",border:`1px solid ${C.grayB}`,borderRadius:7,overflow:"hidden"}}>
+          {["All","Email","Push","Sms"].map(t=><button key={t} onClick={()=>setTf(t)} style={{padding:"7px 15px",fontSize:12.5,border:"none",cursor:"pointer",background:tf===t?"#111827":C.bg,color:tf===t?"#fff":C.t2,fontWeight:tf===t?500:400}}>{t==="Sms"?"SMS":t}</button>)}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 24px"}}>
+        <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,overflow:"hidden"}}>
+          <table style={{width:"100%",borderCollapse:"collapse"}}>
+            <thead><tr>{["ID","PROVIDER","LABEL","TYPE","STATUS","REGION","CREATED","ACTIONS"].map(h=><th key={h} style={{...thS,textAlign:h==="ACTIONS"?"right":thS.textAlign}}>{h}</th>)}</tr></thead>
+            <tbody>
+              {rows.map(c=>(
+                <tr key={c.id} onClick={()=>setDc(c)} style={{cursor:"pointer",transition:"background .1s"}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <td style={tdS}><span style={{fontSize:12.5,color:C.t3,fontFamily:"monospace"}}>{c.id}</span></td>
+                  <td style={tdS}><div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <div style={{width:30,height:30,borderRadius:7,background:c.status==="Error"?C.redL:C.blueL,border:`1px solid ${c.status==="Error"?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8.5,fontWeight:700,color:c.status==="Error"?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
+                    <div><div style={{fontSize:13,fontWeight:500,color:C.text}}>{c.provider}</div><div style={{fontSize:10.5,color:C.t3,fontFamily:"monospace"}}>{c.cred}</div></div>
+                  </div></td>
+                  <td style={tdS}><span style={{fontSize:13,color:C.t2}}>{c.label}</span></td>
+                  <td style={tdS}><Badge label={c.type}/></td>
+                  <td style={tdS}><Badge label={c.status}/></td>
+                  <td style={tdS}><span style={{fontSize:13,color:C.t2}}>{c.region}</span></td>
+                  <td style={tdS}><span style={{fontSize:12.5,color:C.t2}}>{c.created}</span></td>
+                  <td style={{...tdS,textAlign:"right"}} onClick={e=>e.stopPropagation()}><DotsMenu items={[["✎ Edit",C.blue,null],["⊙ View",C.blue,()=>setDc(c)],["⚡ Test",C.gray,null],["☰ Preview",C.gray,null]]}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",borderTop:`1px solid ${C.border}`,flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:7,fontSize:12.5,color:C.t2}}><div style={{width:7,height:7,borderRadius:"50%",background:C.blue}}/>Showing 1–{rows.length} of {rows.length}</div>
+        <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12.5,color:C.t2}}>Page 1 of 1{["‹","›","»"].map(a=><button key={a} style={{width:26,height:26,border:`1px solid ${C.grayB}`,borderRadius:5,background:C.bg,color:C.t3,cursor:"pointer",fontSize:12}}>{a}</button>)}</div>
+      </div>
+      {flow==="provider"&&<ProviderSelector onSelect={p=>{setProv(p);setFlow("form")}} onClose={()=>setFlow(null)}/>}
+      {flow==="form"&&<ConnectForm provider={prov} onBack={()=>setFlow("provider")} onNext={()=>setFlow("summary")} onClose={()=>setFlow(null)}/>}
+      {flow==="summary"&&<SummaryPage provider={prov} onBack={()=>setFlow("form")} onClose={()=>setFlow(null)}/>}
+      {dc&&<DetailPanel conn={dc} onClose={()=>setDc(null)}/>}
+    </div>
+  );
+}
+
+/* ════ ROUTING VIEW ════ */
+
+/* Routing detail MODAL */
+function RoutingDetailModal({row,onClose,onToggle}){
+  const isActive=row.status==="Active";
+  return(
+    <ModalShell title={row.name} subtitle={`${row.type} · ${row.subdomain} · Created ${row.created}`} onClose={onClose} width={560}>
+      <div style={{flex:1,overflowY:"auto",padding:"18px 22px"}}>
+        {/* Status toggle */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:isActive?C.greenL:C.grayL,border:`1px solid ${isActive?C.greenB:C.grayB}`,borderRadius:8,marginBottom:18}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:8,height:8,borderRadius:"50%",background:isActive?C.green:C.gray}}/>
+            <span style={{fontSize:13,fontWeight:500,color:isActive?C.greenT:C.gray}}>{isActive?"Active routing":"Inactive routing"}</span>
+          </div>
+          <button onClick={()=>onToggle(row.id)} style={{padding:"6px 16px",border:`1px solid ${isActive?C.redB:C.greenB}`,borderRadius:6,background:isActive?C.redL:C.greenL,color:isActive?C.redT:C.greenT,fontSize:12.5,cursor:"pointer",fontWeight:500}}>
+            {isActive?"Deactivate":"Activate"}
+          </button>
+        </div>
+        {/* Details */}
+        <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden",marginBottom:16}}>
+          {[["Strategy",row.type],["Subdomain",row.subdomain],["Description",row.desc],["Status",row.status],["Created",row.created]].map(([k,v],i,a)=>(
+            <div key={k} style={{display:"flex",alignItems:"center",padding:"10px 16px",borderBottom:i<a.length-1?`1px solid ${C.bg2}`:"none"}}>
+              <span style={{width:130,fontSize:13,color:C.t2,flexShrink:0}}>{k}</span>
+              <span style={{fontSize:13,fontWeight:500,color:C.text}}>{v}</span>
+            </div>
+          ))}
+        </div>
+        {/* Connectors */}
+        <div style={{fontSize:11,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Connectors</div>
+        <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden"}}>
+          {row.connectors.map((c,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 16px",borderBottom:i<row.connectors.length-1?`1px solid ${C.bg2}`:"none"}}>
+              <div style={{width:24,height:24,borderRadius:5,background:c.err?C.redL:C.blueL,border:`1px solid ${c.err?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:c.err?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
+              <div style={{flex:1}}><span style={{fontSize:13,fontWeight:500,color:C.text}}>{c.name}</span><span style={{fontSize:12,color:C.t3,marginLeft:6}}>{c.label}</span></div>
+              {c.pos!==undefined&&<span style={{fontSize:11,background:i===0?C.greenL:C.bg2,border:`1px solid ${i===0?C.greenB:C.border}`,color:i===0?C.greenT:C.t3,padding:"1px 9px",borderRadius:10}}>{i===0?"Primary":`Fallback ${i}`}</span>}
+              {c.weight!==undefined&&<span style={{fontSize:12.5,fontWeight:600,color:C.blue}}>{c.weight}%</span>}
+              {c.cap&&<span style={{fontSize:12,color:C.t2}}>Cap: {c.cap.toLocaleString()}/day</span>}
+              {c.role&&<Badge label="Overflow" sx={{background:C.amberL,color:C.amberT,border:`1px solid ${C.amberB}`,fontSize:11}}/>}
+              {c.err&&<Badge label="Error" sx={{background:C.redL,color:C.redT,border:`1px solid ${C.redB}`,fontSize:11}}/>}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{display:"flex",gap:8,padding:"13px 22px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
+        <Btn variant="outline" onClick={onClose}>⊙ View details</Btn>
+        {!isActive&&<Btn variant="outline" onClick={onClose}>✎ Edit</Btn>}
+        <Btn variant="outline" onClick={onClose}>⧉ {isActive?"Edit & ":""}Duplicate</Btn>
+        <div style={{flex:1}}/>
+        <Btn variant="outline" onClick={onClose}>Close</Btn>
+      </div>
+    </ModalShell>
+  );
+}
+
+/* Route Setup Modal */
+function RouteSetupModal({card,onClose}){
+  const [sub,setSub]=useState("Mail");const [saved,setSaved]=useState(false);
+  const CONNS={Mail:["SendGrid — Transactional","SendGrid — Marketing","Mailgun — Backup","AWS SES — Emergency"],Push:["FCM — Android Push","APNs — iOS Push","OneSignal — Cross-platform"],SMS:["Twilio — Primary SMS","Infobip — SMS Fallback","Semaphore — PH SMS"]};
+  const conns=CONNS[sub];
+  return(
+    <ModalShell title={card.title} subtitle={`Configure ${card.title} routing before activating.`} onClose={onClose} width={600}>
+      <div style={{flex:1,overflowY:"auto",padding:"18px 22px",display:"flex",flexDirection:"column",gap:18}}>
+        <div>
+          <label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:9}}>Subdomain <span style={{color:C.red}}>*</span></label>
+          <div style={{display:"flex",gap:8}}>{["Mail","Push","SMS"].map(s=><button key={s} onClick={()=>setSub(s)} style={{flex:1,padding:"9px 0",border:`2px solid ${sub===s?C.blue:C.grayB}`,borderRadius:7,background:sub===s?C.blueL:C.bg,color:sub===s?C.blue:C.t2,fontSize:13,cursor:"pointer",fontWeight:sub===s?600:400,transition:"all .12s"}}>{s}</button>)}</div>
+        </div>
+        <div><label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Configuration name <span style={{color:C.red}}>*</span></label><Input placeholder={`${card.title} — ${sub} — ${new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}`}/></div>
+        {card.key==="fallback"&&<div>
+          <label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:8}}>Connections (ordered) <span style={{color:C.red}}>*</span></label>
+          {conns.map((c,i)=><div key={c} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 13px",border:`1px solid ${C.border}`,borderRadius:7,marginBottom:6,background:C.bg}}>
+            <span style={{color:C.grayB,fontSize:16,userSelect:"none"}}>⠿</span>
+            <div style={{width:22,height:22,borderRadius:"50%",background:i===0?C.blueL:C.bg2,border:`1px solid ${i===0?C.blueM:C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10.5,fontWeight:700,color:i===0?C.blue:C.t2}}>{i+1}</div>
+            <span style={{flex:1,fontSize:13,color:C.text}}>{c}</span>
+            {i===0&&<Badge label="Active" sx={{background:C.greenL,color:C.greenT,border:`1px solid ${C.greenB}`}}/>}
+            {i>0&&<span style={{fontSize:11,background:C.bg2,border:`1px solid ${C.border}`,color:C.t3,padding:"1px 8px",borderRadius:10}}>Fallback {i}</span>}
+          </div>)}
+          <div style={{fontSize:11.5,color:C.t3,marginTop:4}}>Max 5 connections · Trigger: 5xx, timeout (10s), terminal errors</div>
+        </div>}
+        {card.key==="weighted"&&<div>
+          <label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:8}}>Connection weights <span style={{color:C.red}}>*</span></label>
+          {conns.slice(0,2).map((c,i)=><div key={c} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 13px",border:`1px solid ${C.border}`,borderRadius:7,marginBottom:6}}>
+            <span style={{flex:1,fontSize:13,color:C.text}}>{c}</span>
+            <input type="number" defaultValue={i===0?60:40} min="5" max="95" style={{width:60,padding:"5px 8px",border:`1px solid ${C.grayB}`,borderRadius:5,fontSize:13,textAlign:"center",outline:"none"}}/>
+            <span style={{fontSize:12,color:C.t3}}>%</span>
+          </div>)}
+          <div style={{fontSize:12,color:C.greenT,marginTop:4}}>Total: <strong>100% ✓</strong> · Min 5% per connection</div>
+        </div>}
+        {card.key==="volcap"&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+          <div><label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Primary connection <span style={{color:C.red}}>*</span></label><Select options={conns} defaultValue={conns[0]}/></div>
+          <div><label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Daily cap (messages) <span style={{color:C.red}}>*</span></label><Input placeholder="10000" type="number"/></div>
+          <div style={{gridColumn:"1/-1"}}><label style={{display:"block",fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Overflow connection <span style={{color:C.red}}>*</span></label><Select options={conns.slice(1)} defaultValue={conns[1]}/></div>
+          <div style={{gridColumn:"1/-1",fontSize:11.5,color:C.t3,lineHeight:1.6}}>Counter resets UTC midnight · Alert at 80% and 100% · V0: 1 primary + 1 overflow only</div>
+        </div>}
+        {saved&&<div style={{padding:"11px 14px",background:C.greenL,border:`1px solid ${C.greenB}`,borderRadius:7,fontSize:12.5,color:C.greenT}}>✓ Routing configuration saved and activated.</div>}
+      </div>
+      <div style={{display:"flex",gap:10,padding:"13px 22px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
+        <Btn variant="outline" onClick={onClose}>Cancel</Btn><div style={{flex:1}}/>
+        <Btn variant="blue" onClick={()=>{setSaved(true);setTimeout(onClose,1200)}}>✓ Configure Rule</Btn>
+      </div>
+    </ModalShell>
+  );
+}
+
+function RoutingView(){
+  const [rows,setRows]=useState(ROUTING_DATA);
+  const [activeCard,setActiveCard]=useState(null);
+  const [detailRow,setDetailRow]=useState(null);
+  const toggleStatus=id=>setRows(prev=>prev.map(r=>r.id===id?{...r,status:r.status==="Active"?"Inactive":"Active"}:r));
+
+  /* Card icons matching Hyperswitch reference exactly */
+  const ROUTE_CARDS=[
+    {key:"fallback",title:"Fallback Chain",desc:"Ordered priority list of connections. On failure, automatically routes to the next connector in the chain.",
+      icon:(
+        <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:2}}>
+          <div style={{width:12,height:12,borderRadius:"50%",background:"#f87171"}}/>
+          <svg width="14" height="10" viewBox="0 0 14 10"><path d="M1 5h12M8 1l5 4-5 4" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div style={{width:12,height:12,borderRadius:3,background:C.blue,display:"flex",alignItems:"center",justifyContent:"center"}}><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1 1h6M1 4h4M1 7h5" stroke="#fff" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg></div>
+        </div>
+      ),btn:"Setup"},
+    {key:"weighted",title:"Weighted Split",desc:"Distribute notification traffic across connections by percentage using weighted random selection on every send.",
+      icon:(
+        <div style={{display:"flex",alignItems:"center",gap:3,marginBottom:2}}>
+          <div style={{width:13,height:13,borderRadius:2,background:"#f87171"}}/>
+          <div style={{width:8,height:8,borderRadius:"50%",background:C.blue}}/>
+          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4h8M6 1l3 3-3 3" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div style={{width:13,height:13,borderRadius:2,border:`2px solid ${C.blue}`,background:"transparent"}}/>
+        </div>
+      ),btn:"Setup"},
+    {key:"volcap",title:"Volume Cap Overflow",desc:"Route to a primary connection until the configured daily cap is hit, then automatically overflow to a backup connection.",
+      icon:(
+        <div style={{display:"flex",alignItems:"center",gap:3,marginBottom:2}}>
+          <div style={{width:13,height:13,borderRadius:"50%",background:"#fb923c",opacity:.7}}/>
+          <div style={{width:13,height:13,borderRadius:"50%",background:"#fb923c",opacity:.85}}/>
+          <div style={{width:13,height:13,borderRadius:"50%",background:C.purple}}/>
+        </div>
+      ),btn:"Setup"},
+  ];
+
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t3,padding:"10px 14px",background:C.bg2,borderBottom:`1px solid ${C.border}`,letterSpacing:".04em",whiteSpace:"nowrap"};
+  const tdS={padding:"11px 14px",borderBottom:`1px solid ${C.bg2}`,fontSize:13,color:C.t2,verticalAlign:"middle"};
+
+  return(
+    <div style={{flex:1,overflowY:"auto",padding:"20px 24px",position:"relative"}}>
+      <div style={{marginBottom:20}}>
+        <h1 style={{fontSize:20,fontWeight:600,color:C.text}}>Routing configuration</h1>
+        <div style={{fontSize:12,color:C.t2,marginTop:3}}>Configure how notification sends are distributed across connections. Set it up based on your preferred strategy.</div>
+      </div>
+
+      {/* Strategy cards */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28}}>
+        {ROUTE_CARDS.map(card=>(
+          <div key={card.key} style={{border:`1px solid ${C.border}`,borderRadius:10,padding:"20px 20px 18px",background:C.bg,display:"flex",flexDirection:"column",gap:12,transition:"border-color .12s,box-shadow .12s"}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=C.blueM;e.currentTarget.style.boxShadow=`0 2px 12px rgba(59,86,240,.08)`;}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.boxShadow="none";}}>
+            {card.icon}
+            <div style={{fontSize:14.5,fontWeight:600,color:C.text}}>{card.title}</div>
+            <div style={{fontSize:12.5,color:C.t3,lineHeight:1.7,flex:1}}>{card.desc}</div>
+            <button onClick={()=>setActiveCard(card)}
+              style={{alignSelf:"flex-start",padding:"7px 20px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.text,fontSize:12.5,cursor:"pointer",fontWeight:500,transition:"all .12s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background=C.blueL;e.currentTarget.style.borderColor=C.blue;e.currentTarget.style.color=C.blue;}}
+              onMouseLeave={e=>{e.currentTarget.style.background=C.bg;e.currentTarget.style.borderColor=C.grayB;e.currentTarget.style.color=C.text;}}>
+              {card.btn}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Active configurations — no tabs */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+        <div style={{fontSize:14.5,fontWeight:600,color:C.text}}>Active configurations</div>
+        <span style={{fontSize:12,color:C.t3}}>{rows.filter(r=>r.status==="Active").length} active · {rows.filter(r=>r.status==="Inactive").length} inactive</span>
+      </div>
+
+      <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,overflow:"hidden"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr>{["S.No","Name","Type","Subdomain","Description","Status","Created",""].map(h=><th key={h} style={{...thS,textAlign:h===""?"right":thS.textAlign}}>{h}</th>)}</tr></thead>
+          <tbody>
+            {rows.map((r,i)=>{
+              const isActive=r.status==="Active";
+              return(
+                <tr key={r.id} onClick={()=>setDetailRow(r)} style={{cursor:"pointer",transition:"background .1s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <td style={tdS}>{i+1}</td>
+                  <td style={{...tdS,color:C.text,fontWeight:500}}>{r.name}</td>
+                  <td style={tdS}>{r.type}</td>
+                  <td style={tdS}><Badge label={r.subdomain}/></td>
+                  <td style={{...tdS,color:C.t3,fontSize:12}}>{r.desc}</td>
+                  <td style={tdS}><Badge label={r.status}/></td>
+                  <td style={{...tdS,color:C.t3,fontSize:12}}>{r.created}</td>
+                  <td style={{...tdS,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
+                    <DotsMenu items={isActive
+                      ?[["⊙ View",C.blue,()=>setDetailRow(r)],["⧉ Edit & Duplicate",C.blue,null],["✕ Deactivate",C.redT,()=>toggleStatus(r.id)]]
+                      :[["⊙ View",C.blue,()=>setDetailRow(r)],["✎ Edit",C.blue,null],["✕ Deactivate",C.gray,()=>toggleStatus(r.id)]]}/>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {activeCard&&(
+        <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+          <RouteSetupModal card={activeCard} onClose={()=>setActiveCard(null)}/>
+        </div>
+      )}
+      {detailRow&&(
+        <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+          <RoutingDetailModal row={detailRow} onClose={()=>setDetailRow(null)} onToggle={id=>{toggleStatus(id);setDetailRow(prev=>({...prev,status:prev.status==="Active"?"Inactive":"Active"}));}}/>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ════ ANALYTICS VIEW ════ */
+
+/* Per-channel, per-period data seeds — multipliers give realistic variation */
+const ANALYTICS_SEEDS={
+  Email:{
+    "24h":{sent:3821,failed:214,latency:"204ms",fallback:"1.8%"},
+    "7d": {sent:15430,failed:876,latency:"218ms",fallback:"2.1%"},
+    "30d":{sent:61200,failed:3540,latency:"231ms",fallback:"2.4%"},
+  },
+  Push:{
+    "24h":{sent:6210,failed:98,latency:"142ms",fallback:"0.9%"},
+    "7d": {sent:41200,failed:620,latency:"156ms",fallback:"1.1%"},
+    "30d":{sent:162000,failed:2430,latency:"161ms",fallback:"1.3%"},
+  },
+  Sms:{
+    "24h":{sent:1540,failed:132,latency:"312ms",fallback:"3.2%"},
+    "7d": {sent:9820,failed:780,latency:"328ms",fallback:"3.6%"},
+    "30d":{sent:38700,failed:3100,latency:"341ms",fallback:"4.0%"},
+  },
+};
+
+/* Per-channel, per-period bar data */
+const BAR_SEEDS={
+  Email:{
+    "24h":[{label:"SendGrid",short:"SG",type:"Email",total:2100,success:1940,failed:160},{label:"Mailgun",short:"MG",type:"Email",total:980,success:940,failed:40},{label:"AWS SES",short:"SES",type:"Email",total:120,success:55,failed:65}],
+    "7d": [{label:"SendGrid",short:"SG",type:"Email",total:8400,success:7760,failed:640},{label:"Mailgun",short:"MG",type:"Email",total:4200,success:4020,failed:180},{label:"AWS SES",short:"SES",type:"Email",total:480,success:220,failed:260}],
+    "30d":[{label:"SendGrid",short:"SG",type:"Email",total:33000,success:30400,failed:2600},{label:"Mailgun",short:"MG",type:"Email",total:16800,success:16100,failed:700},{label:"AWS SES",short:"SES",type:"Email",total:1900,success:870,failed:1030}],
+  },
+  Push:{
+    "24h":[{label:"FCM",short:"FCM",type:"Push",total:4200,success:4112,failed:88},{label:"APNs",short:"APNs",type:"Push",total:2800,success:2740,failed:60},{label:"OneSignal",short:"1S",type:"Push",total:340,success:334,failed:6}],
+    "7d": [{label:"FCM",short:"FCM",type:"Push",total:28100,success:27480,failed:620},{label:"APNs",short:"APNs",type:"Push",total:18800,success:18350,failed:450},{label:"OneSignal",short:"1S",type:"Push",total:2200,success:2156,failed:44}],
+    "30d":[{label:"FCM",short:"FCM",type:"Push",total:110000,success:107500,failed:2500},{label:"APNs",short:"APNs",type:"Push",total:73000,success:71200,failed:1800},{label:"OneSignal",short:"1S",type:"Push",total:8600,success:8430,failed:170}],
+  },
+  Sms:{
+    "24h":[{label:"Twilio",short:"TW",type:"Sms",total:980,success:882,failed:98},{label:"Infobip",short:"IB",type:"Sms",total:320,success:320,failed:0},{label:"Semaphore",short:"SM",type:"Sms",total:140,success:137,failed:3}],
+    "7d": [{label:"Twilio",short:"TW",type:"Sms",total:6800,success:6120,failed:680},{label:"Infobip",short:"IB",type:"Sms",total:2100,success:2100,failed:0},{label:"Semaphore",short:"SM",type:"Sms",total:980,success:958,failed:22}],
+    "30d":[{label:"Twilio",short:"TW",type:"Sms",total:26800,success:24100,failed:2700},{label:"Infobip",short:"IB",type:"Sms",total:8300,success:8300,failed:0},{label:"Semaphore",short:"SM",type:"Sms",total:3800,success:3720,failed:80}],
+  },
+};
+
+function fmtNum(n){return n>=1000000?(n/1000000).toFixed(1)+"M":n>=1000?(n/1000).toFixed(1)+"k":n.toLocaleString();}
+
+function HoverBar({d,maxVal,hovered,onHover,onLeave}){
+  const totalW=(d.total/maxVal)*100;
+  const successW=d.total>0?(d.success/d.total)*totalW:0;
+  const failW=d.total>0?(d.failed/d.total)*totalW:0;
+  const isHov=hovered===d.label;
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:10,padding:"6px 0",transition:"opacity .15s",opacity:hovered&&!isHov?.45:1}}
+      onMouseEnter={()=>onHover(d)} onMouseLeave={onLeave}>
+      <div style={{width:58,fontSize:11.5,fontWeight:500,color:C.t2,textAlign:"right",flexShrink:0,lineHeight:1.2}}>{d.short}</div>
+      <div style={{flex:1,position:"relative",height:30,borderRadius:5,overflow:"hidden",background:C.bg3,cursor:"default"}}>
+        {successW>0&&<div style={{position:"absolute",left:0,top:0,height:"100%",width:`${successW}%`,background:C.green,transition:"width .35s ease"}}/>}
+        {failW>0&&<div style={{position:"absolute",left:`${successW}%`,top:0,height:"100%",width:`${failW}%`,background:C.red,transition:"width .35s ease,left .35s ease"}}/>}
+        {/* inline value label on bar if wide enough */}
+        {totalW>18&&<div style={{position:"absolute",right:6,top:0,height:"100%",display:"flex",alignItems:"center",fontSize:10.5,color:"rgba(255,255,255,.85)",fontWeight:600,pointerEvents:"none"}}>{fmtNum(d.total)}</div>}
+      </div>
+      <div style={{width:42,fontSize:11,color:C.t3,textAlign:"right",flexShrink:0}}>{fmtNum(d.total)}</div>
+    </div>
+  );
+}
+
+function AnalyticsView(){
+  const [dp,setDp]=useState("7d");
+  const [cf,setCf]=useState("Email");
+  const [hovered,setHovered]=useState(null);
+  const [tooltip,setTooltip]=useState(null);
+
+  /* Derive everything from dp + cf */
+  const seed=ANALYTICS_SEEDS[cf]?.[dp]||ANALYTICS_SEEDS.Email["7d"];
+  const bars=BAR_SEEDS[cf]?.[dp]||[];
+  const maxVal=Math.max(...bars.map(d=>d.total),1)*1.15;
+
+  const totalSent=seed.sent;
+  const totalFailed=seed.failed;
+  const totalSuccess=totalSent-totalFailed;
+  const failRate=((totalFailed/totalSent)*100).toFixed(1)+"%";
+
+  /* When filters change, clear hover state */
+  useEffect(()=>{setHovered(null);setTooltip(null);},[dp,cf]);
+
+  const KPI=[
+    {label:"Total Sent",value:fmtNum(totalSent),delta:dp==="24h"?"+8%":dp==="7d"?"+12%":"+18%",up:true,sub:"vs prev period"},
+    {label:"Failed",value:fmtNum(totalFailed),delta:dp==="24h"?"+2%":dp==="7d"?"+3%":"+5%",up:false,sub:"vs prev period"},
+    {label:"Successful",value:fmtNum(totalSuccess),delta:dp==="24h"?"+9%":dp==="7d"?"+11%":"+17%",up:true,sub:"vs prev period"},
+    {label:"Failure Rate",value:failRate,delta:dp==="24h"?"−0.2%":dp==="7d"?"+0.4%":"+0.6%",up:dp==="24h",sub:"vs prev period"},
+    {label:"Avg Latency",value:seed.latency,delta:dp==="24h"?"−8ms":"−14ms",up:true,sub:"faster"},
+    {label:"Fallback Rate",value:seed.fallback,delta:dp==="24h"?"−0.2%":"−0.3%",up:true,sub:"vs prev period"},
+  ];
+
+  const dpLabel={"24h":"Last 24h","7d":"Last 7 days","30d":"Last 30 days"}[dp];
+
+  return(
+    <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
+      <div style={{marginBottom:16}}><h1 style={{fontSize:20,fontWeight:600,color:C.text}}>Analytics</h1></div>
+
+      {/* ── FILTERS ROW — above everything — date left, channel right ── */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,gap:10,flexWrap:"wrap"}}>
+        {/* Date filter */}
+        <div style={{display:"flex",border:`1px solid ${C.grayB}`,borderRadius:7,overflow:"hidden"}}>
+          {[["24h","Last 24h"],["7d","Last 7 days"],["30d","Last 30 days"]].map(([v,l])=>(
+            <button key={v} onClick={()=>setDp(v)}
+              style={{padding:"7px 16px",fontSize:12.5,border:"none",cursor:"pointer",
+                background:dp===v?"#111827":C.bg,color:dp===v?"#fff":C.t2,fontWeight:dp===v?500:400}}>
+              {l}
+            </button>
+          ))}
+        </div>
+        {/* Channel filter — Email | Push | SMS only */}
+        <div style={{display:"flex",border:`1px solid ${C.grayB}`,borderRadius:7,overflow:"hidden"}}>
+          {["Email","Push","Sms"].map(t=>(
+            <button key={t} onClick={()=>setCf(t)}
+              style={{padding:"7px 16px",fontSize:12.5,border:"none",cursor:"pointer",
+                background:cf===t?"#111827":C.bg,color:cf===t?"#fff":C.t2,fontWeight:cf===t?500:400}}>
+              {t==="Sms"?"SMS":t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── KPI CARDS — dynamic based on dp + cf ── */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:10,marginBottom:22}}>
+        {KPI.map(k=>(
+          <div key={k.label} style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,padding:"13px 15px",transition:"box-shadow .15s"}}
+            onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 10px rgba(0,0,0,.06)"}
+            onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
+            <div style={{fontSize:10.5,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".05em",marginBottom:7}}>{k.label}</div>
+            <div style={{fontSize:21,fontWeight:700,color:C.text,transition:"all .25s"}}>{k.value}</div>
+            <div style={{display:"flex",alignItems:"center",gap:4,marginTop:4}}>
+              <span style={{fontSize:11.5,fontWeight:600,color:k.up?C.greenT:C.redT}}>{k.up?"↑":"↓"} {k.delta}</span>
+              <span style={{fontSize:11,color:C.t3}}>{k.sub}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── CONNECTION OVERVIEW BAR CHART ── */}
+      <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,padding:"20px 22px"}}>
+        {/* Chart title only — filters already at top */}
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:16,gap:10}}>
+          <div>
+            <div style={{fontSize:15,fontWeight:600,color:C.text}}>Connection Overview</div>
+            <div style={{fontSize:12,color:C.t3,marginTop:2}}>
+              {dpLabel} · {cf==="Sms"?"SMS":cf} connectors · Hover a bar for details
+            </div>
+          </div>
+          <div style={{display:"flex",gap:12,fontSize:12,flexShrink:0,marginTop:2}}>
+            <span style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:12,height:12,background:C.green,borderRadius:2,display:"inline-block"}}/><span style={{color:C.t2}}>Successful</span></span>
+            <span style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:12,height:12,background:C.red,borderRadius:2,display:"inline-block"}}/><span style={{color:C.t2}}>Failed</span></span>
+          </div>
+        </div>
+
+        {/* Hover tooltip */}
+        {tooltip&&(
+          <div style={{background:"#1f2937",color:"#fff",borderRadius:9,padding:"12px 18px",fontSize:12.5,marginBottom:16,display:"flex",gap:24,flexWrap:"wrap",alignItems:"center",boxShadow:"0 4px 16px rgba(0,0,0,.18)"}}>
+            <div style={{fontWeight:700,fontSize:13.5}}>{tooltip.label}</div>
+            <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:8,borderRadius:"50%",background:"#9ca3af"}}/><span style={{color:"rgba(255,255,255,.6)"}}>Total</span><span style={{fontWeight:600,marginLeft:4}}>{tooltip.total.toLocaleString()}</span></div>
+            <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:8,borderRadius:"50%",background:C.green}}/><span style={{color:"rgba(255,255,255,.6)"}}>Success</span><span style={{fontWeight:600,color:"#86efac",marginLeft:4}}>{tooltip.success.toLocaleString()}<span style={{fontSize:11,color:"rgba(255,255,255,.5)",fontWeight:400,marginLeft:4}}>({Math.round(tooltip.success/tooltip.total*100)}%)</span></span></div>
+            <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:8,borderRadius:"50%",background:C.red}}/><span style={{color:"rgba(255,255,255,.6)"}}>Failed</span><span style={{fontWeight:600,color:"#fca5a5",marginLeft:4}}>{tooltip.failed.toLocaleString()}<span style={{fontSize:11,color:"rgba(255,255,255,.5)",fontWeight:400,marginLeft:4}}>({Math.round(tooltip.failed/tooltip.total*100)}%)</span></span></div>
+          </div>
+        )}
+
+        {/* X-axis scale */}
+        <div style={{display:"flex",marginLeft:68,marginBottom:6}}>
+          {[0,.25,.5,.75,1].map((f,i)=>(
+            <div key={i} style={{flex:1,fontSize:9.5,color:C.t3,textAlign:"center"}}>{fmtNum(Math.round(f*maxVal))}</div>
+          ))}
+        </div>
+
+        {/* Bars */}
+        <div style={{display:"flex",flexDirection:"column",gap:0}}>
+          {bars.length>0
+            ?bars.map(d=>(
+              <HoverBar key={d.label} d={d} maxVal={maxVal} hovered={hovered}
+                onHover={d=>{setHovered(d.label);setTooltip(d);}}
+                onLeave={()=>{setHovered(null);setTooltip(null);}}/>
+            ))
+            :<div style={{padding:"40px 0",textAlign:"center",color:C.t3,fontSize:13}}>No data for selected filter.</div>}
+        </div>
+
+        {/* Bottom note */}
+        <div style={{marginTop:14,paddingTop:12,borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
+          <span style={{fontSize:11.5,color:C.t3}}>Bar length = total volume · Red segment at end = failed notifications</span>
+          <span style={{marginLeft:"auto",fontSize:11.5,color:C.t3}}>Hover any bar for exact counts</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════ ROOT APP ════ */
+function App(){
+  const [tab,setTab]=useState("analytics");
+  const TABS=[{key:"connections",label:"Connections"},{key:"routing",label:"Routing"},{key:"analytics",label:"Analytics"}];
+  return(
+    <div style={{display:"flex",height:"100vh",background:C.bg2,overflow:"hidden"}}>
+      <Sidebar/>
+      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",minWidth:0}}>
+        {/* Primary nav — tab bar IS the header, no extra bar above */}
+        <div style={{display:"flex",alignItems:"center",borderBottom:`1px solid ${C.border}`,background:C.bg,padding:"0 24px",flexShrink:0,gap:2}}>
+          {TABS.map(t=>(
+            <button key={t.key} onClick={()=>setTab(t.key)}
+              style={{padding:"13px 20px",fontSize:13.5,border:"none",cursor:"pointer",background:"none",
+                color:tab===t.key?C.blue:C.t2,fontWeight:tab===t.key?600:400,
+                borderBottom:tab===t.key?`2px solid ${C.blue}`:"2px solid transparent",
+                marginBottom:-1,transition:"color .12s"}}>
+              {t.label}
+            </button>
+          ))}
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:10,paddingRight:4}}>
+            <button style={{width:28,height:28,border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <div style={{width:30,height:30,borderRadius:"50%",background:C.blueL,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11.5,fontWeight:700,color:C.blue,cursor:"pointer"}}>UG</div>
+          </div>
+        </div>
+        {/* Content */}
+        <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          {tab==="connections"&&<ConnectionsView/>}
+          {tab==="routing"&&<RoutingView/>}
+          {tab==="analytics"&&<AnalyticsView/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
