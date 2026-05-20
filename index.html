@@ -56,14 +56,14 @@ const ICONS={
 
 /* ─── Data ─── */
 const CONNECTIONS=[
-  {id:8,provider:"SendGrid",logo:"SG",cred:"•••• 9x3z",label:"Marketing",type:"Email",status:"Active",region:"Global",created:"Apr 27, 2026"},
-  {id:7,provider:"SendGrid",logo:"SG",cred:"•••• 4f2a",label:"Transactional",type:"Email",status:"Active",region:"Global",created:"Apr 20, 2026"},
-  {id:6,provider:"Mailgun",logo:"MG",cred:"•••• 9c1b",label:"Backup",type:"Email",status:"Inactive",region:"US",created:"Apr 18, 2026"},
-  {id:5,provider:"AWS SES",logo:"SES",cred:"•••• 2e8f",label:"Emergency",type:"Email",status:"Error",region:"ap-south-1",created:"Apr 10, 2026"},
-  {id:4,provider:"FCM",logo:"FCM",cred:"•••• 7d3c",label:"Android Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026"},
-  {id:3,provider:"APNs",logo:"APNs",cred:"•••• 3a9d",label:"iOS Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026"},
-  {id:2,provider:"Twilio",logo:"TW",cred:"•••• 1a9f",label:"Primary SMS",type:"Sms",status:"Active",region:"IN",created:"Apr 05, 2026"},
-  {id:1,provider:"Infobip",logo:"IB",cred:"•••• 5b2e",label:"SMS Fallback",type:"Sms",status:"Inactive",region:"Global",created:"Mar 28, 2026"},
+  {id:8,provider:"SendGrid",logo:"SG",cred:"•••• 9x3z",label:"Marketing",type:"Email",status:"Active",region:"Global",created:"Apr 27, 2026",clientName:"smart_app_consumer"},
+  {id:7,provider:"SendGrid",logo:"SG",cred:"•••• 4f2a",label:"Transactional",type:"Email",status:"Active",region:"Global",created:"Apr 20, 2026",clientName:"smart_app_consumer"},
+  {id:6,provider:"Mailgun",logo:"MG",cred:"•••• 9c1b",label:"Backup",type:"Email",status:"Inactive",region:"US",created:"Apr 18, 2026",clientName:"smart_app_merchant"},
+  {id:5,provider:"AWS SES",logo:"SES",cred:"•••• 2e8f",label:"Emergency",type:"Email",status:"Error",region:"ap-south-1",created:"Apr 10, 2026",clientName:"smart_app_consumer"},
+  {id:4,provider:"FCM",logo:"FCM",cred:"•••• 7d3c",label:"Android Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026",clientName:"smart_app_mobile"},
+  {id:3,provider:"APNs",logo:"APNs",cred:"•••• 3a9d",label:"iOS Push",type:"Push",status:"Active",region:"Global",created:"Apr 08, 2026",clientName:"smart_app_mobile"},
+  {id:2,provider:"Twilio",logo:"TW",cred:"•••• 1a9f",label:"Primary SMS",type:"Sms",status:"Active",region:"IN",created:"Apr 05, 2026",clientName:"smart_app_consumer"},
+  {id:1,provider:"Infobip",logo:"IB",cred:"•••• 5b2e",label:"SMS Fallback",type:"Sms",status:"Inactive",region:"Global",created:"Mar 28, 2026",clientName:"smart_app_merchant"},
 ];
 const PROVIDERS=[
   {key:"sendgrid",name:"SendGrid",logo:"SG",type:"Email",desc:"Reliable transactional email with ECDSA webhook delivery tracking."},
@@ -148,9 +148,10 @@ function DotMenu({items}){
 ═══════════════════════════════════════ */
 function Sidebar({page,section,onPage,onSection}){
   const [commOpen,setCommOpen]=useState(false);
-  const [connOpen,setConnOpen]=useState(page==="connectra"||page==="notifications");
+  const [connOpen,setConnOpen]=useState(page==="connectra"||page==="notifications"||page==="client");
+  const [configOpen,setConfigOpen]=useState(page==="client");
 
-  const inConnectra=page==="connectra"||page==="notifications";
+  const inConnectra=page==="connectra"||page==="notifications"||page==="client"||page==="payments";
 
   const NavRow=({icon,label,active,indent=0,hasArrow,onClick,blue})=>(
     <div onClick={onClick} style={{display:"flex",alignItems:"center",gap:8,padding:`6px 14px 6px ${14+indent}px`,cursor:"pointer",color:blue||active?C.blue:C.text,fontWeight:active?600:400,fontSize:13,background:active?C.blueL:"transparent",borderLeft:active?`3px solid ${C.blue}`:"3px solid transparent",transition:"background .1s"}}
@@ -232,20 +233,38 @@ function Sidebar({page,section,onPage,onSection}){
         {/* Connectra domains */}
         {connOpen&&(
           <div>
-            {/* Notification domain */}
-            <div onClick={()=>{onPage("notifications");onSection("connections");}}
-              style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 32px",cursor:"pointer",
+            {/* Config — expandable */}
+            <div onClick={()=>setConfigOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 28px",cursor:"pointer",
+              color:page==="client"?C.blue:C.t2,fontWeight:page==="client"?600:400,fontSize:12.5}}
+              onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              <span style={{flex:1}}>Config</span>
+              <span style={{fontSize:11,color:C.t3,transform:configOpen?"rotate(90deg)":"none",transition:"transform .15s"}}>›</span>
+            </div>
+            {configOpen&&(
+              <div onClick={()=>onPage("client")}
+                style={{display:"flex",alignItems:"center",gap:8,padding:"5px 14px 5px 44px",cursor:"pointer",
+                  color:page==="client"?C.blue:C.t2,fontWeight:page==="client"?600:400,fontSize:12,
+                  background:page==="client"?C.blueL:"transparent",
+                  borderLeft:page==="client"?`3px solid ${C.blue}`:"3px solid transparent"}}
+                onMouseEnter={e=>{if(page!=="client")e.currentTarget.style.background=C.bg2}} onMouseLeave={e=>{if(page!=="client")e.currentTarget.style.background="transparent"}}>
+                Client
+              </div>
+            )}
+            {/* Communications domain */}
+            <div onClick={()=>{onPage("notifications");onSection("analytics");}}
+              style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 28px",cursor:"pointer",
                 color:page==="notifications"?C.blue:C.t2,fontWeight:page==="notifications"?600:400,fontSize:12.5,
                 background:page==="notifications"?C.blueL:"transparent",
                 borderLeft:page==="notifications"?`3px solid ${C.blue}`:"3px solid transparent"}}
               onMouseEnter={e=>{if(page!=="notifications")e.currentTarget.style.background=C.bg2}} onMouseLeave={e=>{if(page!=="notifications")e.currentTarget.style.background="transparent"}}>
               <span style={{color:page==="notifications"?C.blue:C.t3,display:"flex",alignItems:"center"}}>{ICONS.notif}</span>
-              <span style={{flex:1}}>Notification</span>
+              <span style={{flex:1}}>Communications</span>
             </div>
-            {/* KYC domain — Soon */}
-            <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 32px",cursor:"default",opacity:.6}}>
-              <span style={{color:C.t3,display:"flex",alignItems:"center"}}>{ICONS.kyc}</span>
-              <span style={{flex:1,color:C.t3,fontSize:12.5}}>KYC</span>
+            {/* Payments — Soon */}
+            <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 28px",cursor:"default",opacity:.6}}>
+              <span style={{color:C.t3,display:"flex",alignItems:"center"}}>{ICONS.pay}</span>
+              <span style={{flex:1,color:C.t3,fontSize:12.5}}>Payments</span>
               <span style={{fontSize:10,fontWeight:600,background:C.amberL,color:C.amberT,border:`1px solid ${C.amberB}`,padding:"1px 6px",borderRadius:8,flexShrink:0}}>Soon</span>
             </div>
           </div>
@@ -263,6 +282,151 @@ function Sidebar({page,section,onPage,onSection}){
       </div>
     </aside>
   );
+}
+
+
+/* ─── Client seed data ─── */
+const CLIENT_DATA=[
+  {id:1,clientId:"smart_app_consumer",name:"Smart App Consumer",email:"jpm@aventistechnology.com",status:"Active",created:"May 16, 2025 02:00 AM"},
+  {id:2,clientId:"smart_app_merchant",name:"Smart App Merchant",email:"jpm@aventistechnology.com",status:"Active",created:"May 16, 2025 02:00 AM"},
+  {id:3,clientId:"sds",name:"sd",email:"hemanth@aventistechnology.com",status:"Active",created:"Apr 16, 2026 12:40 PM"},
+  {id:4,clientId:"asd",name:"sd",email:"sds@gmail.co",status:"Active",created:"Apr 25, 2026 01:10 AM"},
+  {id:5,clientId:"sdfs",name:"connectra--test",email:"adnan@gmail.com",status:"Active",created:"May 20, 2026 02:00 AM"},
+];
+
+/* ════════════════════════════════════════
+   ADD CONFIG MODAL
+════════════════════════════════════════ */
+function AddConfigModal({onClose}){
+  const [saved,setSaved]=useState(false);
+  const [form,setForm]=useState({clientId:"",name:"",email:"",status:"Active",description:""});
+  const valid=form.clientId&&form.name&&form.email&&form.description;
+  const FI=({label,req,children})=>(
+    <div>
+      <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5,color:"#111827"}}>
+        {label}{req&&<span style={{color:"#dc2626"}}> *</span>}
+      </label>
+      {children}
+    </div>
+  );
+  const inp=(key,p)=><input value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} placeholder={p}
+    style={{width:"100%",padding:"8px 11px",border:"1px solid #e5e7eb",borderRadius:6,fontSize:13,color:"#111827",background:"#fff",outline:"none"}}
+    onFocus={e=>{e.currentTarget.style.borderColor="#3B56F0";e.currentTarget.style.boxShadow="0 0 0 3px #EEF0FD";}}
+    onBlur={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.boxShadow="none";}}/>;
+  if(saved)return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:300}}>
+    <div style={{background:"#fff",borderRadius:8,padding:"32px 28px",textAlign:"center",boxShadow:"0 8px 32px rgba(0,0,0,.15)"}}>
+      <div style={{fontSize:28,marginBottom:12}}>✅</div>
+      <div style={{fontSize:15,fontWeight:600}}>Client configuration created</div>
+      <div style={{fontSize:13,color:"#6b7280",marginTop:6,marginBottom:20}}>The client is now ready to use.</div>
+      <button onClick={onClose} style={{padding:"8px 24px",background:"#111827",color:"#fff",border:"none",borderRadius:6,cursor:"pointer",fontSize:13,fontWeight:500}}>Done</button>
+    </div>
+  </div>;
+  return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:300}}>
+    <div style={{background:"#fff",borderRadius:8,width:660,maxWidth:"96%",maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 8px 32px rgba(0,0,0,.15)",overflow:"hidden"}}>
+      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"20px 24px 14px"}}>
+        <div>
+          <div style={{fontSize:16,fontWeight:600,color:"#111827"}}>Create Client Configuration</div>
+          <div style={{fontSize:12.5,color:"#6b7280",marginTop:3}}>Create a new client configuration to start sending notifications.</div>
+        </div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:"#9ca3af",lineHeight:1,padding:"2px 4px"}}>×</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 24px 8px",display:"flex",flexDirection:"column",gap:16}}>
+        {/* Row 1 — Client ID + Name */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+          <FI label="Client ID" req>{inp("clientId","client_id")}</FI>
+          <FI label="Name" req>{inp("name","Client Name")}</FI>
+        </div>
+        {/* Row 2 — From Email + Status */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+          <FI label="From Email" req>{inp("email","noreply@yourdomain.com")}</FI>
+          <FI label="Status">
+            <select value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}
+              style={{width:"100%",padding:"8px 11px",border:"1px solid #e5e7eb",borderRadius:6,fontSize:13,color:"#111827",background:"#fff",outline:"none",cursor:"pointer"}}>
+              <option>Active</option><option>Inactive</option>
+            </select>
+          </FI>
+        </div>
+        {/* Row 3 — Description full width */}
+        <FI label="Description" req>
+          <textarea value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}
+            placeholder="Enter description" rows={4}
+            style={{width:"100%",padding:"8px 11px",border:"1px solid #e5e7eb",borderRadius:6,fontSize:13,color:"#111827",background:"#fff",outline:"none",resize:"vertical"}}/>
+        </FI>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,justifyContent:"flex-end",padding:"14px 24px",borderTop:"1px solid #e5e7eb"}}>
+        <button onClick={onClose} style={{padding:"8px 20px",border:"1px solid #e5e7eb",borderRadius:6,background:"#fff",color:"#6b7280",fontSize:13,cursor:"pointer"}}>Cancel</button>
+        <button onClick={()=>valid&&setSaved(true)} disabled={!valid}
+          style={{padding:"8px 24px",background:valid?"#111827":"#9ca3af",color:"#fff",border:"none",borderRadius:6,fontSize:13,cursor:valid?"pointer":"not-allowed",fontWeight:500}}>Save</button>
+      </div>
+    </div>
+  </div>;
+}
+
+/* ════════════════════════════════════════
+   CLIENT VIEW (Config > Client)
+════════════════════════════════════════ */
+function ClientView(){
+  const [showAdd,setShowAdd]=useState(false);
+  const [rows]=useState(CLIENT_DATA);
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:"#6b7280",padding:"10px 16px",background:"#fff",borderBottom:"1px solid #e5e7eb",whiteSpace:"nowrap",letterSpacing:".06em",textTransform:"uppercase",backgroundImage:"linear-gradient(to bottom, #e0e0e0 0%, #e0e0e0 65%, transparent 65%)",backgroundRepeat:"no-repeat",backgroundPosition:"right 0 top 0",backgroundSize:"1px 100%"};
+  const thSL={...thS,backgroundImage:"none"};
+  const tdS={padding:"14px 16px",borderBottom:"1px solid #e5e7eb",verticalAlign:"middle",fontSize:13,color:"#111827"};
+  return<div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+    {/* Warning strip */}
+    <div style={{display:"flex",alignItems:"flex-start",gap:9,padding:"9px 20px",background:"#fffbeb",borderBottom:"1px solid #fde68a",fontSize:12.5,flexShrink:0}}>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginTop:1,flexShrink:0}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+      <div><span style={{fontWeight:600,color:"#92400e"}}>Warning: </span><span style={{color:"#92400e"}}>Changing these values may impact system stability. Proceed only if you understand the configuration.</span></div>
+    </div>
+    {/* Page header */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px 10px",flexShrink:0}}>
+      <div/>
+      <button onClick={()=>setShowAdd(true)} style={{padding:"8px 18px",background:"#111827",color:"#fff",border:"none",borderRadius:7,fontSize:13,cursor:"pointer",fontWeight:500,display:"flex",alignItems:"center",gap:6}}>
+        + Add Config
+      </button>
+    </div>
+    {/* Table */}
+    <div style={{flex:1,overflowY:"auto",padding:"0 20px"}}>
+      <div style={{background:"#fff",overflow:"hidden"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr>
+            <th style={thS}>CLIENT ID</th>
+            <th style={thS}>NAME</th>
+            <th style={thS}>EMAIL</th>
+            <th style={thS}>STATUS</th>
+            <th style={thS}>CREATED AT</th>
+            <th style={thSL}>ACTIONS</th>
+          </tr></thead>
+          <tbody>
+            {rows.map(c=>(
+              <tr key={c.id} style={{background:"#fff",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#f9fafb"} onMouseLeave={e=>e.currentTarget.style.background="#fff"}>
+                <td style={{...tdS,fontFamily:"monospace",fontSize:12.5,color:"#374151"}}>{c.clientId}</td>
+                <td style={tdS}>{c.name}</td>
+                <td style={{...tdS,color:"#6b7280"}}>{c.email}</td>
+                <td style={tdS}><span style={{display:"inline-flex",alignItems:"center",padding:"2px 10px",borderRadius:12,fontSize:12,fontWeight:500,background:c.status==="Active"?"#f0fdf4":"#fef2f2",color:c.status==="Active"?"#15803d":"#b91c1c",border:`1px solid ${c.status==="Active"?"#bbf7d0":"#fecaca"}`}}>{c.status}</span></td>
+                <td style={{...tdS,color:"#6b7280"}}>{c.created}</td>
+                <td style={{...tdS,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
+                  <DotMenu items={[["View",C.blue,null],["Edit",C.blue,null]]}/>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {/* Pagination */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 20px",background:"#fff",borderTop:"1px solid #e5e7eb",flexShrink:0}}>
+      <div style={{fontSize:12.5,color:"#6b7280"}}>| Showing 1–{rows.length} of {rows.length}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,fontSize:12.5,color:"#6b7280"}}>
+        <div style={{display:"flex",alignItems:"center",gap:4}}>
+          Rows per page
+          <select style={{border:"1px solid #e5e7eb",borderRadius:5,padding:"2px 6px",fontSize:12.5,color:"#111827",background:"#fff",outline:"none",cursor:"pointer",marginLeft:4}}><option>10</option><option>20</option><option>50</option></select>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:7,height:7,borderRadius:"50%",background:"#3B56F0"}}/><span>Page 1 of 1</span></div>
+        {["›","»"].map(a=><button key={a} style={{width:26,height:26,border:"1px solid #e5e7eb",borderRadius:4,background:"#fff",color:"#9ca3af",cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>{a}</button>)}
+      </div>
+    </div>
+    {showAdd&&<AddConfigModal onClose={()=>setShowAdd(false)}/>}
+  </div>;
 }
 
 /* ═══════════════════════════════════════
@@ -283,8 +447,8 @@ function ConnectraHome({onEnterDomain}){
     </svg>
   );
   const DOMAIN_CARDS=[
-    {key:"notifications",cardIcon:CARD_ICON_NOTIF,title:"Notification",desc:"Manage Email, Push, and SMS connections. Configure routing and monitor delivery analytics across all channels.",available:true,connCount:8},
-    {key:"kyc",cardIcon:CARD_ICON_KYC,title:"KYC",desc:"Connect KYC verification providers and identity check services. Manage credentials and routing for compliance workflows.",available:false},
+    {key:"notifications",cardIcon:CARD_ICON_NOTIF,title:"Communications",desc:"Manage Email, Push, and SMS connections. Configure routing and monitor delivery analytics across all channels.",available:true,connCount:8},
+    {key:"kyc",cardIcon:CARD_ICON_KYC,title:"Payments",desc:"Connect payment gateway providers and manage transaction routing. Coming soon.",available:false},
   ];
   return(
     <div style={{flex:1,overflowY:"auto",padding:"32px 28px"}}>
@@ -398,6 +562,15 @@ function ConnectForm({provider,onBack,onNext,onClose}){
       <Badge v={provider?.type} sx={{marginLeft:"auto"}}/>
     </div>
     <div style={{flex:1,overflowY:"auto",padding:"16px 20px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,alignContent:"start"}}>
+      {/* Client ID — required for every connector */}
+      <div style={{gridColumn:"1/-1"}}>
+        <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5,color:C.text}}>Client ID <span style={{color:C.red}}>*</span></label>
+        <select style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.text,background:C.bg,outline:"none",cursor:"pointer"}}>
+          <option value="">Select Client</option>
+          {CLIENT_DATA.map(c=><option key={c.clientId} value={c.clientId}>{c.clientId} — {c.name}</option>)}
+        </select>
+        <div style={{fontSize:11,color:C.t3,marginTop:3}}>Map this connection to a Connectra client</div>
+      </div>
       {fields.map((f,i)=>(
         <div key={i} style={{gridColumn:f.ta?"1/-1":"auto"}}>
           <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:4}}>{f.l} {f.r&&<span style={{color:C.red}}>*</span>}</label>
@@ -440,6 +613,7 @@ function Summary({provider,onBack,onClose}){
 function ConnViewDetail({conn,onClose}){
   /* Data rows — matching screenshot 2 "View Template" layout exactly */
   const vrows=[
+    ["Client",conn.clientName||"—","text"],
     ["Provider",conn.provider,"text"],
     ["Label",conn.label,"text"],
     ["Type",conn.type,"badge"],
@@ -547,10 +721,20 @@ function ConnTestModal({conn,onClose}){
    CONNECTIONS VIEW
 ═══════════════════════════════════════ */
 function ConnectionsView(){
-  const [q,setQ]=useState("");const [tf,setTf]=useState("All");
+  const [q,setQ]=useState("");
+  const [showFilters,setShowFilters]=useState(false);
+  const [fStatus,setFStatus]=useState("");
+  const [fClient,setFClient]=useState("");
+  const [fType,setFType]=useState("");
   const [flow,setFlow]=useState(null);const [prov,setProv]=useState(null);
   const [modal,setModal]=useState(null);const [selConn,setSelConn]=useState(null);
-  const rows=CONNECTIONS.filter(c=>(tf==="All"||c.type===tf)&&(q===""||c.provider.toLowerCase().includes(q.toLowerCase())||c.label.toLowerCase().includes(q.toLowerCase())));
+  const rows=CONNECTIONS.filter(c=>{
+    const matchQ=q===""||c.provider.toLowerCase().includes(q.toLowerCase())||c.label.toLowerCase().includes(q.toLowerCase());
+    const matchStatus=fStatus===""||c.status===fStatus;
+    const matchClient=fClient===""||c.clientName===fClient;
+    const matchType=fType===""||c.type===fType;
+    return matchQ&&matchStatus&&matchClient&&matchType;
+  });
   /* Table header — subtle pipe divider, does not touch bottom border visually */
   /* Header pipe: gradient stops at 65% height so it never touches borderBottom */
   const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"10px 16px",background:C.bg,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".06em",textTransform:"uppercase",backgroundImage:"linear-gradient(to bottom, #e0e0e0 0%, #e0e0e0 65%, transparent 65%)",backgroundRepeat:"no-repeat",backgroundPosition:"right 0 top 0",backgroundSize:"1px 100%"};
@@ -568,8 +752,8 @@ function ConnectionsView(){
       <div style={{fontSize:20,fontWeight:600,color:C.text}}>Connections</div>
       <Btn variant="dark" onClick={()=>setFlow("provider")}>+ New Connection</Btn>
     </div>
-    {/* Search bar row — standalone, not inside table */}
-    <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 20px 12px",flexShrink:0}}>
+    {/* Search + Show Filters — Manage Template style */}
+    <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 20px 0",flexShrink:0}}>
       <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.grayB}`,borderRadius:6,overflow:"hidden",background:C.bg,height:34}}>
         <select style={{padding:"0 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer",height:"100%"}}><option>Search by</option><option>Provider</option><option>Label</option></select>
         <div style={{display:"flex",alignItems:"center",gap:6,padding:"0 10px"}}>
@@ -577,15 +761,66 @@ function ConnectionsView(){
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search here..." style={{border:"none",outline:"none",fontSize:13,width:180,color:C.text}}/>
         </div>
       </div>
-      <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
-        <div style={{display:"inline-flex",background:C.bg2,border:`1px solid ${C.border}`,borderRadius:8,padding:3,gap:2}}>
-          {["All","Email","Push","Sms"].map(t=><button key={t} onClick={()=>setTf(t)} style={{padding:"5px 14px",fontSize:12.5,border:"none",cursor:"pointer",borderRadius:6,background:tf===t?C.bg:"transparent",color:tf===t?C.blue:C.t2,fontWeight:tf===t?600:400,boxShadow:tf===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .12s"}}>{t==="Sms"?"SMS":t}</button>)}
-        </div>
-        <button style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",border:`1px solid ${C.grayB}`,borderRadius:6,background:C.bg,color:C.t2,fontSize:12.5,cursor:"pointer"}}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t2} strokeWidth="2"><path d="M1 6h22M5 12h14M9 18h6"/></svg> Show Filters
+      <div style={{marginLeft:"auto"}}>
+        <button onClick={()=>setShowFilters(f=>!f)}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",border:`1px solid ${C.grayB}`,borderRadius:6,background:showFilters?"#f8faff":C.bg,color:showFilters?C.blue:C.t2,fontSize:12.5,cursor:"pointer",fontWeight:showFilters?500:400}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 6h22M5 12h14M9 18h6"/></svg>
+          {showFilters?"Hide Filters":"Show Filters"}
         </button>
       </div>
     </div>
+    {/* Expandable filter row — Manage Template style, 3 dropdowns */}
+    {showFilters&&(
+      <div style={{display:"flex",gap:16,padding:"12px 20px 4px",alignItems:"flex-end",flexShrink:0}}>
+        {/* Status filter */}
+        <div style={{minWidth:180}}>
+          <div style={{fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Status</div>
+          <div style={{position:"relative"}}>
+            <select value={fStatus} onChange={e=>setFStatus(e.target.value)}
+              style={{width:"100%",padding:"8px 32px 8px 12px",border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,color:fStatus?C.text:C.t3,background:C.bg,outline:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+              <option value="">Select Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Error">Error</option>
+            </select>
+            <svg style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        {/* Client Name filter */}
+        <div style={{minWidth:220}}>
+          <div style={{fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Client Name</div>
+          <div style={{position:"relative"}}>
+            <select value={fClient} onChange={e=>setFClient(e.target.value)}
+              style={{width:"100%",padding:"8px 32px 8px 12px",border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,color:fClient?C.text:C.t3,background:C.bg,outline:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+              <option value="">Select Client</option>
+              {CLIENT_DATA.map(c=><option key={c.clientId} value={c.clientId}>{c.clientId}</option>)}
+            </select>
+            <svg style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        {/* Connection Type filter */}
+        <div style={{minWidth:180}}>
+          <div style={{fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Connection Type</div>
+          <div style={{position:"relative"}}>
+            <select value={fType} onChange={e=>setFType(e.target.value)}
+              style={{width:"100%",padding:"8px 32px 8px 12px",border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,color:fType?C.text:C.t3,background:C.bg,outline:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+              <option value="">Select Type</option>
+              <option value="Email">Email</option>
+              <option value="Push">Push</option>
+              <option value="Sms">SMS</option>
+            </select>
+            <svg style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        {(fStatus||fClient||fType)&&(
+          <button onClick={()=>{setFStatus("");setFClient("");setFType("");}}
+            style={{padding:"8px 14px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:12.5,cursor:"pointer",alignSelf:"flex-end",marginBottom:0}}>
+            Clear
+          </button>
+        )}
+      </div>
+    )}
+    <div style={{height:12,flexShrink:0}}/>
     {/* Table — flat, no rounded card, single outer border, vertical column dividers */}
     <div style={{flex:1,overflowY:"auto",padding:"0 20px"}}>
       <div style={{background:C.bg,overflow:"hidden"}}>
@@ -599,6 +834,7 @@ function ConnectionsView(){
               <th style={thS}>STATUS</th>
               <th style={thS}>REGION</th>
               <th style={thS}>CREATED AT</th>
+              <th style={thS}>CLIENT NAME</th>
               <th style={thSL}>ACTIONS</th>
             </tr>
           </thead>
@@ -617,6 +853,7 @@ function ConnectionsView(){
                 <td style={tdS}><Badge v={c.status}/></td>
                 <td style={{...tdS,color:C.t2}}>{c.region}</td>
                 <td style={{...tdS,color:C.t2}}>{c.created}</td>
+                <td style={{...tdS,color:C.t2,fontSize:12.5}}>{c.clientName||"—"}</td>
                 <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
                   <DotMenu items={c.status==="Active"
                     ?[["View details",C.blue,()=>{setSelConn(c);setModal("view");}],
@@ -653,6 +890,47 @@ function ConnectionsView(){
     {modal==="view"&&selConn&&<ConnViewDetail conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
     {modal==="edit"&&selConn&&<ConnEditModal conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
     {modal==="test"&&selConn&&<ConnTestModal conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
+  </div>;
+}
+
+
+/* ════════════════════════════════════════
+   ERROR TOAST — bottom-right, auto-dismiss
+════════════════════════════════════════ */
+function ErrorToast({message,onDismiss}){
+  useEffect(()=>{const t=setTimeout(onDismiss,5000);return()=>clearTimeout(t);},[]);
+  const [visible,setVisible]=useState(false);
+  useEffect(()=>{const t=setTimeout(()=>setVisible(true),10);return()=>clearTimeout(t);},[]);
+  return<div style={{
+    position:"fixed",bottom:28,right:28,zIndex:9999,
+    maxWidth:440,padding:"14px 18px",
+    background:"#fff1f2",
+    border:"1px solid #fecaca",
+    borderLeft:"4px solid #dc2626",
+    borderRadius:8,
+    boxShadow:"0 4px 24px rgba(220,38,38,.18)",
+    display:"flex",alignItems:"flex-start",gap:12,
+    opacity:visible?1:0,
+    transform:visible?"translateY(0)":"translateY(12px)",
+    transition:"opacity .25s ease, transform .25s ease",
+  }}>
+    {/* Red warning icon */}
+    <div style={{flexShrink:0,marginTop:1}}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <div style={{flex:1}}>
+      <div style={{fontSize:13,fontWeight:600,color:"#991b1b",marginBottom:3}}>Cannot deactivate</div>
+      <div style={{fontSize:12.5,color:"#b91c1c",lineHeight:1.5}}>{message}</div>
+    </div>
+    {/* Progress bar */}
+    <button onClick={onDismiss} style={{flexShrink:0,background:"none",border:"none",cursor:"pointer",color:"#6b7280",fontSize:16,lineHeight:1,padding:"0 2px",marginTop:-2}}>×</button>
+    {/* Auto-dismiss progress bar at bottom */}
+    <div style={{position:"absolute",bottom:0,left:0,height:"3px",borderRadius:"0 0 8px 8px",background:"#dc2626",animation:"routingToastBar 5s linear forwards"}}/>
+    <style>{`@keyframes routingToastBar{from{width:100%}to{width:0%}}`}</style>
   </div>;
 }
 
@@ -714,10 +992,10 @@ function RoutingDetailModal({row,onClose,onToggle}){
           ))}
         </div>
       </div>
-      {/* Footer */}
+      {/* Footer — Edit only, no Duplicate */}
       <div style={{display:"flex",gap:8,padding:"16px 20px",borderTop:`1px solid ${C.border}`,marginTop:16,background:C.bg}}>
         <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>View</button>
-        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>Edit &amp; Duplicate</button>
+        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>Edit</button>
         <div style={{flex:1}}/>
         <button style={{padding:"7px 20px",border:"none",borderRadius:7,background:"#111827",color:"#fff",fontSize:13,cursor:"pointer",fontWeight:500}} onClick={onClose}>Close</button>
       </div>
@@ -730,8 +1008,13 @@ function RouteSetup({card,onClose}){
   const conns=CONNS[sub];
   return<Modal title={card.title} subtitle={`Configure ${card.title} routing before activating.`} onClose={onClose} width={580}>
     <div style={{flex:1,overflowY:"auto",padding:"16px 20px",display:"flex",flexDirection:"column",gap:16}}>
-      <div><label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:8}}>Subdomain <span style={{color:C.red}}>*</span></label>
-        <div style={{display:"flex",gap:8}}>{["Mail","Push","SMS"].map(s=><button key={s} onClick={()=>setSub(s)} style={{flex:1,padding:"8px 0",border:`2px solid ${sub===s?C.blue:C.grayB}`,borderRadius:6,background:sub===s?C.blueL:C.bg,color:sub===s?C.blue:C.t2,fontSize:13,cursor:"pointer",fontWeight:sub===s?600:400}}>{s}</button>)}</div>
+      <div><label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5}}>Subdomain <span style={{color:C.red}}>*</span></label>
+        <select value={sub} onChange={e=>setSub(e.target.value)} style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.text,background:C.bg,outline:"none",cursor:"pointer"}}>
+          <option value="">Select Subdomain</option>
+          <option value="Mail">Email</option>
+          <option value="Push">Push</option>
+          <option value="SMS">SMS</option>
+        </select>
       </div>
       <div><label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5}}>Configuration name <span style={{color:C.red}}>*</span></label><Inp placeholder={`${card.title} — ${sub}`}/></div>
       {card.key==="fallback"&&<div>
@@ -769,7 +1052,26 @@ function RouteSetup({card,onClose}){
 function RoutingView(){
   const [rows,setRows]=useState(ROUTING_DATA);
   const [activeCard,setActiveCard]=useState(null);const [detailRow,setDetailRow]=useState(null);
-  const toggle=id=>setRows(p=>p.map(r=>r.id===id?{...r,status:r.status==="Active"?"Inactive":"Active"}:r));
+  const [showFilters,setShowFilters]=useState(false);
+  const [filterSub,setFilterSub]=useState("");
+  const [filterStatus,setFilterStatus]=useState("");
+  const [toast,setToast]=useState(null);
+  const filteredRows=rows.filter(r=>(filterSub===""||r.subdomain===filterSub)&&(filterStatus===""||r.status===filterStatus));
+
+  /* ── Deactivation guard: at least 1 active per subdomain ── */
+  const toggle=id=>{
+    const target=rows.find(r=>r.id===id);
+    if(!target)return;
+    if(target.status==="Active"){
+      /* Count active configs for this subdomain */
+      const activeCountForSub=rows.filter(r=>r.status==="Active"&&r.subdomain===target.subdomain).length;
+      if(activeCountForSub<=1){
+        setToast("This is the last active routing configuration for this subdomain. Please create and activate another configuration before making this one inactive.");
+        return; /* Block the action */
+      }
+    }
+    setRows(p=>p.map(r=>r.id===id?{...r,status:r.status==="Active"?"Inactive":"Active"}:r));
+  };
   const CARDS=[
     {key:"fallback",title:"Fallback Chain",desc:"Ordered priority list of connections. On failure, automatically routes to the next connector in the chain.",icon:<div style={{display:"flex",alignItems:"center",gap:4,marginBottom:2}}><div style={{width:12,height:12,borderRadius:"50%",background:"#f87171"}}/><svg width="14" height="10" viewBox="0 0 14 10"><path d="M1 5h12M8 1l5 4-5 4" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg><div style={{width:12,height:12,borderRadius:3,background:C.blue,display:"flex",alignItems:"center",justifyContent:"center"}}><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1 1h6M1 4h4M1 7h5" stroke="#fff" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg></div></div>},
     {key:"weighted",title:"Weighted Split",desc:"Distribute traffic across connections by percentage using weighted random selection on every send.",icon:<div style={{display:"flex",alignItems:"center",gap:3,marginBottom:2}}><div style={{width:13,height:13,borderRadius:2,background:"#f87171"}}/><div style={{width:8,height:8,borderRadius:"50%",background:C.blue}}/><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4h8M6 1l3 3-3 3" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg><div style={{width:13,height:13,borderRadius:2,border:`2px solid ${C.blue}`}}/></div>},
@@ -793,9 +1095,62 @@ function RoutingView(){
         </div>
       ))}
     </div>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+    {/* Search + Show Filters row — matches Manage Template layout */}
+    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:0}}>
+      <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.grayB}`,borderRadius:6,overflow:"hidden",background:C.bg,height:34}}>
+        <select style={{padding:"0 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer",height:"100%"}}><option>Search by</option><option>Name</option><option>Type</option></select>
+        <div style={{display:"flex",alignItems:"center",gap:6,padding:"0 10px"}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input placeholder="Search here..." style={{border:"none",outline:"none",fontSize:13,width:180,color:C.text}}/>
+        </div>
+      </div>
+      <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:10}}>
+        <span style={{fontSize:12,color:C.t3}}>{rows.filter(r=>r.status==="Active").length} active · {rows.filter(r=>r.status==="Inactive").length} inactive</span>
+        <button onClick={()=>setShowFilters(f=>!f)}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",border:`1px solid ${C.grayB}`,borderRadius:6,background:showFilters?"#f8faff":C.bg,color:showFilters?C.blue:C.t2,fontSize:12.5,cursor:"pointer",fontWeight:showFilters?500:400}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 6h22M5 12h14M9 18h6"/></svg>
+          {showFilters?"Hide Filters":"Show Filters"}
+        </button>
+      </div>
+    </div>
+    {/* Expandable filter row — matches Manage Template style from screenshot */}
+    {showFilters&&(
+      <div style={{display:"flex",gap:16,padding:"14px 0 4px",alignItems:"flex-end"}}>
+        <div style={{minWidth:200}}>
+          <div style={{fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Subdomain</div>
+          <div style={{position:"relative"}}>
+            <select value={filterSub} onChange={e=>setFilterSub(e.target.value)}
+              style={{width:"100%",padding:"8px 32px 8px 12px",border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,color:filterSub?C.text:C.t3,background:C.bg,outline:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+              <option value="">Select Subdomain</option>
+              <option value="Mail">Email</option>
+              <option value="Push">Push</option>
+              <option value="SMS">SMS</option>
+            </select>
+            <svg style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div style={{minWidth:200}}>
+          <div style={{fontSize:12.5,fontWeight:500,color:C.text,marginBottom:6}}>Status</div>
+          <div style={{position:"relative"}}>
+            <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)}
+              style={{width:"100%",padding:"8px 32px 8px 12px",border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,color:filterStatus?C.text:C.t3,background:C.bg,outline:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+              <option value="">Select Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <svg style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        {(filterSub||filterStatus)&&(
+          <button onClick={()=>{setFilterSub("");setFilterStatus("");}}
+            style={{padding:"8px 14px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:12.5,cursor:"pointer",height:36,alignSelf:"flex-end",marginBottom:0}}>
+            Clear filters
+          </button>
+        )}
+      </div>
+    )}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10,marginTop:showFilters?14:10}}>
       <div style={{fontSize:14,fontWeight:600}}>Active configurations</div>
-      <span style={{fontSize:12,color:C.t3}}>{rows.filter(r=>r.status==="Active").length} active · {rows.filter(r=>r.status==="Inactive").length} inactive</span>
     </div>
     <div style={{background:C.bg,overflow:"hidden"}}>
       <table style={{width:"100%",borderCollapse:"collapse"}}>
@@ -805,7 +1160,7 @@ function RoutingView(){
           <th style={thS}>Status</th><th style={thS}>Created</th><th style={thSL}></th>
         </tr></thead>
         <tbody>
-          {rows.map((r,i)=>{
+          {filteredRows.map((r,i)=>{
             const isA=r.status==="Active";
             return<tr key={r.id} onClick={()=>setDetailRow(r)} style={{cursor:"pointer",background:C.bg}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>
               <td style={tdS}>{i+1}</td>
@@ -816,7 +1171,13 @@ function RoutingView(){
               <td style={tdS}><Badge v={r.status}/></td>
               <td style={{...tdS,color:C.t2,fontSize:12.5}}>{r.created}</td>
               <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
-                <DotMenu items={isA?[["⊙ View",C.blue,()=>setDetailRow(r)],["⧉ Edit & Duplicate",C.blue,null],["✕ Deactivate",C.redT,()=>toggle(r.id)]]:[["⊙ View",C.blue,()=>setDetailRow(r)],["✎ Edit",C.blue,null],["✕ Deactivate",C.gray,()=>toggle(r.id)]]}/>
+                <DotMenu items={isA
+                  ?[["⊙ View",C.blue,()=>setDetailRow(r)],
+                    ["✎ Edit",C.blue,null],
+                    ["✕ Deactivate",C.redT,()=>toggle(r.id)]]
+                  :[["⊙ View",C.blue,()=>setDetailRow(r)],
+                    ["✎ Edit",C.blue,null],
+                    ["✓ Activate",C.greenT,()=>toggle(r.id)]]}/>
               </td>
             </tr>;
           })}
@@ -824,7 +1185,23 @@ function RoutingView(){
       </table>
     </div>
     {activeCard&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}><RouteSetup card={activeCard} onClose={()=>setActiveCard(null)}/></div>}
-    {detailRow&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}><RoutingDetailModal row={detailRow} onClose={()=>setDetailRow(null)} onToggle={id=>{toggle(id);setDetailRow(p=>({...p,status:p.status==="Active"?"Inactive":"Active"}));}}/></div>}
+    {detailRow&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+      <RoutingDetailModal row={detailRow} onClose={()=>setDetailRow(null)}
+        onToggle={id=>{
+          const target=rows.find(r=>r.id===id);
+          if(target&&target.status==="Active"){
+            const activeCountForSub=rows.filter(r=>r.status==="Active"&&r.subdomain===target.subdomain).length;
+            if(activeCountForSub<=1){
+              setToast("This is the last active routing configuration for this subdomain. Please create and activate another configuration before making this one inactive.");
+              return;
+            }
+          }
+          toggle(id);
+          setDetailRow(p=>({...p,status:p.status==="Active"?"Inactive":"Active"}));
+        }}/>
+    </div>}
+    {/* Error toast — bottom right, auto-dismiss */}
+    {toast&&<ErrorToast message={toast} onDismiss={()=>setToast(null)}/>}
   </div>;
 }
 
@@ -846,39 +1223,90 @@ function HBar({d,maxVal,hov,onHover,onLeave}){
     <div style={{width:40,fontSize:11,color:C.t3,textAlign:"right",flexShrink:0}}>{fmtNum(d.total)}</div>
   </div>;
 }
+/* ── Recent activity log data ── */
+const RECENT_ACTIVITY=[
+  {time:"2m ago",event:"SendGrid",action:"Sent",channel:"Email",client:"smart_app_consumer",count:142,status:"ok"},
+  {time:"4m ago",event:"Twilio",action:"Sent",channel:"SMS",client:"smart_app_merchant",count:38,status:"ok"},
+  {time:"8m ago",event:"AWS SES",action:"Failed",channel:"Email",client:"smart_app_consumer",count:12,status:"err"},
+  {time:"15m ago",event:"FCM",action:"Sent",channel:"Push",client:"smart_app_mobile",count:380,status:"ok"},
+  {time:"22m ago",event:"Mailgun",action:"Sent",channel:"Email",client:"smart_app_consumer",count:74,status:"ok"},
+  {time:"31m ago",event:"APNs",action:"Sent",channel:"Push",client:"smart_app_mobile",count:220,status:"ok"},
+  {time:"44m ago",event:"AWS SES",action:"Error",channel:"Email",client:"smart_app_consumer",count:5,status:"err"},
+  {time:"1h ago",event:"Infobip",action:"Sent",channel:"SMS",client:"smart_app_merchant",count:91,status:"ok"},
+];
+const ROUTE_HEALTH=[
+  {name:"Email Fallback Chain",subdomain:"Mail",status:"Active",successRate:94.2,avgLatency:"204ms",sends7d:8820,lastEvent:"2m ago",health:"warn"},
+  {name:"Email Weighted Split",subdomain:"Mail",status:"Inactive",successRate:97.1,avgLatency:"191ms",sends7d:4200,lastEvent:"2d ago",health:"off"},
+  {name:"Push Weighted Split",subdomain:"Push",status:"Active",successRate:98.8,avgLatency:"142ms",sends7d:28100,lastEvent:"4m ago",health:"ok"},
+  {name:"SMS Volume Cap",subdomain:"SMS",status:"Active",successRate:88.3,avgLatency:"312ms",sends7d:6800,lastEvent:"15m ago",health:"ok"},
+];
+
 function AnalyticsView(){
   const [dp,setDp]=useState("7d");const [cf,setCf]=useState("Email");const [hov,setHov]=useState(null);const [tip,setTip]=useState(null);
   useEffect(()=>{setHov(null);setTip(null);},[dp,cf]);
   const seed=ASEED[cf]?.[dp]||ASEED.Email["7d"];
   const bars=BSEED[cf]?.[dp]||[];
   const maxVal=Math.max(...bars.map(d=>d.total),1)*1.15;
+  const totalSent=seed.sent,totalFailed=seed.failed,totalSuccess=totalSent-totalFailed;
+  const successRate=((totalSuccess/totalSent)*100).toFixed(1);
+
+  /* System summary — computed from live data */
+  const activeConns=CONNECTIONS.filter(c=>c.status==="Active").length;
+  const errorConns=CONNECTIONS.filter(c=>c.status==="Error").length;
+  const activeRoutes=ROUTING_DATA.filter(r=>r.status==="Active").length;
+  const activeClients=CLIENT_DATA.filter(c=>c.status==="Active").length;
+
+  /* KPI cards — no emoji, plain text labels */
   const KPI=[
-    {l:"Total Sent",v:fmtNum(seed.sent),d:dp==="24h"?"+8%":"+12%",up:true},
-    {l:"Failed",v:fmtNum(seed.failed),d:dp==="24h"?"+2%":"+3%",up:false},
-    {l:"Successful",v:fmtNum(seed.sent-seed.failed),d:dp==="24h"?"+9%":"+11%",up:true},
-    {l:"Failure Rate",v:((seed.failed/seed.sent)*100).toFixed(1)+"%",d:dp==="24h"?"−0.2%":"+0.4%",up:dp==="24h"},
+    {l:"Total Sent",v:fmtNum(totalSent),d:dp==="24h"?"+8%":"+12%",up:true},
+    {l:"Successful",v:fmtNum(totalSuccess),d:dp==="24h"?"+9%":"+11%",up:true},
+    {l:"Failed",v:fmtNum(totalFailed),d:dp==="24h"?"+2%":"+3%",up:false},
+    {l:"Success Rate",v:successRate+"%",d:dp==="24h"?"−0.2%":"+0.4%",up:dp==="24h"},
     {l:"Avg Latency",v:seed.latency,d:"−14ms",up:true},
     {l:"Fallback Rate",v:seed.fallback,d:"−0.3%",up:true},
   ];
+
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"9px 14px",background:C.bg,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".05em",textTransform:"uppercase",backgroundImage:"linear-gradient(to bottom, #e0e0e0 0%, #e0e0e0 65%, transparent 65%)",backgroundRepeat:"no-repeat",backgroundPosition:"right 0 top 0",backgroundSize:"1px 100%"};
+  const thSL={...thS,backgroundImage:"none"};
+  const tdS={padding:"11px 14px",borderBottom:`1px solid ${C.border}`,fontSize:12.5,color:C.text,verticalAlign:"middle"};
+
   return<div style={{flex:1,overflowY:"auto",padding:"16px 20px"}}>
+
+    {/* ── Filters row — same as previous layout ── */}
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18,gap:10}}>
       <div style={{display:"inline-flex",background:C.bg2,border:`1px solid ${C.border}`,borderRadius:8,padding:3,gap:2}}>
-        {[["24h","Last 24h"],["7d","Last 7 days"],["30d","Last 30 days"]].map(([v,l])=><button key={v} onClick={()=>setDp(v)} style={{padding:"5px 16px",fontSize:12.5,border:"none",cursor:"pointer",borderRadius:6,background:dp===v?C.bg:"transparent",color:dp===v?C.blue:C.t2,fontWeight:dp===v?600:400,boxShadow:dp===v?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .12s"}}>{l}</button>)}
+        {[["24h","Last 24h"],["7d","Last 7 days"],["30d","Last 30 days"]].map(([v,l])=>(
+          <button key={v} onClick={()=>setDp(v)} style={{padding:"5px 16px",fontSize:12.5,border:"none",cursor:"pointer",borderRadius:6,background:dp===v?C.bg:"transparent",color:dp===v?C.blue:C.t2,fontWeight:dp===v?600:400,boxShadow:dp===v?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .12s"}}>{l}</button>
+        ))}
       </div>
       <div style={{display:"inline-flex",background:C.bg2,border:`1px solid ${C.border}`,borderRadius:8,padding:3,gap:2}}>
-        {["Email","Push","Sms"].map(t=><button key={t} onClick={()=>setCf(t)} style={{padding:"5px 16px",fontSize:12.5,border:"none",cursor:"pointer",borderRadius:6,background:cf===t?C.bg:"transparent",color:cf===t?C.blue:C.t2,fontWeight:cf===t?600:400,boxShadow:cf===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .12s"}}>{t==="Sms"?"SMS":t}</button>)}
+        {["Email","Push","Sms"].map(t=>(
+          <button key={t} onClick={()=>setCf(t)} style={{padding:"5px 16px",fontSize:12.5,border:"none",cursor:"pointer",borderRadius:6,background:cf===t?C.bg:"transparent",color:cf===t?C.blue:C.t2,fontWeight:cf===t?600:400,boxShadow:cf===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .12s"}}>{t==="Sms"?"SMS":t}</button>
+        ))}
       </div>
     </div>
+
+    {/* ── KPI cards — same 6-column grid as before ── */}
     <div style={{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:10,marginBottom:20}}>
-      {KPI.map(k=><div key={k.l} style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"12px 14px"}}>
-        <div style={{fontSize:10.5,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".05em",marginBottom:6}}>{k.l}</div>
-        <div style={{fontSize:20,fontWeight:700,color:C.text}}>{k.v}</div>
-        <div style={{display:"flex",alignItems:"center",gap:3,marginTop:3}}><span style={{fontSize:11.5,fontWeight:600,color:k.up?C.greenT:C.redT}}>{k.up?"↑":"↓"} {k.d}</span><span style={{fontSize:11,color:C.t3}}>vs prev</span></div>
-      </div>)}
+      {KPI.map(k=>(
+        <div key={k.l} style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"12px 14px"}}>
+          <div style={{fontSize:10.5,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".05em",marginBottom:6}}>{k.l}</div>
+          <div style={{fontSize:20,fontWeight:700,color:C.text}}>{k.v}</div>
+          <div style={{display:"flex",alignItems:"center",gap:3,marginTop:3}}>
+            <span style={{fontSize:11.5,fontWeight:600,color:k.up?C.greenT:C.redT}}>{k.up?"↑":"↓"} {k.d}</span>
+            <span style={{fontSize:11,color:C.t3}}>vs prev</span>
+          </div>
+        </div>
+      ))}
     </div>
-    <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"18px 20px"}}>
+
+    {/* ── Connection Overview bar chart — same as before, full width ── */}
+    <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"18px 20px",marginBottom:14}}>
       <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:14}}>
-        <div><div style={{fontSize:14,fontWeight:600}}>Connection Overview</div><div style={{fontSize:12,color:C.t3,marginTop:2}}>Bar length = total volume · Hover for details</div></div>
+        <div>
+          <div style={{fontSize:14,fontWeight:600,color:C.text}}>Connection Overview</div>
+          <div style={{fontSize:12,color:C.t3,marginTop:2}}>Bar length = total volume · Hover for details</div>
+        </div>
         <div style={{display:"flex",gap:12,fontSize:12}}>
           <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:12,height:10,background:C.green,borderRadius:2,display:"inline-block"}}/><span style={{color:C.t2}}>Successful</span></span>
           <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:12,height:10,background:C.red,borderRadius:2,display:"inline-block"}}/><span style={{color:C.t2}}>Failed</span></span>
@@ -896,6 +1324,77 @@ function AnalyticsView(){
       {bars.map(d=><HBar key={d.label} d={d} maxVal={maxVal} hov={hov} onHover={d=>{setHov(d.label);setTip(d);}} onLeave={()=>{setHov(null);setTip(null);}}/>)}
       <div style={{marginTop:12,paddingTop:10,borderTop:`1px solid ${C.border}`,fontSize:11.5,color:C.t3}}>Hover any bar for exact counts</div>
     </div>
+
+    {/* ── System summary — 4 inline stat items, compact single row ── */}
+    {/* Placed BELOW the chart, not dominating the top — subtle enterprise style */}
+    <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"12px 20px",marginBottom:14}}>
+      <div style={{display:"flex",alignItems:"center",gap:0,flexWrap:"wrap"}}>
+        {[
+          {label:"Active Connections",value:activeConns,of:CONNECTIONS.length,note:errorConns>0?`${errorConns} error`:null,noteColor:C.redT},
+          {label:"Active Routes",value:activeRoutes,of:ROUTING_DATA.length,note:`${ROUTING_DATA.length-activeRoutes} inactive`,noteColor:C.t3},
+          {label:"Active Clients",value:activeClients,of:CLIENT_DATA.length,note:null,noteColor:null},
+          {label:"System Health",value:errorConns>0?"Degraded":"Operational",of:null,note:errorConns>0?`${errorConns} error`:"All connections healthy",noteColor:errorConns>0?C.redT:C.greenT},
+        ].map((s,i,arr)=>(
+          <div key={s.label} style={{flex:1,minWidth:140,padding:"6px 16px",borderRight:i<arr.length-1?`1px solid ${C.border}`:"none",display:"flex",alignItems:"center",gap:12}}>
+            {/* Minimal SVG icon — monochrome, no emoji */}
+            <div style={{flexShrink:0,color:C.t3}}>
+              {i===0&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>}
+              {i===1&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>}
+              {i===2&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+              {i===3&&<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
+            </div>
+            <div style={{minWidth:0}}>
+              <div style={{fontSize:10.5,fontWeight:500,color:C.t3,marginBottom:1,whiteSpace:"nowrap"}}>{s.label}</div>
+              <div style={{display:"flex",alignItems:"baseline",gap:4}}>
+                <span style={{fontSize:15,fontWeight:700,color:C.text}}>{s.value}</span>
+                {s.of&&<span style={{fontSize:11,color:C.t3}}>/ {s.of}</span>}
+              </div>
+              {s.note&&<div style={{fontSize:10.5,color:s.noteColor,marginTop:1,whiteSpace:"nowrap"}}>{s.note}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* ── Route Health — full width ── */}
+    <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden"}}>
+      <div style={{padding:"14px 20px 10px",borderBottom:`1px solid ${C.border}`}}>
+        <div style={{fontSize:14,fontWeight:600,color:C.text}}>Route Health</div>
+        <div style={{fontSize:12,color:C.t3,marginTop:2}}>Live status of all routing configurations</div>
+      </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr>
+          <th style={thS}>Route</th>
+          <th style={thS}>Subdomain</th>
+          <th style={thS}>Status</th>
+          <th style={thS}>Success Rate</th>
+          <th style={thS}>Avg Latency</th>
+          <th style={thS}>Sends (7d)</th>
+          <th style={thSL}>Last Activity</th>
+        </tr></thead>
+        <tbody>
+          {ROUTE_HEALTH.map((r,i)=>(
+            <tr key={i} style={{background:C.bg}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>
+              <td style={{...tdS,fontWeight:500}}>{r.name}</td>
+              <td style={tdS}><Badge v={r.subdomain}/></td>
+              <td style={tdS}><Badge v={r.status}/></td>
+              <td style={tdS}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:80,height:5,background:C.bg2,borderRadius:3,overflow:"hidden",flexShrink:0}}>
+                    <div style={{height:"100%",background:r.successRate>=95?C.green:r.successRate>=85?C.amber:C.red,width:r.successRate+"%"}}/>
+                  </div>
+                  <span style={{fontSize:12.5,fontWeight:500,color:r.successRate>=95?C.greenT:r.successRate>=85?C.amberT:C.redT}}>{r.successRate}%</span>
+                </div>
+              </td>
+              <td style={{...tdS,color:C.t2}}>{r.avgLatency}</td>
+              <td style={{...tdS,color:C.t2}}>{fmtNum(r.sends7d)}</td>
+              <td style={{...tdS,color:C.t3,fontSize:12}}>{r.lastEvent}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
   </div>;
 }
 
@@ -906,16 +1405,16 @@ function App(){
   // page: "connectra" | "notifications"
   // section: "connections" | "routing" | "analytics"
   const [page,setPage]=useState("connectra");
-  const [section,setSection]=useState("connections");
+  const [section,setSection]=useState("analytics");
 
-  const TABS=[{key:"connections",label:"Connections"},{key:"routing",label:"Routing"},{key:"analytics",label:"Analytics"}];
+  const TABS=[{key:"analytics",label:"Analytics"},{key:"connections",label:"Connections"},{key:"routing",label:"Routing"}];
 
-  const handlePage=p=>{setPage(p);if(p==="notifications")setSection("connections");};
+  const handlePage=p=>{setPage(p);if(p==="notifications")setSection("analytics");if(p==="client")setSection("analytics");};
   const handleSection=s=>{setSection(s);};
 
   /* Breadcrumb text */
   const sectionLabel=TABS.find(t=>t.key===section)?.label||"";
-  const bcParts=page==="notifications"?["Connectra","Notification",sectionLabel]:["Connectra"];
+  const bcParts=page==="notifications"?["Connectra","Communications",sectionLabel]:page==="client"?["Connectra","Config","Client"]:["Connectra"];
 
   return<div style={{display:"flex",height:"100vh",background:C.bg2,overflow:"hidden"}}>
     <Sidebar page={page} section={section} onPage={handlePage} onSection={handleSection}/>
@@ -934,7 +1433,7 @@ function App(){
         {/* Row 1 — Title */}
         <div style={{display:"flex",alignItems:"center",padding:"0 20px",height:48}}>
           <span style={{fontSize:18,fontWeight:600,color:C.text}}>
-            {page==="connectra"?"Connectra":"Notification"}
+            {page==="connectra"?"Connectra":page==="client"?"Connector Config":page==="notifications"?"Communications":page==="payments"?"Payments":""}
           </span>
         </div>
 
@@ -957,8 +1456,8 @@ function App(){
           </div>
         )}
 
-        {/* Row 3 — Breadcrumb (no border — the band's bottom border covers it) */}
-        {page==="notifications"&&(
+        {/* Row 3 — Breadcrumb */}
+        {(page==="notifications"||page==="client")&&(
           <div style={{padding:"0 20px 8px",display:"flex",alignItems:"center",gap:6}}>
             {bcParts.map((p,i)=>(
               <React.Fragment key={p}>
@@ -978,6 +1477,7 @@ function App(){
       {/* ── CONTENT ── */}
       <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
         {page==="connectra"&&<ConnectraHome onEnterDomain={d=>{handlePage(d==="notifications"?"notifications":d);}}/>}
+        {page==="client"&&<ClientView/>}
         {page==="notifications"&&(
           <>
             {section==="connections"&&<ConnectionsView/>}
