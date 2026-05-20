@@ -269,49 +269,50 @@ function Sidebar({page,section,onPage,onSection}){
    CONNECTRA HOMEPAGE — Ontology-style cards
 ═══════════════════════════════════════ */
 function ConnectraHome({onEnterDomain}){
-  /* clean SVG icons matching backoffice style — no emoji */
+  /* Ontology-style cards: large dark icon, no coloured circle, rectangular */
   const CARD_ICON_NOTIF=(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
       <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
     </svg>
   );
   const CARD_ICON_KYC=(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </svg>
   );
   const DOMAIN_CARDS=[
-    {key:"notifications",cardIcon:CARD_ICON_NOTIF,title:"Notification",desc:"Manage Email, Push, and SMS connections. Configure routing and monitor delivery analytics across all channels.",available:true,connCount:8,color:C.blue,colorL:C.blueL,colorB:C.blueM},
-    {key:"kyc",cardIcon:CARD_ICON_KYC,title:"KYC",desc:"Connect KYC verification providers and identity check services. Manage credentials and routing for compliance workflows.",available:false,color:"#059669",colorL:"#ecfdf5",colorB:"#a7f3d0"},
+    {key:"notifications",cardIcon:CARD_ICON_NOTIF,title:"Notification",desc:"Manage Email, Push, and SMS connections. Configure routing and monitor delivery analytics across all channels.",available:true,connCount:8},
+    {key:"kyc",cardIcon:CARD_ICON_KYC,title:"KYC",desc:"Connect KYC verification providers and identity check services. Manage credentials and routing for compliance workflows.",available:false},
   ];
   return(
-    <div style={{flex:1,overflowY:"auto",padding:"28px 28px"}}>
-      <div style={{marginBottom:24}}>
+    <div style={{flex:1,overflowY:"auto",padding:"32px 28px"}}>
+      <div style={{marginBottom:8}}>
         <h1 style={{fontSize:22,fontWeight:600,color:C.text}}>Connectra</h1>
-        <p style={{fontSize:13.5,color:C.t2,marginTop:5,maxWidth:600,lineHeight:1.6}}>Unified control plane for third-party integrations. Connect, route, and monitor external providers across all domains from a single interface.</p>
+        <p style={{fontSize:13,color:C.t2,marginTop:4,lineHeight:1.5}}>Unified control plane for third-party integrations. Connect, route, and monitor external providers across all domains from a single interface.</p>
       </div>
-      {/* Domain cards — Ontology Explorer style, clean SVG icons */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,maxWidth:900}}>
+      {/* Domain cards — exact Ontology Explorer layout */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,maxWidth:960,marginTop:24}}>
         {DOMAIN_CARDS.map(d=>(
           <div key={d.key} onClick={()=>d.available&&onEnterDomain(d.key)}
-            style={{border:`1px solid ${C.border}`,borderRadius:10,padding:"22px 20px",background:C.bg,cursor:d.available?"pointer":"default",transition:"border-color .15s,box-shadow .15s",position:"relative",opacity:d.available?1:.72}}
-            onMouseEnter={e=>{if(d.available){e.currentTarget.style.borderColor=d.colorB;e.currentTarget.style.boxShadow=`0 2px 16px rgba(0,0,0,.07)`;}}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.boxShadow="none";}}>
+            style={{border:`1px solid ${C.border}`,borderRadius:8,padding:"28px 24px 26px",background:C.bg,
+              cursor:d.available?"pointer":"default",transition:"box-shadow .15s",
+              position:"relative",opacity:d.available?1:.65,minHeight:210}}
+            onMouseEnter={e=>{if(d.available)e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,.08)";}}
+            onMouseLeave={e=>{e.currentTarget.style.boxShadow="none";}}>
             {!d.available&&(
-              <span style={{position:"absolute",top:14,right:14,fontSize:10.5,fontWeight:600,background:C.amberL,color:C.amberT,border:`1px solid ${C.amberB}`,padding:"2px 8px",borderRadius:10}}>Coming soon</span>
+              <span style={{position:"absolute",top:14,right:14,fontSize:10,fontWeight:600,
+                background:"#f3f4f6",color:"#6b7280",border:"1px solid #e5e7eb",
+                padding:"2px 7px",borderRadius:10,letterSpacing:".03em"}}>Coming soon</span>
             )}
-            {/* Icon — clean SVG in a coloured circle, no emoji */}
-            <div style={{width:40,height:40,borderRadius:"50%",background:d.colorL,border:`1px solid ${d.colorB}`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16,color:d.available?d.color:"#9ca3af"}}>
-              {d.cardIcon}
-            </div>
-            <div style={{fontSize:15,fontWeight:600,color:C.text,marginBottom:6}}>{d.title}</div>
-            <div style={{fontSize:12.5,color:C.t2,lineHeight:1.65}}>{d.desc}</div>
+            {/* Large dark icon — same style as Ontology Explorer (no coloured bg circle) */}
+            <div style={{color:"#374151",marginBottom:14}}>{d.cardIcon}</div>
+            <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:8}}>{d.title}</div>
+            <div style={{fontSize:13,color:C.t2,lineHeight:1.6}}>{d.desc}</div>
             {d.available&&d.connCount&&(
-              <div style={{marginTop:14,fontSize:12,color:d.color,fontWeight:500,display:"flex",alignItems:"center",gap:5}}>
-                <span style={{width:6,height:6,borderRadius:"50%",background:d.color,display:"inline-block"}}/>
-                {d.connCount} connections configured
+              <div style={{marginTop:16,fontSize:12,color:C.t2}}>
+                <span style={{fontWeight:500,color:C.blue}}>{d.connCount}</span> connections configured
               </div>
             )}
           </div>
@@ -433,28 +434,144 @@ function Summary({provider,onBack,onClose}){
   </Modal>;
 }
 
+/* ════════════════════════════════════════
+   CONNECTION VIEW DETAIL MODAL
+════════════════════════════════════════ */
+function ConnViewDetail({conn,onClose}){
+  /* Data rows — matching screenshot 2 "View Template" layout exactly */
+  const vrows=[
+    ["Provider",conn.provider,"text"],
+    ["Label",conn.label,"text"],
+    ["Type",conn.type,"badge"],
+    ["Status",conn.status,"badge"],
+    ["Region",conn.region||"Global","text"],
+    ["Credential",conn.cred,"mono"],
+    ["From email","noreply@fyscaltech.com","text"],
+    ["From name","Fyscal Technologies","text"],
+    ["Environment","Production","text"],
+    ["Created",conn.created,"text"],
+    ["Routing usage",conn.status==="Active"?"Email Fallback Chain · Position 1":"Not in any routing config","routing"],
+    ["Last successful send","May 20, 2026 10:41 AM","muted"],
+  ];
+  return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+    <div style={{background:C.bg,borderRadius:6,width:560,maxWidth:"96%",maxHeight:"88vh",display:"flex",flexDirection:"column",boxShadow:"0 4px 24px rgba(0,0,0,.18)",overflow:"hidden"}}>
+      {/* Title row — "View Connection" left, × right — exactly like screenshot */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 12px"}}>
+        <span style={{fontSize:15,fontWeight:600,color:C.text}}>View Connection</span>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:C.t3,lineHeight:1,padding:"2px 4px"}}>×</button>
+      </div>
+      {/* Key-value table — exact screenshot 2 layout */}
+      <div style={{flex:1,overflowY:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead>
+            <tr style={{background:"#f3f4f6"}}>
+              <th style={{textAlign:"left",fontSize:13,fontWeight:400,color:C.text,padding:"10px 20px",borderBottom:`1px solid ${C.border}`,width:"38%"}}>Name</th>
+              <th style={{textAlign:"left",fontSize:13,fontWeight:400,color:C.text,padding:"10px 20px",borderBottom:`1px solid ${C.border}`}}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vrows.map(([k,v,type],i)=>(
+              <tr key={k} style={{background:C.bg}}>
+                <td style={{padding:"10px 20px",fontSize:13,color:C.text,borderBottom:`1px solid ${C.border}`,width:"38%"}}>{k}</td>
+                <td style={{padding:"10px 20px",fontSize:13,borderBottom:`1px solid ${C.border}`}}>
+                  {type==="badge"?<Badge v={v}/>:
+                   type==="mono"?<span style={{fontFamily:"monospace",fontSize:12.5,color:C.text}}>{v}</span>:
+                   type==="routing"?<span style={{color:conn.status==="Active"?C.greenT:C.t3}}>{v}</span>:
+                   type==="muted"?<span style={{color:C.t2}}>{v}</span>:
+                   <span style={{color:v==="N/A"||!v?C.t3:C.text}}>{v||"N/A"}</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Footer — single black Close button, right-aligned */}
+      <div style={{padding:"12px 20px",display:"flex",justifyContent:"flex-end"}}>
+        <button onClick={onClose} style={{padding:"9px 28px",background:"#111827",color:"#fff",border:"none",borderRadius:6,fontSize:13,cursor:"pointer",fontWeight:500,letterSpacing:".01em"}}>Close</button>
+      </div>
+    </div>
+  </div>;
+}
+
+function ConnEditModal({conn,onClose}){
+  return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+    <div style={{background:C.bg,borderRadius:8,width:560,maxWidth:"96%",maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 8px 32px rgba(0,0,0,.15)",overflow:"hidden"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px",borderBottom:`1px solid ${C.border}`}}>
+        <div><div style={{fontSize:15,fontWeight:600,color:C.text}}>Edit Connection</div><div style={{fontSize:12,color:C.t2,marginTop:2}}>{conn.provider} · {conn.label}</div></div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,lineHeight:1,padding:"2px 6px"}}>×</button>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"20px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        {/* API keys are not editable — removed per security policy */}
+        {[{l:"Label",p:conn.label},{l:"From Email",p:"noreply@fyscaltech.com"},{l:"From Name",p:"Fyscal Technologies"},{l:"Region",p:conn.region||"Global"}].map((f,i)=>(
+          <div key={i}>
+            <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5,color:C.text}}>{f.l}</label>
+            <input type="text" defaultValue={f.p} style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.text,background:C.bg,outline:"none"}}
+              onFocus={e=>{e.currentTarget.style.borderColor=C.blue;e.currentTarget.style.boxShadow=`0 0 0 3px ${C.blueL}`;}}
+              onBlur={e=>{e.currentTarget.style.borderColor=C.grayB;e.currentTarget.style.boxShadow="none";}}/>
+          </div>
+        ))}
+        <div style={{gridColumn:"1/-1",padding:"10px 12px",background:"#fafafa",border:`1px solid ${C.border}`,borderRadius:6,fontSize:12,color:C.t2}}>
+          🔒 API keys and credentials cannot be edited. To update credentials, delete this connection and create a new one.
+        </div>
+      </div>
+      <div style={{padding:"12px 20px",borderTop:`1px solid ${C.border}`,display:"flex",gap:8,justifyContent:"flex-end"}}>
+        <button onClick={onClose} style={{padding:"8px 18px",background:C.bg,color:C.t2,border:`1px solid ${C.grayB}`,borderRadius:7,fontSize:13,cursor:"pointer"}}>Cancel</button>
+        <button onClick={onClose} style={{padding:"8px 24px",background:"#111827",color:"#fff",border:"none",borderRadius:7,fontSize:13,cursor:"pointer",fontWeight:500}}>Save changes</button>
+      </div>
+    </div>
+  </div>;
+}
+
+function ConnTestModal({conn,onClose}){
+  const [state,setState]=useState("idle");
+  useEffect(()=>{setState("testing");const t=setTimeout(()=>setState(conn.status==="Error"?"fail":"ok"),1600);return()=>clearTimeout(t);},[]);
+  return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+    <div style={{background:C.bg,borderRadius:8,width:440,maxWidth:"96%",boxShadow:"0 8px 32px rgba(0,0,0,.15)",overflow:"hidden"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px",borderBottom:`1px solid ${C.border}`}}>
+        <div><div style={{fontSize:15,fontWeight:600,color:C.text}}>Test Connection</div><div style={{fontSize:12,color:C.t2,marginTop:2}}>{conn.provider} · {conn.label}</div></div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,lineHeight:1,padding:"2px 6px"}}>×</button>
+      </div>
+      <div style={{padding:"28px 24px",textAlign:"center"}}>
+        {state==="testing"&&<><div style={{fontSize:28,marginBottom:12}}>⏳</div><div style={{fontSize:14,fontWeight:500,color:C.text}}>Testing credentials…</div><div style={{fontSize:12.5,color:C.t2,marginTop:6}}>Firing a live validation request to {conn.provider}</div></>}
+        {state==="ok"&&<><div style={{fontSize:32,marginBottom:12}}>✅</div><div style={{fontSize:14,fontWeight:500,color:C.greenT}}>Connection successful</div><div style={{fontSize:12.5,color:C.t2,marginTop:6}}>Credentials are valid and the provider responded correctly.</div></>}
+        {state==="fail"&&<><div style={{fontSize:32,marginBottom:12}}>❌</div><div style={{fontSize:14,fontWeight:500,color:C.redT}}>Connection failed</div><div style={{fontSize:12.5,color:C.t2,marginTop:6}}>The provider returned an authentication error. Check your credentials.</div></>}
+      </div>
+      <div style={{padding:"12px 20px",borderTop:`1px solid ${C.border}`,display:"flex",justifyContent:"flex-end"}}>
+        <button onClick={onClose} style={{padding:"8px 24px",background:"#111827",color:"#fff",border:"none",borderRadius:7,fontSize:13,cursor:"pointer",fontWeight:500}}>Close</button>
+      </div>
+    </div>
+  </div>;
+}
+
 /* ═══════════════════════════════════════
    CONNECTIONS VIEW
 ═══════════════════════════════════════ */
 function ConnectionsView(){
-  const [q,setQ]=useState("");const [tf,setTf]=useState("All");const [flow,setFlow]=useState(null);const [prov,setProv]=useState(null);
+  const [q,setQ]=useState("");const [tf,setTf]=useState("All");
+  const [flow,setFlow]=useState(null);const [prov,setProv]=useState(null);
+  const [modal,setModal]=useState(null);const [selConn,setSelConn]=useState(null);
   const rows=CONNECTIONS.filter(c=>(tf==="All"||c.type===tf)&&(q===""||c.provider.toLowerCase().includes(q.toLowerCase())||c.label.toLowerCase().includes(q.toLowerCase())));
-  /* Table styles — Fyscal backoffice pixel-match */
-  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"9px 14px",background:C.bg2,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".04em",textTransform:"uppercase"};
-  const tdS={padding:"11px 14px",borderBottom:`1px solid ${C.border}`,verticalAlign:"middle",fontSize:13,color:C.text};
+  /* Table header — subtle pipe divider, does not touch bottom border visually */
+  /* Header pipe: gradient stops at 65% height so it never touches borderBottom */
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"10px 16px",background:C.bg,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".06em",textTransform:"uppercase",backgroundImage:"linear-gradient(to bottom, #e0e0e0 0%, #e0e0e0 65%, transparent 65%)",backgroundRepeat:"no-repeat",backgroundPosition:"right 0 top 0",backgroundSize:"1px 100%"};
+  const thSL={...thS,backgroundImage:"none"};
+  const tdS={padding:"14px 16px",borderBottom:`1px solid ${C.border}`,verticalAlign:"middle",fontSize:13,color:C.text};
+  const tdSL=tdS;
   return<div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-    {/* Warning — yellow strip style (Admin permissions style) */}
-    <div style={{display:"flex",alignItems:"flex-start",gap:9,padding:"10px 20px",background:C.amberL,borderBottom:`1px solid ${C.amberB}`,fontSize:12.5,flexShrink:0}}>
+    {/* Warning — yellow strip (Admin permissions style) */}
+    <div style={{display:"flex",alignItems:"flex-start",gap:9,padding:"9px 20px",background:C.amberL,borderBottom:`1px solid ${C.amberB}`,fontSize:12.5,flexShrink:0}}>
       <span style={{color:C.amber,marginTop:1,flexShrink:0}}>{ICONS.warn}</span>
       <div><span style={{fontWeight:600,color:C.amberT}}>Warning: </span><span style={{color:C.amberT}}>AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. Sends may fail at position 3.</span></div>
     </div>
-    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"16px 20px 0",flexShrink:0}}>
-      <div></div>
+    {/* Page header — title left, button right (matches Manage Templates layout) */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 20px 10px",flexShrink:0}}>
+      <div style={{fontSize:20,fontWeight:600,color:C.text}}>Connections</div>
       <Btn variant="dark" onClick={()=>setFlow("provider")}>+ New Connection</Btn>
     </div>
-    <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 20px 10px",flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.grayB}`,borderRadius:6,overflow:"hidden",background:C.bg}}>
-        <select style={{padding:"6px 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer"}}><option>Search by</option><option>Provider</option><option>Label</option></select>
+    {/* Search bar row — standalone, not inside table */}
+    <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 20px 12px",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.grayB}`,borderRadius:6,overflow:"hidden",background:C.bg,height:34}}>
+        <select style={{padding:"0 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer",height:"100%"}}><option>Search by</option><option>Provider</option><option>Label</option></select>
         <div style={{display:"flex",alignItems:"center",gap:6,padding:"0 10px"}}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search here..." style={{border:"none",outline:"none",fontSize:13,width:180,color:C.text}}/>
@@ -469,22 +586,30 @@ function ConnectionsView(){
         </button>
       </div>
     </div>
+    {/* Table — flat, no rounded card, single outer border, vertical column dividers */}
     <div style={{flex:1,overflowY:"auto",padding:"0 20px"}}>
-      <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden"}}>
+      <div style={{background:C.bg,overflow:"hidden"}}>
         <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead><tr style={{background:C.bg}}>
-            <th style={thS}>ID</th><th style={thS}>PROVIDER</th><th style={thS}>LABEL</th><th style={thS}>TYPE</th>
-            <th style={thS}>STATUS</th><th style={thS}>REGION</th><th style={thS}>CREATED AT</th>
-            <th style={{...thS,textAlign:"right"}}>ACTIONS</th>
-          </tr></thead>
+          <thead>
+            <tr>
+              <th style={thS}>ID</th>
+              <th style={thS}>PROVIDER</th>
+              <th style={thS}>LABEL</th>
+              <th style={thS}>TYPE</th>
+              <th style={thS}>STATUS</th>
+              <th style={thS}>REGION</th>
+              <th style={thS}>CREATED AT</th>
+              <th style={thSL}>ACTIONS</th>
+            </tr>
+          </thead>
           <tbody>
             {rows.map(c=>(
-              <tr key={c.id} style={{cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                <td style={{...tdS,color:C.t3,fontFamily:"monospace",fontSize:12}}>{c.id}</td>
+              <tr key={c.id} onClick={()=>{setSelConn(c);setModal("view");}} style={{cursor:"pointer",background:C.bg}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>
+                <td style={{...tdS,color:C.t3,fontSize:13}}>{c.id}</td>
                 <td style={tdS}>
                   <div style={{display:"flex",alignItems:"center",gap:9}}>
-                    <div style={{width:28,height:28,borderRadius:6,background:c.status==="Error"?C.redL:C.blueL,border:`1px solid ${c.status==="Error"?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8.5,fontWeight:700,color:c.status==="Error"?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
-                    <div><div style={{fontSize:13,fontWeight:500}}>{c.provider}</div><div style={{fontSize:10.5,color:C.t3,fontFamily:"monospace"}}>{c.cred}</div></div>
+                    <div style={{width:26,height:26,borderRadius:5,background:c.status==="Error"?C.redL:C.blueL,border:`1px solid ${c.status==="Error"?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:c.status==="Error"?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
+                    <div><div style={{fontSize:13,fontWeight:500,color:C.text}}>{c.provider}</div><div style={{fontSize:10.5,color:C.t3,fontFamily:"monospace"}}>{c.cred}</div></div>
                   </div>
                 </td>
                 <td style={{...tdS,color:C.t2}}>{c.label}</td>
@@ -492,10 +617,18 @@ function ConnectionsView(){
                 <td style={tdS}><Badge v={c.status}/></td>
                 <td style={{...tdS,color:C.t2}}>{c.region}</td>
                 <td style={{...tdS,color:C.t2}}>{c.created}</td>
-                <td style={{...tdS,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
+                <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
                   <DotMenu items={c.status==="Active"
-                    ?[["⊙ View details",C.blue,null],["✎ Edit",C.blue,null],["⚡ Test connection",C.gray,null],["⧉ Edit & Duplicate",C.blue,null],["✕ Deactivate",C.redT,null]]
-                    :[["⊙ View details",C.blue,null],["✎ Edit",C.blue,null],["⚡ Test connection",C.gray,null],["✓ Set as active",C.greenT,null],["🗑 Delete",C.redT,null]]}/>
+                    ?[["View details",C.blue,()=>{setSelConn(c);setModal("view");}],
+                      ["Edit",C.blue,()=>{setSelConn(c);setModal("edit");}],
+                      ["Test connection",C.gray,()=>{setSelConn(c);setModal("test");}],
+                      ["Edit & Duplicate",C.blue,null],
+                      ["Deactivate",C.redT,null]]
+                    :[["View details",C.blue,()=>{setSelConn(c);setModal("view");}],
+                      ["Edit",C.blue,()=>{setSelConn(c);setModal("edit");}],
+                      ["Test connection",C.gray,()=>{setSelConn(c);setModal("test");}],
+                      ["Set as active",C.greenT,null],
+                      ["Delete",C.redT,null]]}/>
                 </td>
               </tr>
             ))}
@@ -503,13 +636,23 @@ function ConnectionsView(){
         </table>
       </div>
     </div>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 20px",borderTop:`1px solid ${C.border}`,flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",gap:6,fontSize:12.5,color:C.t2}}><div style={{width:7,height:7,borderRadius:"50%",background:C.blue}}/>Showing 1–{rows.length} of {rows.length}</div>
-      <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12.5,color:C.t2}}>Page 1 of 1{["‹","›","»"].map(a=><button key={a} style={{width:24,height:24,border:`1px solid ${C.grayB}`,borderRadius:4,background:C.bg,color:C.t3,cursor:"pointer",fontSize:12}}>{a}</button>)}</div>
+    {/* Pagination — matches Orders/Refunds/Roles style exactly */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 20px",background:C.bg,flexShrink:0}}>
+      <div style={{fontSize:12.5,color:C.t2}}>| Showing 1–{rows.length} of {rows.length}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,fontSize:12.5,color:C.t2}}>
+        <div style={{display:"flex",alignItems:"center",gap:5}}>
+          <div style={{width:7,height:7,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
+          <span>Page 1 of 1</span>
+        </div>
+        {["›","»"].map(a=><button key={a} style={{width:26,height:26,border:`1px solid ${C.grayB}`,borderRadius:4,background:C.bg,color:C.t3,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>{a}</button>)}
+      </div>
     </div>
     {flow==="provider"&&<ProviderSel onSelect={p=>{setProv(p);setFlow("form")}} onClose={()=>setFlow(null)}/>}
     {flow==="form"&&<ConnectForm provider={prov} onBack={()=>setFlow("provider")} onNext={()=>setFlow("summary")} onClose={()=>setFlow(null)}/>}
     {flow==="summary"&&<Summary provider={prov} onBack={()=>setFlow("form")} onClose={()=>setFlow(null)}/>}
+    {modal==="view"&&selConn&&<ConnViewDetail conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
+    {modal==="edit"&&selConn&&<ConnEditModal conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
+    {modal==="test"&&selConn&&<ConnTestModal conn={selConn} onClose={()=>{setModal(null);setSelConn(null);}}/>}
   </div>;
 }
 
@@ -518,39 +661,68 @@ function ConnectionsView(){
 ═══════════════════════════════════════ */
 function RoutingDetailModal({row,onClose,onToggle}){
   const isActive=row.status==="Active";
-  return<Modal title={row.name} subtitle={`${row.type} · ${row.subdomain} · Created ${row.created}`} onClose={onClose} width={540}>
-    <div style={{flex:1,overflowY:"auto",padding:"16px 20px"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",background:isActive?C.greenL:C.grayL,border:`1px solid ${isActive?C.greenB:C.grayB}`,borderRadius:7,marginBottom:14}}>
-        <div style={{display:"flex",alignItems:"center",gap:7}}><div style={{width:7,height:7,borderRadius:"50%",background:isActive?C.green:C.gray}}/><span style={{fontSize:13,fontWeight:500,color:isActive?C.greenT:C.gray}}>{isActive?"Active routing":"Inactive routing"}</span></div>
-        <button onClick={()=>onToggle(row.id)} style={{padding:"5px 14px",border:`1px solid ${isActive?C.redB:C.greenB}`,borderRadius:6,background:isActive?C.redL:C.greenL,color:isActive?C.redT:C.greenT,fontSize:12.5,cursor:"pointer",fontWeight:500}}>{isActive?"Deactivate":"Activate"}</button>
+  return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+    <div style={{background:C.bg,borderRadius:8,width:480,maxWidth:"96%",maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 8px 32px rgba(0,0,0,.15)",overflow:"hidden"}}>
+      {/* Modal header */}
+      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"18px 20px 14px",borderBottom:`1px solid ${C.border}`}}>
+        <div>
+          <div style={{fontSize:16,fontWeight:600,color:C.text}}>{row.name}</div>
+          <div style={{fontSize:12,color:C.t2,marginTop:3}}>{row.type} · {row.subdomain} · Created {row.created}</div>
+        </div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,lineHeight:1,padding:"2px 6px",marginLeft:12}}>×</button>
       </div>
-      <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:7,overflow:"hidden",marginBottom:14}}>
-        {[["Strategy",row.type],["Subdomain",row.subdomain],["Description",row.desc],["Status",row.status],["Created",row.created]].map(([k,v],i,a)=>(
-          <div key={k} style={{display:"flex",alignItems:"center",padding:"9px 14px",borderBottom:i<a.length-1?`1px solid ${C.bg2}`:"none"}}><span style={{width:120,fontSize:13,color:C.t2,flexShrink:0}}>{k}</span><span style={{fontSize:13,fontWeight:500}}>{v}</span></div>
-        ))}
+      {/* Active status bar — matches screenshot 2 */}
+      <div style={{margin:"16px 20px 0",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",background:isActive?"#f0fdf4":"#f9fafb",borderRadius:7,border:`1px solid ${isActive?"#bbf7d0":"#e5e7eb"}`}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:isActive?C.green:C.gray,flexShrink:0}}/>
+          <span style={{fontSize:13,fontWeight:500,color:isActive?C.greenT:C.gray}}>{isActive?"Active routing":"Inactive routing"}</span>
+        </div>
+        <button onClick={()=>onToggle(row.id)}
+          style={{padding:"5px 16px",border:`1px solid ${isActive?"#fecaca":"#bbf7d0"}`,borderRadius:6,
+            background:isActive?C.redL:C.greenL,color:isActive?C.redT:C.greenT,
+            fontSize:12.5,cursor:"pointer",fontWeight:500}}>
+          {isActive?"Deactivate":"Activate"}
+        </button>
       </div>
-      <div style={{fontSize:11,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".07em",marginBottom:7}}>Connectors</div>
-      <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:7,overflow:"hidden"}}>
-        {row.connectors.map((c,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:9,padding:"9px 14px",borderBottom:i<row.connectors.length-1?`1px solid ${C.bg2}`:"none"}}>
-            <div style={{width:22,height:22,borderRadius:5,background:c.err?C.redL:C.blueL,border:`1px solid ${c.err?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:c.err?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
-            <div style={{flex:1}}><span style={{fontSize:13,fontWeight:500}}>{c.name}</span><span style={{fontSize:12,color:C.t3,marginLeft:5}}>{c.label}</span></div>
-            {c.pos!==undefined&&<span style={{fontSize:11,background:i===0?C.greenL:C.bg2,border:`1px solid ${i===0?C.greenB:C.border}`,color:i===0?C.greenT:C.t3,padding:"1px 8px",borderRadius:9}}>{i===0?"Primary":`Fallback ${i}`}</span>}
-            {c.weight!==undefined&&<span style={{fontSize:12.5,fontWeight:600,color:C.blue}}>{c.weight}%</span>}
-            {c.cap&&<span style={{fontSize:12,color:C.t2}}>Cap: {c.cap.toLocaleString()}/day</span>}
-            {c.role&&<Badge v="Overflow" sx={{background:C.amberL,color:C.amberT,border:`1px solid ${C.amberB}`,fontSize:11}}/>}
-            {c.err&&<Badge v="Error" sx={{fontSize:11}}/>}
+      {/* Key-value fields */}
+      <div style={{margin:"14px 20px 0"}}>
+        {[["Strategy",row.type],["Subdomain",row.subdomain],["Description",row.desc],["Status",row.status],["Created",row.created]].map(([k,v])=>(
+          <div key={k} style={{display:"flex",alignItems:"center",padding:"9px 0",borderBottom:`1px solid ${C.border}`}}>
+            <span style={{width:110,fontSize:13,color:C.t2,flexShrink:0}}>{k}</span>
+            <span style={{fontSize:13,color:C.text}}>{v}</span>
           </div>
         ))}
       </div>
+      {/* Connectors section — matches screenshot 2 */}
+      <div style={{margin:"16px 20px 0"}}>
+        <div style={{fontSize:10.5,fontWeight:600,color:C.t3,textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>CONNECTORS</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {row.connectors.map((c,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:C.bg2,borderRadius:7,border:`1px solid ${C.border}`}}>
+              <div style={{width:26,height:26,borderRadius:5,background:c.err?C.redL:C.blueL,border:`1px solid ${c.err?C.redB:C.blueM}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:c.err?C.redT:C.blue,flexShrink:0}}>{c.logo}</div>
+              <div style={{flex:1}}>
+                <span style={{fontSize:13,fontWeight:500,color:C.text}}>{c.name}</span>
+                <span style={{fontSize:12,color:C.t3,marginLeft:6}}>{c.label}</span>
+              </div>
+              {/* Position badge */}
+              {c.pos!==undefined&&!c.err&&<span style={{fontSize:11.5,padding:"2px 10px",borderRadius:5,background:i===0?C.greenL:C.bg,border:`1px solid ${i===0?C.greenB:C.border}`,color:i===0?C.greenT:C.t2,fontWeight:500}}>{i===0?"Primary":`Fallback ${i}`}</span>}
+              {c.weight!==undefined&&<span style={{fontSize:12.5,padding:"2px 10px",borderRadius:5,background:C.blueL,border:`1px solid ${C.blueM}`,color:C.blue,fontWeight:500}}>{c.weight}%</span>}
+              {c.cap&&<span style={{fontSize:12,color:C.t2}}>Cap: {c.cap.toLocaleString()}/day</span>}
+              {c.role&&<span style={{fontSize:11.5,padding:"2px 10px",borderRadius:5,background:C.amberL,border:`1px solid ${C.amberB}`,color:C.amberT,fontWeight:500}}>Overflow</span>}
+              {c.err&&<span style={{fontSize:11.5,padding:"2px 10px",borderRadius:5,background:C.redL,border:`1px solid ${C.redB}`,color:C.redT,fontWeight:500}}>Error</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Footer */}
+      <div style={{display:"flex",gap:8,padding:"16px 20px",borderTop:`1px solid ${C.border}`,marginTop:16,background:C.bg}}>
+        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>View</button>
+        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>Edit &amp; Duplicate</button>
+        <div style={{flex:1}}/>
+        <button style={{padding:"7px 20px",border:"none",borderRadius:7,background:"#111827",color:"#fff",fontSize:13,cursor:"pointer",fontWeight:500}} onClick={onClose}>Close</button>
+      </div>
     </div>
-    <div style={{display:"flex",gap:8,padding:"12px 20px",borderTop:`1px solid ${C.border}`,background:C.bg2,flexShrink:0}}>
-      <Btn variant="outline" onClick={onClose}>⊙ View</Btn>
-      {!isActive&&<Btn variant="outline" onClick={onClose}>✎ Edit</Btn>}
-      <Btn variant="outline" onClick={onClose}>⧉ {isActive?"Edit & ":""}Duplicate</Btn>
-      <div style={{flex:1}}/><Btn variant="outline" onClick={onClose}>Close</Btn>
-    </div>
-  </Modal>;
+  </div>;
 }
 function RouteSetup({card,onClose}){
   const [sub,setSub]=useState("Mail");const [saved,setSaved]=useState(false);
@@ -603,9 +775,12 @@ function RoutingView(){
     {key:"weighted",title:"Weighted Split",desc:"Distribute traffic across connections by percentage using weighted random selection on every send.",icon:<div style={{display:"flex",alignItems:"center",gap:3,marginBottom:2}}><div style={{width:13,height:13,borderRadius:2,background:"#f87171"}}/><div style={{width:8,height:8,borderRadius:"50%",background:C.blue}}/><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4h8M6 1l3 3-3 3" stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg><div style={{width:13,height:13,borderRadius:2,border:`2px solid ${C.blue}`}}/></div>},
     {key:"volcap",title:"Volume Cap Overflow",desc:"Route to a primary connection until the daily cap is hit, then automatically overflow to a backup.",icon:<div style={{display:"flex",alignItems:"center",gap:3,marginBottom:2}}><div style={{width:13,height:13,borderRadius:"50%",background:"#fb923c",opacity:.7}}/><div style={{width:13,height:13,borderRadius:"50%",background:"#fb923c",opacity:.85}}/><div style={{width:13,height:13,borderRadius:"50%",background:C.purple}}/></div>},
   ];
-  /* Table styles — Fyscal backoffice pixel-match */
-  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"9px 14px",background:C.bg2,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".04em",textTransform:"uppercase"};
-  const tdS={padding:"11px 14px",borderBottom:`1px solid ${C.border}`,fontSize:13,color:C.text,verticalAlign:"middle"};
+  /* Table styles — Fyscal backoffice: subtle pipe divider */
+  /* Header pipe: gradient stops at 65% height so it never touches borderBottom */
+  const thS={textAlign:"left",fontSize:11,fontWeight:600,color:C.t2,padding:"10px 16px",background:C.bg,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:".06em",textTransform:"uppercase",backgroundImage:"linear-gradient(to bottom, #e0e0e0 0%, #e0e0e0 65%, transparent 65%)",backgroundRepeat:"no-repeat",backgroundPosition:"right 0 top 0",backgroundSize:"1px 100%"};
+  const thSL={...thS,backgroundImage:"none"};
+  const tdS={padding:"14px 16px",borderBottom:`1px solid ${C.border}`,fontSize:13,color:C.text,verticalAlign:"middle"};
+  const tdSL=tdS;
   return<div style={{flex:1,overflowY:"auto",padding:"16px 20px",position:"relative"}}>
     <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
       {CARDS.map(card=>(
@@ -622,17 +797,25 @@ function RoutingView(){
       <div style={{fontSize:14,fontWeight:600}}>Active configurations</div>
       <span style={{fontSize:12,color:C.t3}}>{rows.filter(r=>r.status==="Active").length} active · {rows.filter(r=>r.status==="Inactive").length} inactive</span>
     </div>
-    <div style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,overflow:"hidden"}}>
+    <div style={{background:C.bg,overflow:"hidden"}}>
       <table style={{width:"100%",borderCollapse:"collapse"}}>
-        <thead><tr><th style={thS}>S.No</th><th style={thS}>Name</th><th style={thS}>Type</th><th style={thS}>Subdomain</th><th style={thS}>Description</th><th style={thS}>Status</th><th style={thS}>Created</th><th style={{...thS,textAlign:"right"}}></th></tr></thead>
+        <thead><tr>
+          <th style={thS}>S.No</th><th style={thS}>Name</th><th style={thS}>Type</th>
+          <th style={thS}>Subdomain</th><th style={thS}>Description</th>
+          <th style={thS}>Status</th><th style={thS}>Created</th><th style={thSL}></th>
+        </tr></thead>
         <tbody>
           {rows.map((r,i)=>{
             const isA=r.status==="Active";
-            return<tr key={r.id} onClick={()=>setDetailRow(r)} style={{cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-              <td style={tdS}>{i+1}</td><td style={{...tdS,fontWeight:500,color:C.text}}>{r.name}</td><td style={tdS}>{r.type}</td>
-              <td style={tdS}><Badge v={r.subdomain}/></td><td style={{...tdS,color:C.t3,fontSize:12}}>{r.desc}</td>
-              <td style={tdS}><Badge v={r.status}/></td><td style={{...tdS,color:C.t3,fontSize:12}}>{r.created}</td>
-              <td style={{...tdS,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
+            return<tr key={r.id} onClick={()=>setDetailRow(r)} style={{cursor:"pointer",background:C.bg}} onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>
+              <td style={tdS}>{i+1}</td>
+              <td style={{...tdS,fontWeight:500}}>{r.name}</td>
+              <td style={tdS}>{r.type}</td>
+              <td style={tdS}><Badge v={r.subdomain}/></td>
+              <td style={{...tdS,color:C.t2,fontSize:12.5}}>{r.desc}</td>
+              <td style={tdS}><Badge v={r.status}/></td>
+              <td style={{...tdS,color:C.t2,fontSize:12.5}}>{r.created}</td>
+              <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
                 <DotMenu items={isA?[["⊙ View",C.blue,()=>setDetailRow(r)],["⧉ Edit & Duplicate",C.blue,null],["✕ Deactivate",C.redT,()=>toggle(r.id)]]:[["⊙ View",C.blue,()=>setDetailRow(r)],["✎ Edit",C.blue,null],["✕ Deactivate",C.gray,()=>toggle(r.id)]]}/>
               </td>
             </tr>;
