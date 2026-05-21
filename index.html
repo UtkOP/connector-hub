@@ -112,9 +112,9 @@ const ASEED={
   Sms:{"24h":{sent:1540,failed:132,latency:"312ms",fallback:"3.2%"},"7d":{sent:9820,failed:780,latency:"328ms",fallback:"3.6%"},"30d":{sent:38700,failed:3100,latency:"341ms",fallback:"4.0%"}},
 };
 const BSEED={
-  Email:{"24h":[{label:"SendGrid",short:"SG",total:2100,success:1940,failed:160},{label:"Mailgun",short:"MG",total:980,success:940,failed:40},{label:"AWS SES",short:"SES",total:120,success:55,failed:65}],"7d":[{label:"SendGrid",short:"SG",total:8400,success:7760,failed:640},{label:"Mailgun",short:"MG",total:4200,success:4020,failed:180},{label:"AWS SES",short:"SES",total:480,success:220,failed:260}],"30d":[{label:"SendGrid",short:"SG",total:33000,success:30400,failed:2600},{label:"Mailgun",short:"MG",total:16800,success:16100,failed:700},{label:"AWS SES",short:"SES",total:1900,success:870,failed:1030}]},
-  Push:{"24h":[{label:"FCM",short:"FCM",total:4200,success:4112,failed:88},{label:"APNs",short:"APNs",total:2800,success:2740,failed:60},{label:"OneSignal",short:"1S",total:340,success:334,failed:6}],"7d":[{label:"FCM",short:"FCM",total:28100,success:27480,failed:620},{label:"APNs",short:"APNs",total:18800,success:18350,failed:450},{label:"OneSignal",short:"1S",total:2200,success:2156,failed:44}],"30d":[{label:"FCM",short:"FCM",total:110000,success:107500,failed:2500},{label:"APNs",short:"APNs",total:73000,success:71200,failed:1800},{label:"OneSignal",short:"1S",total:8600,success:8430,failed:170}]},
-  Sms:{"24h":[{label:"Twilio",short:"TW",total:980,success:882,failed:98},{label:"Infobip",short:"IB",total:320,success:320,failed:0},{label:"Semaphore",short:"SM",total:140,success:137,failed:3}],"7d":[{label:"Twilio",short:"TW",total:6800,success:6120,failed:680},{label:"Infobip",short:"IB",total:2100,success:2100,failed:0},{label:"Semaphore",short:"SM",total:980,success:958,failed:22}],"30d":[{label:"Twilio",short:"TW",total:26800,success:24100,failed:2700},{label:"Infobip",short:"IB",total:8300,success:8300,failed:0},{label:"Semaphore",short:"SM",total:3800,success:3720,failed:80}]},
+  Email:{"24h":[{label:"SendGrid",total:2100,success:1940,failed:160},{label:"Mailgun",total:980,success:940,failed:40},{label:"AWS SES",total:120,success:55,failed:65}],"7d":[{label:"SendGrid",total:8400,success:7760,failed:640},{label:"Mailgun",total:4200,success:4020,failed:180},{label:"AWS SES",total:480,success:220,failed:260}],"30d":[{label:"SendGrid",total:33000,success:30400,failed:2600},{label:"Mailgun",total:16800,success:16100,failed:700},{label:"AWS SES",total:1900,success:870,failed:1030}]},
+  Push:{"24h":[{label:"FCM",total:4200,success:4112,failed:88},{label:"APNs",total:2800,success:2740,failed:60},{label:"OneSignal",total:340,success:334,failed:6}],"7d":[{label:"FCM",total:28100,success:27480,failed:620},{label:"APNs",total:18800,success:18350,failed:450},{label:"OneSignal",total:2200,success:2156,failed:44}],"30d":[{label:"FCM",total:110000,success:107500,failed:2500},{label:"APNs",total:73000,success:71200,failed:1800},{label:"OneSignal",total:8600,success:8430,failed:170}]},
+  Sms:{"24h":[{label:"Twilio",total:980,success:882,failed:98},{label:"Infobip",total:320,success:320,failed:0},{label:"Semaphore",total:140,success:137,failed:3}],"7d":[{label:"Twilio",total:6800,success:6120,failed:680},{label:"Infobip",total:2100,success:2100,failed:0},{label:"Semaphore",total:980,success:958,failed:22}],"30d":[{label:"Twilio",total:26800,success:24100,failed:2700},{label:"Infobip",total:8300,success:8300,failed:0},{label:"Semaphore",total:3800,success:3720,failed:80}]},
 };
 
 /* ─── Badge helpers ─── */
@@ -163,7 +163,7 @@ function Sidebar({page,section,onPage,onSection}){
   );
 
   return(
-    <aside style={{width:194,flexShrink:0,background:C.bg,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",height:"100%",overflowY:"auto"}}>
+    <aside style={{width:220,flexShrink:0,background:C.bg2,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",height:"100%",overflowY:"auto"}}>
       {/* Brand */}
       <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px 10px",borderBottom:`1px solid ${C.border}`}}>
         <svg xmlns="http://www.w3.org/2000/svg" width="118" height="20" viewBox="0 0 150 26" style={{flexShrink:0}}>
@@ -200,7 +200,7 @@ function Sidebar({page,section,onPage,onSection}){
 
         {/* Communication */}
         <div onClick={()=>setCommOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px",cursor:"pointer",color:C.text,fontWeight:400,fontSize:13}}
-          onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+          onMouseEnter={e=>e.currentTarget.style.background=C.bg} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
           <span style={{color:C.t2,display:"flex",alignItems:"center",flexShrink:0}}>{ICONS.comm}</span>
           <span style={{flex:1}}>Communication</span>
           <span style={{fontSize:11,color:C.t3,transform:commOpen?"rotate(90deg)":"none",transition:"transform .15s"}}>›</span>
@@ -236,7 +236,7 @@ function Sidebar({page,section,onPage,onSection}){
             {/* Config — expandable */}
             <div onClick={()=>setConfigOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 14px 6px 28px",cursor:"pointer",
               color:page==="client"?C.blue:C.t2,fontWeight:page==="client"?600:400,fontSize:12.5}}
-              onMouseEnter={e=>e.currentTarget.style.background=C.bg2} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              onMouseEnter={e=>e.currentTarget.style.background=C.bg} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
               <span style={{flex:1}}>Config</span>
               <span style={{fontSize:11,color:C.t3,transform:configOpen?"rotate(90deg)":"none",transition:"transform .15s"}}>›</span>
@@ -247,7 +247,7 @@ function Sidebar({page,section,onPage,onSection}){
                   color:page==="client"?C.blue:C.t2,fontWeight:page==="client"?600:400,fontSize:12,
                   background:page==="client"?C.blueL:"transparent",
                   borderLeft:page==="client"?`3px solid ${C.blue}`:"3px solid transparent"}}
-                onMouseEnter={e=>{if(page!=="client")e.currentTarget.style.background=C.bg2}} onMouseLeave={e=>{if(page!=="client")e.currentTarget.style.background="transparent"}}>
+                onMouseEnter={e=>{if(page!=="client")e.currentTarget.style.background=C.bg}} onMouseLeave={e=>{if(page!=="client")e.currentTarget.style.background="transparent"}}>
                 Client
               </div>
             )}
@@ -257,7 +257,7 @@ function Sidebar({page,section,onPage,onSection}){
                 color:page==="notifications"?C.blue:C.t2,fontWeight:page==="notifications"?600:400,fontSize:12.5,
                 background:page==="notifications"?C.blueL:"transparent",
                 borderLeft:page==="notifications"?`3px solid ${C.blue}`:"3px solid transparent"}}
-              onMouseEnter={e=>{if(page!=="notifications")e.currentTarget.style.background=C.bg2}} onMouseLeave={e=>{if(page!=="notifications")e.currentTarget.style.background="transparent"}}>
+              onMouseEnter={e=>{if(page!=="notifications")e.currentTarget.style.background=C.bg}} onMouseLeave={e=>{if(page!=="notifications")e.currentTarget.style.background="transparent"}}>
               <span style={{color:page==="notifications"?C.blue:C.t3,display:"flex",alignItems:"center"}}>{ICONS.notif}</span>
               <span style={{flex:1}}>Communications</span>
             </div>
@@ -451,36 +451,45 @@ function ConnectraHome({onEnterDomain}){
     {key:"kyc",cardIcon:CARD_ICON_KYC,title:"Payments",desc:"Connect payment gateway providers and manage transaction routing. Coming soon.",available:false},
   ];
   return(
-    <div style={{flex:1,overflowY:"auto",padding:"32px 28px"}}>
-      <div style={{marginBottom:8}}>
-        <h1 style={{fontSize:22,fontWeight:600,color:C.text}}>Connectra</h1>
-        <p style={{fontSize:13,color:C.t2,marginTop:4,lineHeight:1.5}}>Unified control plane for third-party integrations. Connect, route, and monitor external providers across all domains from a single interface.</p>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* Page header — title left, Config button right (matches backoffice "+ Add Template" pattern) */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",height:52,background:C.bg,flexShrink:0}}>
+        <span style={{fontSize:18,fontWeight:700,color:C.text}}>Connectra</span>
+        <button onClick={()=>onEnterDomain("client")}
+          style={{display:"flex",alignItems:"center",gap:7,padding:"7px 16px",
+            background:"#111827",color:"#fff",border:"none",borderRadius:7,
+            fontSize:13,cursor:"pointer",fontWeight:500,letterSpacing:".01em"}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Config
+        </button>
       </div>
-      {/* Domain cards — exact Ontology Explorer layout */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,maxWidth:960,marginTop:24}}>
-        {DOMAIN_CARDS.map(d=>(
-          <div key={d.key} onClick={()=>d.available&&onEnterDomain(d.key)}
-            style={{border:`1px solid ${C.border}`,borderRadius:8,padding:"28px 24px 26px",background:C.bg,
-              cursor:d.available?"pointer":"default",transition:"box-shadow .15s",
-              position:"relative",opacity:d.available?1:.65,minHeight:210}}
-            onMouseEnter={e=>{if(d.available)e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,.08)";}}
-            onMouseLeave={e=>{e.currentTarget.style.boxShadow="none";}}>
-            {!d.available&&(
-              <span style={{position:"absolute",top:14,right:14,fontSize:10,fontWeight:600,
-                background:"#f3f4f6",color:"#6b7280",border:"1px solid #e5e7eb",
-                padding:"2px 7px",borderRadius:10,letterSpacing:".03em"}}>Coming soon</span>
-            )}
-            {/* Large dark icon — same style as Ontology Explorer (no coloured bg circle) */}
-            <div style={{color:"#374151",marginBottom:14}}>{d.cardIcon}</div>
-            <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:8}}>{d.title}</div>
-            <div style={{fontSize:13,color:C.t2,lineHeight:1.6}}>{d.desc}</div>
-            {d.available&&d.connCount&&(
-              <div style={{marginTop:16,fontSize:12,color:C.t2}}>
-                <span style={{fontWeight:500,color:C.blue}}>{d.connCount}</span> connections configured
-              </div>
-            )}
-          </div>
-        ))}
+      {/* Cards area */}
+      <div style={{flex:1,overflowY:"auto",padding:"28px 28px"}}>
+        <p style={{fontSize:13,color:C.t2,marginTop:0,marginBottom:24,lineHeight:1.5}}>Unified control plane for third-party integrations. Connect, route, and monitor external providers across all domains. Manage Connectra clients via Config.</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,maxWidth:960}}>
+          {DOMAIN_CARDS.map(d=>(
+            <div key={d.key} onClick={()=>d.available&&onEnterDomain(d.key)}
+              style={{border:`1px solid ${C.border}`,borderRadius:8,padding:"28px 24px 26px",background:C.bg,
+                cursor:d.available?"pointer":"default",transition:"box-shadow .15s",
+                position:"relative",opacity:d.available?1:.65,minHeight:210}}
+              onMouseEnter={e=>{if(d.available)e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,.08)";}}
+              onMouseLeave={e=>{e.currentTarget.style.boxShadow="none";}}>
+              {!d.available&&(
+                <span style={{position:"absolute",top:14,right:14,fontSize:10,fontWeight:600,
+                  background:"#f3f4f6",color:"#6b7280",border:"1px solid #e5e7eb",
+                  padding:"2px 7px",borderRadius:10,letterSpacing:".03em"}}>Coming soon</span>
+              )}
+              <div style={{color:"#374151",marginBottom:14}}>{d.cardIcon}</div>
+              <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:8}}>{d.title}</div>
+              <div style={{fontSize:13,color:C.t2,lineHeight:1.6}}>{d.desc}</div>
+              {d.available&&d.connCount&&(
+                <div style={{marginTop:16,fontSize:12,color:C.t2}}>
+                  <span style={{fontWeight:500,color:C.blue}}>{d.connCount}</span> connections configured
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1214,7 +1223,7 @@ function HBar({d,maxVal,hov,onHover,onLeave}){
   const fw=d.total>0?(d.failed/d.total)*tw:0;
   const isH=hov===d.label;
   return<div style={{display:"flex",alignItems:"center",gap:9,padding:"5px 0",opacity:hov&&!isH?.45:1,transition:"opacity .15s"}} onMouseEnter={()=>onHover(d)} onMouseLeave={onLeave}>
-    <div style={{width:56,fontSize:11.5,fontWeight:500,color:C.t2,textAlign:"right",flexShrink:0}}>{d.short}</div>
+    <div style={{width:76,fontSize:12,fontWeight:500,color:C.t2,textAlign:"right",flexShrink:0,whiteSpace:"nowrap"}}>{d.label}</div>
     <div style={{flex:1,position:"relative",height:28,borderRadius:5,overflow:"hidden",background:C.bg2}}>
       {sw>0&&<div style={{position:"absolute",left:0,top:0,height:"100%",width:`${sw}%`,background:C.green,transition:"width .35s"}}/>}
       {fw>0&&<div style={{position:"absolute",left:`${sw}%`,top:0,height:"100%",width:`${fw}%`,background:C.red,transition:"width .35s"}}/>}
@@ -1333,7 +1342,7 @@ function AnalyticsView(){
           {label:"Active Connections",value:activeConns,of:CONNECTIONS.length,note:errorConns>0?`${errorConns} error`:null,noteColor:C.redT},
           {label:"Active Routes",value:activeRoutes,of:ROUTING_DATA.length,note:`${ROUTING_DATA.length-activeRoutes} inactive`,noteColor:C.t3},
           {label:"Active Clients",value:activeClients,of:CLIENT_DATA.length,note:null,noteColor:null},
-          {label:"System Health",value:errorConns>0?"Degraded":"Operational",of:null,note:errorConns>0?`${errorConns} error`:"All connections healthy",noteColor:errorConns>0?C.redT:C.greenT},
+          {label:"System Health",value:errorConns>0?"Warning":"Operational",of:null,note:errorConns>0?`${errorConns} error`:"All connections healthy",noteColor:errorConns>0?C.redT:C.greenT},
         ].map((s,i,arr)=>(
           <div key={s.label} style={{flex:1,minWidth:140,padding:"6px 16px",borderRight:i<arr.length-1?`1px solid ${C.border}`:"none",display:"flex",alignItems:"center",gap:12}}>
             {/* Minimal SVG icon — monochrome, no emoji */}
@@ -1416,7 +1425,7 @@ function App(){
   const sectionLabel=TABS.find(t=>t.key===section)?.label||"";
   const bcParts=page==="notifications"?["Connectra","Communications",sectionLabel]:page==="client"?["Connectra","Config","Client"]:["Connectra"];
 
-  return<div style={{display:"flex",height:"100vh",background:C.bg2,overflow:"hidden"}}>
+  return<div style={{display:"flex",height:"100vh",background:C.bg,overflow:"hidden"}}>
     <Sidebar page={page} section={section} onPage={handlePage} onSection={handleSection}/>
 
     <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",minWidth:0}}>
@@ -1428,14 +1437,16 @@ function App(){
             Row 3: breadcrumb  (only inside a domain)
           A single borderBottom sits at the bottom of the whole band.
       */}
-      <div style={{background:C.bg,flexShrink:0,borderBottom:`1px solid ${C.border}`}}>
+      <div style={{background:C.bg,flexShrink:0,display:page==="connectra"?"none":"block"}}>
 
-        {/* Row 1 — Title */}
-        <div style={{display:"flex",alignItems:"center",padding:"0 20px",height:48}}>
-          <span style={{fontSize:18,fontWeight:600,color:C.text}}>
-            {page==="connectra"?"Connectra":page==="client"?"Connector Config":page==="notifications"?"Communications":page==="payments"?"Payments":""}
-          </span>
-        </div>
+        {/* Row 1 — Title (hidden on connectra page — ConnectraHome has its own header) */}
+        {page!=="connectra"&&(
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",height:48}}>
+            <span style={{fontSize:18,fontWeight:700,color:C.text}}>
+              {page==="client"?"Connectra Client":page==="notifications"?"Communications":page==="payments"?"Payments":""}
+            </span>
+          </div>
+        )}
 
         {/* Row 2 — Toggle group (AML Alert Manager pill style) — no lines */}
         {page==="notifications"&&(
@@ -1476,7 +1487,11 @@ function App(){
 
       {/* ── CONTENT ── */}
       <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
-        {page==="connectra"&&<ConnectraHome onEnterDomain={d=>{handlePage(d==="notifications"?"notifications":d);}}/>}
+        {page==="connectra"&&<ConnectraHome onEnterDomain={d=>{
+          if(d==="notifications")handlePage("notifications");
+          else if(d==="client")handlePage("client");
+          else handlePage(d);
+        }}/>}
         {page==="client"&&<ClientView/>}
         {page==="notifications"&&(
           <>
