@@ -864,19 +864,18 @@ function ConnectionsView(){
   const tdS={padding:"14px 16px",borderBottom:`1px solid ${C.border}`,verticalAlign:"middle",fontSize:13,color:C.text};
   const tdSL=tdS;
   return<div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-    {/* ── Action row — button only (header/breadcrumb in App chrome) ── */}
-    <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",padding:"10px 24px 0",flexShrink:0}}>
+    {/* ── Option A: warning left, button right — single row ── */}
+    <div style={{display:"flex",alignItems:"center",gap:12,margin:"14px 24px 0",flexShrink:0}}>
+      <div style={{flex:1,display:"flex",alignItems:"flex-start",gap:10,
+        padding:"10px 14px",background:C.amberL,border:`1px solid ${C.amberB}`,
+        borderRadius:8,fontSize:12.5}}>
+        <span style={{color:C.amber,marginTop:1,flexShrink:0}}>{ICONS.warn}</span>
+        <div><span style={{fontWeight:600,color:C.amberT}}>Warning: </span><span style={{color:C.amberT}}>AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. Sends may fail at position 3.</span></div>
+      </div>
       <Btn variant="dark" onClick={()=>setFlow("provider")}>+ New Connection</Btn>
     </div>
-    {/* ── Warning banner — rounded card ── */}
-    <div style={{margin:"0 24px 14px",display:"flex",alignItems:"flex-start",gap:10,
-      padding:"11px 16px",background:C.amberL,border:`1px solid ${C.amberB}`,
-      borderRadius:8,fontSize:12.5,flexShrink:0}}>
-      <span style={{color:C.amber,marginTop:1,flexShrink:0}}>{ICONS.warn}</span>
-      <div><span style={{fontWeight:600,color:C.amberT}}>Warning: </span><span style={{color:C.amberT}}>AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. Sends may fail at position 3.</span></div>
-    </div>
-    {/* Search + Show Filters — Manage Template style */}
-    <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 24px 0",flexShrink:0}}>
+    {/* Search + Show Filters */}
+    <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 24px 0",flexShrink:0}}>
       <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.grayB}`,borderRadius:6,overflow:"hidden",background:C.bg,height:34}}>
         <select style={{padding:"0 10px",border:"none",background:C.bg2,color:C.t2,fontSize:12.5,outline:"none",borderRight:`1px solid ${C.grayB}`,cursor:"pointer",height:"100%"}}><option>Search by</option><option>Provider</option><option>Label</option></select>
         <div style={{display:"flex",alignItems:"center",gap:6,padding:"0 10px"}}>
