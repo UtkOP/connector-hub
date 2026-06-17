@@ -4,9 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Connectra — Fyscal Technologies</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body,#root{height:100%;font-family:-apple-system,'Segoe UI','Inter',sans-serif;background:#f9fafb;color:#111827;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -509,7 +509,7 @@ function ClientView(){
           </tr></thead>
           <tbody>
             {rows.map(c=>(
-              <tr key={c.id} style={{background:"#fff",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#f9fafb"} onMouseLeave={e=>e.currentTarget.style.background="#fff"}>
+              <tr key={c.id} style={{background:"#fff",cursor:"pointer"}} onClick={()=>setViewClient(c)} onMouseEnter={e=>e.currentTarget.style.background="#f9fafb"} onMouseLeave={e=>e.currentTarget.style.background="#fff"}>
                 <td style={{...tdS,fontFamily:"monospace",fontSize:12.5,color:"#374151"}}>{c.clientId}</td>
                 <td style={tdS}>{c.name}</td>
                 <td style={{...tdS,color:"#6b7280"}}>{c.email}</td>
@@ -747,7 +747,6 @@ function ConnViewDetail({conn,onClose}){
     ["Environment","Production","text"],
     ["Created",conn.created,"text"],
     ["Routing usage",conn.status==="Active"?"Email Fallback Chain · Position 1":"Not in any routing config","routing"],
-    ["Last successful send","May 20, 2026 10:41 AM","muted"],
   ];
   return<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
     <div style={{background:C.bg,borderRadius:6,width:560,maxWidth:"96%",maxHeight:"88vh",display:"flex",flexDirection:"column",boxShadow:"0 4px 24px rgba(0,0,0,.18)",overflow:"hidden"}}>
@@ -797,7 +796,6 @@ function ConnEditModal({conn,onClose}){
         <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,lineHeight:1,padding:"2px 6px"}}>×</button>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"20px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-        {/* API keys are not editable — removed per security policy */}
         {[{l:"Label",p:conn.label},{l:"From Email",p:"noreply@fyscaltech.com"},{l:"From Name",p:"Fyscal Technologies"},{l:"Region",p:conn.region||"Global"}].map((f,i)=>(
           <div key={i}>
             <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5,color:C.text}}>{f.l}</label>
@@ -806,8 +804,9 @@ function ConnEditModal({conn,onClose}){
               onBlur={e=>{e.currentTarget.style.borderColor=C.grayB;e.currentTarget.style.boxShadow="none";}}/>
           </div>
         ))}
-        <div style={{gridColumn:"1/-1",padding:"10px 12px",background:"#fafafa",border:`1px solid ${C.border}`,borderRadius:6,fontSize:12,color:C.t2}}>
-          🔒 API keys and credentials cannot be edited. To update credentials, delete this connection and create a new one.
+        <div>
+          <label style={{display:"block",fontSize:12.5,fontWeight:500,marginBottom:5,color:C.text}}>API Key <span style={{fontSize:11,color:C.t3,fontWeight:400}}>(read only)</span></label>
+          <input type="password" readOnly value="sk_live_xxxxxxxxxxxxxxxxxxxx" style={{width:"100%",padding:"8px 11px",border:`1px solid ${C.grayB}`,borderRadius:6,fontSize:13,color:C.t3,background:C.bg2,outline:"none",cursor:"not-allowed"}}/>
         </div>
       </div>
       <div style={{padding:"12px 20px",borderTop:`1px solid ${C.border}`,display:"flex",gap:8,justifyContent:"flex-end"}}>
@@ -850,7 +849,8 @@ function ConnectionsView(){
   const [fType,setFType]=useState("");
   const [flow,setFlow]=useState(null);const [prov,setProv]=useState(null);
   const [modal,setModal]=useState(null);const [selConn,setSelConn]=useState(null);
-  const rows=CONNECTIONS.filter(c=>{
+  const [conns,setConns]=useState(CONNECTIONS);
+  const rows=conns.filter(c=>{
     const matchQ=q===""||c.provider.toLowerCase().includes(q.toLowerCase())||c.label.toLowerCase().includes(q.toLowerCase());
     const matchStatus=fStatus===""||c.status===fStatus;
     const matchClient=fClient===""||c.clientName===fClient;
@@ -870,7 +870,7 @@ function ConnectionsView(){
         padding:"10px 14px",background:C.amberL,border:`1px solid ${C.amberB}`,
         borderRadius:8,fontSize:12.5}}>
         <span style={{color:C.amber,marginTop:1,flexShrink:0}}>{ICONS.warn}</span>
-        <div><span style={{fontWeight:600,color:C.amberT}}>Warning: </span><span style={{color:C.amberT}}>AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. Sends may fail at position 3.</span></div>
+        <div><span style={{fontWeight:600,color:C.amberT}}>Warning: </span><span style={{color:C.amberT}}>AWS SES (Emergency) is in Error state and is part of your active Email Fallback Chain. This connection cannot be deactivated until removed from the routing config.</span></div>
       </div>
       <Btn variant="dark" onClick={()=>setFlow("provider")}>+ New Connection</Btn>
     </div>
@@ -978,16 +978,23 @@ function ConnectionsView(){
                 <td style={{...tdS,color:C.t2,fontSize:12.5}}>{c.clientName||"—"}</td>
                 <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
                   <DotMenu items={c.status==="Active"
-                    ?[["View details",C.blue,()=>{setSelConn(c);setModal("view");}],
-                      ["Edit",C.blue,()=>{setSelConn(c);setModal("edit");}],
+                    ?[["View",C.blue,()=>{setSelConn(c);setModal("view");}],
+                      ["Duplicate & Edit",C.blue,()=>{
+                        setConns(prev=>{
+                          const maxId=Math.max(...prev.map(x=>x.id));
+                          const dup={...c,id:maxId+1,label:c.label+" (Copy)",status:"Inactive",created:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})};
+                          return[dup,...prev];
+                        });
+                      }],
                       ["Test connection",C.gray,()=>{setSelConn(c);setModal("test");}],
-                      ["Edit & Duplicate",C.blue,null],
-                      ["Deactivate",C.redT,null]]
-                    :[["View details",C.blue,()=>{setSelConn(c);setModal("view");}],
+                      ["Deactivate",C.redT,()=>setConns(prev=>prev.map(x=>x.id===c.id?{...x,status:"Inactive"}:x))]]
+                    :[["View",C.blue,()=>{setSelConn(c);setModal("view");}],
                       ["Edit",C.blue,()=>{setSelConn(c);setModal("edit");}],
-                      ["Test connection",C.gray,()=>{setSelConn(c);setModal("test");}],
-                      ["Set as active",C.greenT,null],
-                      ["Delete",C.redT,null]]}/>
+                      ["Activate",C.greenT,()=>setConns(prev=>prev.map(x=>{
+                        if(x.id===c.id)return{...x,status:"Active"};
+                        if(x.type===c.type&&x.status==="Active")return{...x,status:"Inactive"};
+                        return x;
+                      }))]]}/>
                 </td>
               </tr>
             ))}
@@ -1070,18 +1077,12 @@ function RoutingDetailModal({row,onClose,onToggle}){
         </div>
         <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t3,lineHeight:1,padding:"2px 6px",marginLeft:12}}>×</button>
       </div>
-      {/* Active status bar — matches screenshot 2 */}
-      <div style={{margin:"16px 20px 0",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",background:isActive?"#f0fdf4":"#f9fafb",borderRadius:7,border:`1px solid ${isActive?"#bbf7d0":"#e5e7eb"}`}}>
+      {/* Active status bar — status indicator only, no button */}
+      <div style={{margin:"16px 20px 0",display:"flex",alignItems:"center",padding:"10px 14px",background:isActive?"#f0fdf4":"#f9fafb",borderRadius:7,border:`1px solid ${isActive?"#bbf7d0":"#e5e7eb"}`}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:8,height:8,borderRadius:"50%",background:isActive?C.green:C.gray,flexShrink:0}}/>
           <span style={{fontSize:13,fontWeight:500,color:isActive?C.greenT:C.gray}}>{isActive?"Active routing":"Inactive routing"}</span>
         </div>
-        <button onClick={()=>onToggle(row.id)}
-          style={{padding:"5px 16px",border:`1px solid ${isActive?"#fecaca":"#bbf7d0"}`,borderRadius:6,
-            background:isActive?C.redL:C.greenL,color:isActive?C.redT:C.greenT,
-            fontSize:12.5,cursor:"pointer",fontWeight:500}}>
-          {isActive?"Deactivate":"Activate"}
-        </button>
       </div>
       {/* Key-value fields */}
       <div style={{margin:"14px 20px 0"}}>
@@ -1113,10 +1114,8 @@ function RoutingDetailModal({row,onClose,onToggle}){
           ))}
         </div>
       </div>
-      {/* Footer — Edit only, no Duplicate */}
+      {/* Footer — Close only, no View/Edit/Duplicate */}
       <div style={{display:"flex",gap:8,padding:"16px 20px",borderTop:`1px solid ${C.border}`,marginTop:16,background:C.bg}}>
-        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>View</button>
-        <button style={{padding:"7px 16px",border:`1px solid ${C.grayB}`,borderRadius:7,background:C.bg,color:C.t2,fontSize:13,cursor:"pointer"}} onClick={onClose}>Edit</button>
         <div style={{flex:1}}/>
         <button style={{padding:"7px 20px",border:"none",borderRadius:7,background:"#111827",color:"#fff",fontSize:13,cursor:"pointer",fontWeight:500}} onClick={onClose}>Close</button>
       </div>
@@ -1294,10 +1293,16 @@ function RoutingView(){
               <td style={{...tdS,color:C.t2,fontSize:12.5}}>{r.created}</td>
               <td style={{...tdSL,textAlign:"right"}} onClick={e=>e.stopPropagation()}>
                 <DotMenu items={isA
-                  ?[["⊙ View",C.blue,()=>setDetailRow(r)],
-                    ["✎ Edit",C.blue,null],
+                  ?[["View",C.blue,()=>setDetailRow(r)],
+                    ["Duplicate & Edit",C.blue,()=>{
+                      setRows(prev=>{
+                        const maxId=Math.max(...prev.map(x=>x.id));
+                        const dup={...r,id:maxId+1,name:r.name+" (Copy)",status:"Inactive",created:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})};
+                        return[...prev,dup];
+                      });
+                    }],
                     ["✕ Deactivate",C.redT,()=>toggle(r.id)]]
-                  :[["⊙ View",C.blue,()=>setDetailRow(r)],
+                  :[["View",C.blue,()=>setDetailRow(r)],
                     ["✎ Edit",C.blue,null],
                     ["✓ Activate",C.greenT,()=>toggle(r.id)]]}/>
               </td>
